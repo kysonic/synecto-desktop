@@ -1,0 +1,692 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/google-signin/google-signin-aware.html">
+<link rel="import" href="../../../../../bower_components/i18-n/i18-n.html">
+<link rel="import" href="../../../../../bower_components/paper-input/paper-input.html">
+<link rel="import" href="../../../../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+<!-- Animation -->
+<link rel="import" href="../../../../../bower_components/neon-animation/neon-animated-pages.html">
+<link rel="import" href="../../../../../bower_components/neon-animation/neon-animatable.html">
+<link rel="import" href="../../../../../bower_components/neon-animation/neon-animations.html">
+<!-- Buttons -->
+<link rel="import" href="../designmap-buttons/designmap-button.html">
+<link rel="import" href="../designmap-buttons/designmap-loading-button.html">
+
+<dom-module id="designmap-login-form">
+    <template>
+        <style>
+            :host {
+                --designmap-login-form-background: var(--gray-lighty-color);
+                --designmap-login-form-color: var(--blue-darkest-color);
+                --designmap-login-form-content: var(--white-color);
+                --designmap-login-form-header: var(--blue-darker-color);
+
+                background: var(--designmap-login-form-background);
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                font-weight: 300;
+                min-width: 450px;
+                color: var(--designmap-login-form-color);
+
+                --paper-input-container-color:  var(--designmap-login-form-color);
+                --paper-input-container-focus-color: var(--designmap-login-form-color);
+                --paper-input-container-input: {
+                    color: var(--designmap-login-form-color);
+                    font-weight: 300;
+                };
+                --iron-overlay-backdrop: {
+                    z-index: 10;
+                };
+                --iron-overlay-backdrop-opened: {
+                    z-index: 10;
+                };
+            }
+            *[hidden] {
+                display: none !important;
+            }
+            :host([fake-support]) {
+                background: transparent;
+            }
+            .forgot-message {
+                margin-top: 15px;
+                text-align: center;
+            }
+            .forgot-button {
+                display: block;
+                margin: 12px auto !important;
+                margin-bottom: 0 !important;
+            }
+            .wrapper {
+                width: 100%;
+                max-width: 500px;
+                height: 556px;
+                overflow: hidden;
+                position: relative;
+                bottom: 20px;
+            }
+            /** HEADER **/
+            .header, .header-phantom{
+                height: 150px;
+                width: 100%;
+                background: var(--designmap-login-form-header);
+                position: relative;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .header-phantom {
+                height: 270px;
+                background: var(--white-color);
+            }
+            .header {
+                position: absolute;
+                top: 0;
+                z-index: 20;
+            }
+            .social {
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                top: 150px;
+                height: 117px;
+                z-index: 20;
+                background: var(--white-color);
+            }
+            .social .button-wrapper {
+                padding: 0 75px;
+            }
+            .social button {
+                margin-top: 39px;
+            }
+            .title {
+                position: absolute;
+                width: 100%;
+                text-align: center;
+                z-index: 20;
+            }
+            .title hr {
+                border-color: var(--gray-lightenest-color);
+                background: var(--gray-lightenest-color);
+                opacity: 0.3;
+            }
+            .title .text {
+                position: absolute;
+                color: var(--gray-darky-color);
+                font-weight: 100;
+                font-size: 22px;
+                text-align: center;
+                padding: 0 5px;
+                left: 50%;
+                margin-left: -28px;
+                top: -10px;
+                background: var(--white-color);
+            }
+            .header iron-icon {
+                width: 280px;
+                height: 45px;
+            }
+            .beta {
+                color: var(--white-color);
+                position: absolute;
+                left: 100%;
+                top: 0;
+                margin-left: -47px;
+                font-size: 12px;
+            }
+            /** CONTENT **/
+            .wrapper > .content {
+                background: var(--designmap-login-form-content);
+                height: 100%;
+                padding: 20px 75px;
+            }
+            .wrapper button {
+                display: inline-block;
+                background: var(--blue-darker-color);
+                color: var(--white-color);
+                width: 100%;
+            }
+            .wrapper > .content button:hover {
+                background: var(--blue-super-dark-color);
+            }
+            .wrapper > .content .button-set {
+                text-align: center;
+            }
+            .wrapper > .content .button-set button {
+                display: inline-block;
+                width: 100%;
+            }
+            .wrapper > .content .msg, .msg {
+                display: block;
+                width: 100%;
+                cursor: pointer;
+                text-align: center;
+                margin: 3px 0 0 0;
+                font-size: 12px;
+                color: var(--blue-super-dark-color);
+            }
+            .wrapper > .content .msg:hover {
+                text-decoration: underline;
+            }
+            .wrapper > .content .forgot-msg {
+                display: inline-block;
+                cursor: pointer;
+                margin: 15px 0 9px 0;
+                font-size: 12px;
+            }
+            .wrapper > .content  .forgot-msg:hover {
+                text-decoration: underline;
+            }
+
+            .sign-up {
+                color: var(--orange-color);
+                font-weight: bold;
+            }
+            /** Forgot password **/
+            .forgot-password-form, .approval-form {
+                position: absolute;
+                top: -50px;
+                z-index: 19;
+                width: 100%;
+                background: var(--white-color);
+                transition: top .5s cubic-bezier(0.23, 1, 0.32, 1);
+                height: 325px;
+            }
+            .forgot-password-form .content,.approval-form .content {
+                background: transparent;
+                height: 100%;
+                padding: 20px 75px;
+            }
+            .forgot-password-form .panel-title, .approval-form .panel-title {
+                width: 100%;
+                text-align: center;
+                font-size: 22px;
+            }
+            .forgot-password-form .msg, .approval-form .msg {
+                margin-top: 5px;
+            }
+
+            /** GOOGLE BUTTONS **/
+            .google-btn {
+                background: var(--google-btn-color) !important;
+                font-size: 16px;
+                vertical-align: top;
+                padding-top: 13px;
+                padding-bottom: 12px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            .google-btn.twl {
+                font-size: 15px;
+                padding-top: 13px;
+                padding-bottom: 13px;
+                padding-left: 5px;
+                padding-right: 5px;
+            }
+            .twl:not(.google-btn) {
+                font-size: 16px;
+                padding-top: 12px;
+                padding-bottom: 12px;
+                vertical-align: top;
+            }
+            .linkers {
+                text-align: left;
+                width: 512px;
+                position: relative;
+                bottom: 20px;
+            }
+            .linkers a {
+                color: var(--gray-darky-color);
+                padding: 5px;
+                font-size: 12px;
+                font-weight: 100;
+            }
+            .fake-signup-title {
+                text-align: center;
+                padding-top: 33px;
+            }
+        </style>
+        <!--<google-signin-aware id="aware"
+                             on-google-signin-aware-success="googleSigninSuccess"
+                             on-google-signin-aware-error="googleSigninFailure"
+                             on-google-signin-aware-signed-out="googleSigninFailure"
+                             client-id="{{clientID}}"
+                             hosted-domain="{{hostedDomain}}"></google-signin-aware>-->
+        <div class="wrapper">
+            <div class="header-phantom"></div>
+            <div class="header">
+                <iron-icon icon="designmap-logo:logo"></iron-icon>
+                <div class="beta">beta 3.0</div>
+            </div>
+            <div class="social">
+                <div class="button-wrapper">
+                    <button id="registerGoogleButton" is="designmap-loading-button"
+                            class="google-btn " on-click="googleAuth" thin>
+                        <i18-n msgid="Signin with Google">Signin with Google</i18-n>
+                    </button>
+                </div>
+            </div>
+            <div class="title">
+                <hr/>
+                <div class="text">
+                    <i18-n msgid="or">or</i18-n>
+                </div>
+            </div>
+            <!-- Forgot password form -->
+            <div class="forgot-password-form" id="forgotPasswordForm">
+                <div class="content" id="forgotPasswordFormContent">
+                    <div class="panel-title">
+                        <i18-n msgid="Forgot password">Forgot password?</i18-n>
+                    </div>
+                    <div class="forgot-message">
+                        <i18-n msgid="Restore message" hidden$="[[restoreMessageSent]]"></i18-n>
+                        <span hidden$="[[!restoreMessageSent]]">
+                <i18-n msgid="Restore message sent"></i18-n>
+                [[restoreEmail]]
+              </span>
+                    </div>
+                    <template is="dom-if" if="[[!restoreMessageSent]]">
+                        <paper-input id="restorePasswordEmail" required
+                                     pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     type="email"></paper-input>
+                        <iron-a11y-keys id="a11ForgotPassword" keys="enter" target="[[this.$.restorePasswordEmail]]"
+                                        on-keys-pressed="creteToken"></iron-a11y-keys>
+                        <button is="designmap-loading-button" id="restoreLoadingButton" type="submit"
+                                class="forgot-button" thin on-click="creteToken">
+                            <i18-n msgid="Send">Send</i18-n>
+                        </button>
+                    </template>
+                    <a class="msg" on-click="closePanel" data-panel="forgotPasswordForm">
+                        <i18-n msgid="return">return</i18-n>
+                    </a>
+                </div>
+            </div>
+            <!-- Send approving link -->
+            <div class="approval-form" id="approvingForm">
+                <div class="content" id="approvingFormContent">
+                    <div class="panel-title">
+                        <i18-n msgid="Approving link">Approving link</i18-n>
+                    </div>
+                    <div class="forgot-message">
+                        <i18-n msgid="Restore message" hidden$="[[approveMessageSent]]"></i18-n>
+                        <span hidden$="[[!approveMessageSent]]">
+                <i18-n msgid="Approve message sent"></i18-n>
+                [[approvingEmail]]
+              </span>
+                    </div>
+                    <template is="dom-if" if="[[!approveMessageSent]]">
+                        <paper-input id="approvingEmail" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
+                                     label="E-mail"
+                                     error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     type="email"></paper-input>
+                        <iron-a11y-keys id="a11ApprovingEmail" keys="enter" target="[[this.$.approvingEmail]]"
+                                        on-keys-pressed="sendApprovingEmail"></iron-a11y-keys>
+                        <button is="designmap-loading-button" id="approvingButton" type="submit" class="forgot-button"
+                                thin on-click="sendApprovingEmail">
+                            <i18-n msgid="Send">Send</i18-n>
+                        </button>
+                    </template>
+                    <a class="msg" on-click="closePanel" data-panel="approvingForm">
+                        <i18-n msgid="return">return</i18-n>
+                    </a>
+                </div>
+            </div>
+            <!-- Main form -->
+            <div class="content" id="content">
+                <neon-animated-pages id="pages" class="flex" selected="[[selected]]"
+                                     entry-animation="[[entryAnimation]]"
+                                     exit-animation="[[exitAnimation]]">
+                    <!-- Sign in -->
+                    <neon-animatable id="animatable1">
+                        <paper-input is="iron-input" id="emailSignin" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
+                                     on-cahange="authEmailChanged"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     type="email"></paper-input>
+                        <iron-a11y-keys id="a11One" keys="enter" target="[[this.$.emailSignin]]"
+                                        on-keys-pressed="login"></iron-a11y-keys>
+                        <paper-input id="passwordSignin" required name="passwordSignin" auto-validate pattern=".{4,}"
+                                     error-message="[[translate('PasswordError',language,i18Loaded)]]"
+                                     label="[[translate('Password',language,i18Loaded)]]"
+                                     type="password"></paper-input>
+                        <a class="forgot-msg" on-click="openPanel" data-panel="forgotPasswordForm">
+                            <i18-n msgid="Forgot password?">Forgot password?</i18-n>
+                        </a>
+                        <div class="button-set">
+                            <button is="designmap-loading-button" id="signInLoadingButton" thin on-click="login">
+                                <i18-n msgid="SignIn">Sign In</i18-n>
+                            </button>
+                        </div>
+                        <a class="msg" hidden$="[[fakeSupport]]" on-click="goToTheSignup">
+                            <i18-n msgid="DidNotHaveAccount">Do not have account?</i18-n>
+                            <i18-n class="sign-up" msgid="Sign-up">Sign-up!</i18-n>
+                        </a>
+                        <a class="msg" hidden$="[[!fakeSupport]]" on-click="goToTheFakeSignUp">
+                            <i18-n class="sign-up" msgid="return">Return</i18-n>
+                        </a>
+                        <!--<a href="https://goo.gl/PbeJAo" target="_blank" class="msg">
+                          <i18-n msgid="RequestTestingAccount">Request testing account</i18-n>
+                        </a>-->
+                    </neon-animatable>
+                    <!-- Sign up -->
+                    <neon-animatable id="animatable2">
+                        <paper-input id="emailSignup" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
+                                     value="{{registerEmail::keyup}}"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     type="email"></paper-input>
+                        <iron-a11y-keys id="a11Two" keys="enter" target="[[this.$.emailSignup]]"
+                                        on-keys-pressed="register"></iron-a11y-keys>
+                        <paper-input id="passwordSignup" required name="passwordSignup" on-input="checkoutPassword"
+                                     pattern=".{4,}" error-message="[[translate('PasswordError',language,i18Loaded)]]"
+                                     label="[[translate('Password',language,i18Loaded)]]" type="password"></paper-input>
+                        <a class="forgot-msg" on-click="openPanel" data-panel="approvingForm">
+                            <i18-n msgid="Send me approving link">Send me approving link</i18-n>
+                        </a>
+                        <div class="button-set">
+                            <button is="designmap-loading-button" id="registerButton" thin on-click="register">
+                                <i18-n msgid="SignUp">Sign Up</i18-n>
+                            </button>
+                        </div>
+                        <a class="msg" on-click="goToTheSignin">
+                            <i18-n msgid="ReturnToTheLogin"></i18-n>
+                            <i18-n class="sign-up" msgid="Authorization"></i18-n>
+                            <i18-n msgid="frm"></i18-n>
+                        </a>
+                    </neon-animatable>
+                    <!-- Fake login -->
+                    <neon-animatable id="animatable3">
+                        <div class="fake-signup-title">
+                            <i18-n msgid="Enter your name we want to know you a little bit closer"></i18-n>
+                        </div>
+                        <paper-input id="nameFakeSignup" required
+                                     value="{{fakeName::keyup}}"
+                                     label="[[translate('Enter your name',language,i18Loaded)]]"
+                                     type="text"></paper-input>
+                        <div class="button-set">
+                            <button is="designmap-loading-button" id="fakeSignupButton" thin on-click="fakeSignUp">
+                                <i18-n msgid="Enter">Enter</i18-n>
+                            </button>
+                        </div>
+                        <a class="msg"  on-click="goToTheSignin">
+                            <i18-n msgid="GoToTheLogin"></i18-n>
+                            <i18-n class="sign-up" msgid="Authorization"></i18-n>
+                            <i18-n msgid="frm"></i18-n>
+                        </a>
+                    </neon-animatable>
+                </neon-animated-pages>
+            </div>
+        </div>
+        <div hidden="[[fakeSupport]]" class="linkers">
+            <a href="https://vk.com/designmap" target="_blank">
+                <i18-n msgid="Join us VK">Join us VK</i18-n>
+            </a>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-login-form',
+            /**
+             * Regular expression allowing to checkout how strong is password.
+             */
+            strongPasswordRegexp: /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,50}/i,
+            properties: {
+                user: {
+                    type: Object,
+                    statePath: 'user'
+                },
+                language: {
+                    type: String,
+                    computed: '_computeLanguage(user.system.language)'
+                },
+                i18Loaded: {
+                    type: Boolean,
+                    statePath: 'i18Loaded'
+                },
+                selected: {
+                    type: Number,
+                    value: 0
+                },
+                token: {
+                    type: String,
+                    value: null,
+                    observer: 'tokenChanged'
+                },
+                approveToken: {
+                    type: String,
+                    value: null,
+                    observer: 'approveTokenChanged'
+                },
+                clientID: {
+                    type: String,
+                    value: function () {
+                        return Designmap.oauth.googleDrive.clientID
+                    }
+                },
+                restoreMessageSent: {
+                    type: Boolean,
+                    value: false
+                },
+                approveMessageSent: {
+                    type: Boolean,
+                    value: false
+                },
+                fakeSupport: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            ready: function () {
+
+            },
+            /**
+             * Entering with temporary token
+             */
+            tokenChanged: function () {
+                if (!this.token || this.token.length < 12) return;
+                this.dispatch('token', this.token).then(function (response) {
+                    if (!response.success) return this.showErrorMessage(response.errors.message, {}, 10000);
+                    // Message
+                    this.showMessage('You have entered using temporary token');
+                }.bind(this))
+            },
+            /**
+             * Approve token is needed for preventing of signing up with
+             * fake email
+             */
+            approveTokenChanged: function () {
+                if (!this.approveToken) return;
+                this.dispatch('approveToken', this.approveToken).then(function (response) {
+                    if (!response.success) return this.showErrorMessage(response.errors.message);
+                    this.showMessage('You have been approved your email successfully!');
+                }.bind(this)).catch(this.manageErrorResponse.bind(this));
+            },
+            /**
+             * To provide right-left animation in form
+             */
+            goToTheSignup: function () {
+                this.entryAnimation = 'slide-from-right-animation';
+                this.exitAnimation = 'slide-left-animation';
+                this.selected = 1;
+            },
+            /**
+             * To provide right-left animation in form
+             */
+            goToTheFakeSignUp: function () {
+                this.entryAnimation = 'slide-from-right-animation';
+                this.exitAnimation = 'slide-left-animation';
+                this.selected = 2;
+            },
+            /**
+             * To provide right-left animation in form
+             */
+            goToTheSignin: function () {
+                this.entryAnimation = 'slide-from-left-animation';
+                this.exitAnimation = 'slide-right-animation';
+                this.selected = 0;
+            },
+            /**
+             * Sign up using form
+             */
+            register: function (e) {
+                e.preventDefault();
+                if (this.$.registerButton.loading) return;
+                if (!(this.$.emailSignup.validate() && this.$.passwordSignup.validate())) return this.showErrorMessage('AuthorizationFormWasFilledNotCorrectly');
+                this.$.registerButton.loading=true;
+                const email = this.$.emailSignup.value;
+                this.dispatch('userSignup', this.$.emailSignup.value, this.$.passwordSignup.value).then(function (response) {
+                    if (!response.success) return this.manageErrorResponse(response);
+                    this.$.emailSignup.value = null;
+                    this.$.passwordSignup.value = null;
+                    this.$.registerButton.loading=false;
+                    // Analytics
+                    this.reachGoal('auth','register',email);
+                }.bind(this)).catch(function(err){
+                    this.$.registerButton.loading=true;
+                    this.manageErrorResponse(err)
+                }.bind(this));
+            },
+            /**
+             * Log in using form
+             */
+            login: function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.$.signInLoadingButton.loading) return;
+                this.$.signInLoadingButton.loading = true;
+                if (!(this.$.emailSignin.validate() && this.$.passwordSignin.validate())) {
+                    this.$.signInLoadingButton.loading = false;
+                    return this.showErrorMessage('AuthorizationFormWasFilledNotCorrectly');
+                }
+                const email = this.$.emailSignin.value;
+                this.dispatch('userLogin', this.$.emailSignin.value, this.$.passwordSignin.value).then(function (response) {
+                    this.$.signInLoadingButton.loading = false;
+                    if (!response.success) return this.manageErrorResponse(response);
+                    this.$.emailSignin.value = null;
+                    this.$.passwordSignin.value = null;
+                    // Analytics
+                    this.reachGoal('auth','login',email);
+                }.bind(this)).catch(function (err) {
+                    this.$.signInLoadingButton.loading = false;
+                    this.manageErrorResponse(err);
+                }.bind(this));
+            },
+            /**
+             * Open panels
+             */
+            openPanel: function (e) {
+                const panel = e.currentTarget.dataset.panel;
+                this.$[panel].style.top = '289px';
+            },
+            /**
+             * Close panels
+             */
+            closePanel: function (e) {
+                const panel = e.currentTarget.dataset.panel;
+                this.$[panel].style.top = '-50px';
+                this.approveMessageSent = false;
+                this.restoreMessageSent = false;
+            },
+            /**
+             * Create token for entering if user
+             * forget a password
+             */
+            creteToken: function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.$$('#restoreLoadingButton').loading) return;
+                this.restoreEmail = this.$$('#restorePasswordEmail').value;
+                this.$$('#restoreLoadingButton').loading = true;
+                if (!this.$$('#restorePasswordEmail').validate()) {
+                    this.$$('#restoreLoadingButton').loading = false;
+                    return this.showErrorMessage('Email is not correct');
+                }
+                const promise = xhr.post(Designmap.config.apiURL + 'token/entry', {email: this.restoreEmail });
+                promise.then(function (response) {
+                    this.$$('#restoreLoadingButton').loading = false;
+                    if (!response.success) return this.manageErrorResponse(response);
+                    this.restoreMessageSent = true;
+                    //this.showMessage('You will receive an email with further instructions on #EMAIL#',{'#EMAIL#':this.restoreEmail },20000);
+                }.bind(this));
+            },
+            /**
+             * If didn't received a mail with approving link -
+             * resend it
+             */
+            sendApprovingEmail: function () {
+                this.approvingEmail = this.$$('#approvingEmail').value;
+                this.$$('#approvingButton').loading = true;
+                this.dispatch('reapprove', this.approvingEmail, this.language).then(function (response) {
+                    this.$$('#approvingButton').loading = false;
+                    if (!response.success) return this.showErrorMessage(response.errors.message);
+                    this.approveMessageSent = true;
+                    //this.showMessage('A mail has been sent',{'#EMAIL#':this.approvingEmail });
+                }.bind(this)).catch(function (err) {
+                    this.$$('#approvingButton').loading = false;
+                    this.showErrorMessage(err);
+                }.bind(this))
+            },
+            /**
+             * Click on Google Sign In button
+             */
+            googleAuth: function (e) {
+                var googleUser = gapi.auth2.getAuthInstance()['currentUser'].get();
+                if (googleUser && googleUser.w3) return this.signInWithGoogle(googleUser);
+                this.googleButtonPressed = true;
+                this.$.registerGoogleButton.loading = true;
+                this.$.aware.signIn();
+                // Analytics
+                this.reachGoal('auth','google');
+            },
+            /**
+             * Google sign-in success
+             */
+            googleSigninSuccess: function () {
+                var googleUser = gapi.auth2.getAuthInstance()['currentUser'].get();
+                if(this.googleButtonPressed) this.signInWithGoogle(googleUser);
+                this.$.registerGoogleButton.loading = false;
+                this.googleButtonPressed = false;
+            },
+            /**
+             * When google sign in went wrong
+             */
+            googleSigninFailure: function () {
+                this.showErrorMessage('Google authorization went wrong.');
+                this.$.registerGoogleButton.loading = false;
+                this.googleButtonPressed = false;
+            },
+            /**
+             * Sign in with google
+             * @param googleUser
+             */
+            signInWithGoogle: function (googleUser) {
+                this.$.registerGoogleButton.loading = true;
+                this.dispatch('userGoogleSignup', googleUser.w3).then(function (response) {
+                    this.$.registerGoogleButton.loading = false;
+                    if (!response.success) return this.showErrorMessage(response.errors.message);
+                    this.showMessage(response.message, {}, 10000);
+                }.bind(this)).catch(function (err) {
+                    this.$.registerGoogleButton.loading = false;
+                }.bind(this));
+            },
+            /**
+             * Sign up with fake data when
+             * user does not have possibility to login with
+             * its own account
+             */
+            fakeSignUp: function(){
+                const unknownName = this.$.nameFakeSignup.value;
+                if (!unknownName) return;
+                const nameParts = unknownName.split(' ');
+                const user = {
+                    _id: this.generateObjectId(),
+                    fake: true,
+                    profile: {
+                        name: nameParts[0],
+                        lastName: nameParts[1] || ''
+                    }
+                };
+                this.dispatch('_userUpdate', user);
+                localStorage.setItem('designmap:user', JSON.stringify(user));
+            }
+        })
+    </script>
+</dom-module>

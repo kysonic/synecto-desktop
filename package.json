@@ -14,5 +14,7 @@
     "electron-process": "^0.2.0",
     "user-media-screenshot": "^1.0.2"
   },
-  "dependencies": {}
+  "dependencies": {
+    "nedb": "^1.8.0"
+  }
 }
