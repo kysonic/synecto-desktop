@@ -1,0 +1,56 @@
+<link rel="import" href="../bower_components/polymer/polymer.html">
+
+<dom-module id="make-snapshot">
+
+  <template>
+    <style>
+      /* local DOM styles go here */
+      :host {
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+      }
+      button {
+        /*-webkit-app-region: drag*/
+        width: 100px;
+        height: 40px;
+        border-radius: 10px;
+        background: #a06271;
+        color: #fff;
+        border: none;
+        cursor: pointer;
+      }
+    </style>
+    <button on-click="makeSnapshot">Make a snapshot</button>
+  </template>
+
+  <script>
+    const fs = require('fs');
+    const path = require('path');
+    const getScreen = require('user-media-screenshot');
+    Polymer({
+      is: 'make-snapshot',
+      properties: {
+
+      },
+      ready: function () {
+        require('electron').ipcRenderer.on('ping', (event, message) => {
+          this[message] ? this[message]() : null;
+        });
+      },
+      makeSnapshot: function(e){
+        getScreen(function(image){
+          var base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+          fs.writeFile("out.jpg", base64Data, 'base64', function(err) {
+            new Notification('Screenshot', {
+              body: 'Screenshot has been taken'
+            })
+          });
+        });
+      }
+    });
+  </script>
+
+</dom-module>
+

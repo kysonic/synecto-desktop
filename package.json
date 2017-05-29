@@ -1,0 +1,18 @@
+{
+  "name": "electron-pure-polymer",
+  "version": "1.0.0",
+  "description": "Pure electron + polymer app without router",
+  "main": "main.js",
+  "scripts": {
+    "start": "electron ."
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "electron": "^1.4.15",
+    "electron-packager": "^8.5.1",
+    "electron-process": "^0.2.0",
+    "user-media-screenshot": "^1.0.2"
+  },
+  "dependencies": {}
+}
