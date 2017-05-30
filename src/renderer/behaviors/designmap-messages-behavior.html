@@ -1,0 +1,43 @@
+<script>
+    Polymer.DesignMapMessagesBehavior = {
+        ready: function(){
+            this.i18nDomain = document.querySelector('#i18nDomain');
+        },
+        showMessage: function(title,message,replacement){
+            let msg = this.i18nDomain.getMsg(message) || message;
+            if(replacement) msg = this.replaceExpressions(msg,replacement);
+            // Show message
+            new Notification(title, {
+                body: message
+            });
+        },
+        showErrorMessage: function(message,replacement){
+            let msg = this.i18nDomain.getMsg(message) || message;
+            if(replacement) msg = this.replaceExpressions(msg,replacement);
+            // Show message
+            new Notification('Error!', {
+                body: msg
+            });
+        },
+        /**
+         * Replace all of expressions in the sentence
+         */
+        replaceExpressions: function(msg,replacement,duration){
+            for(let expression in replacement) {
+                const value = replacement[expression];
+                msg = msg.replace(expression,value);
+            }
+            return msg;
+        },
+        /**
+         * Translate function can manage any codes or full phrases.
+         * @param msg
+         * @returns {*}
+         */
+        translate: function(msg,language,i18Loaded) {
+          if(!msg) return msg;
+          this.i18nDomain = this.i18nDomain || document.querySelector('#i18nDomain');
+          return !this.i18nDomain ? msg : this.i18nDomain.getMsg(msg) || msg;
+        }
+    }
+</script>

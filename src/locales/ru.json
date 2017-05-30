@@ -1,0 +1,1436 @@
+{
+  "SignIn": {
+    "message": "Войти"
+  },
+  "SignUp": {
+    "message": "Регистрация"
+  },
+  "SignOut": {
+    "message": "Выйти"
+  },
+  "EmailError": {
+    "message": "Пожалуйста, введите корректный email."
+  },
+  "PasswordError": {
+    "message": "Пароль должен содержать более 3-х символов."
+  },
+  "YourPasswordIsStrong": {
+    "message": "Ваш пароль безопасен."
+  },
+  "AuthorizationFormWasFilledNotCorrectly": {
+    "message": "Форма заполнена не верно."
+  },
+  "Missing credentials": {
+    "message": "Вы не заполнили необходимые поля: email или пароль."
+  },
+  "Hello": {
+    "message": "Привет"
+  },
+  "Friend": {
+    "message": "друг"
+  },
+  "DidNotHaveAccount": {
+    "message": "Нет аккаунта?"
+  },
+  "Sign-up": {
+    "message": "Регистрируйся!"
+  },
+  "Signup": {
+    "message": "Регистрация"
+  },
+  "ReturnToTheLogin": {
+    "message": "Вернуться к форме "
+  },
+  "GoToTheLogin": {
+    "message": "Перейти к форме "
+  },
+  "Authorization": {
+    "message": "авторизации."
+  },
+  "You are not authorized.": {
+    "message": "Вы не авторизованы."
+  },
+  "frm": {
+    "message": " "
+  },
+  "Add": {
+    "message": "Добавить"
+  },
+  "AddSubFolder": {
+    "message": "Добавить подпапку"
+  },
+  "Rename": {
+    "message": "Переименовать"
+  },
+  "Remove": {
+    "message": "Удалить"
+  },
+  "Yes": {
+    "message": "Да"
+  },
+  "No": {
+    "message": "Нет"
+  },
+  "AreYouSureThatYouWannaDeleteFolder": {
+    "message": "Вы уверены что хотите удалить папку?"
+  },
+  "ProjectNameError": {
+    "message": "Имя Проекто должно содержать хотя бы одну букву."
+  },
+  "Name of the folder must be unique": {
+    "message": "Имя папки должно быть уникальным."
+  },
+  "FolderNameError": {
+    "message": "Название папки не верно."
+  },
+  "Name can't be empty.": {
+    "message": "Имя не может быть пустым."
+  },
+  "You don't have access to manage this project": {
+    "message": "У Вас нет прав управления этим Проектом."
+  },
+  "Error: The request failed with status code: 404": {
+    "message": "Ваш браузер попытался сделать запрос, но ничего не нашел."
+  },
+  "Folder adding had been successful.": {
+    "message": "Папка была создана."
+  },
+  "Add file": {
+    "message": "Добавить файл"
+  },
+  "Add file hint": {
+    "message": "Добавьте файл"
+  },
+  "Folder removing had been successful.": {
+    "message": "Папка \"#NAME#\" была удалена."
+  },
+  "Folder renaming had been successful.": {
+    "message": "Папка \"#NAME#\" была переименована на \"#NEWNAME#\"."
+  },
+  "Email was filled out not correctly.": {
+    "message": "Email был заполнен неверно."
+  },
+  "That email is already taken.": {
+    "message": "Этот email уже занят."
+  },
+  "You already authorized": {
+    "message": "Вы уже авторизированы."
+  },
+  "Password field must contain more than 3 symbols.": {
+    "message": "Поле пароль должно содержать более 3-ех символов."
+  },
+  "Registration has been successful.": {
+    "message": "Регистрация прошла успешно."
+  },
+  "Good bye.": {
+    "message": "До встречи!"
+  },
+  "Welcome.": {
+    "message": "Приветствуем Вас!"
+  },
+  "User not found": {
+    "message": "Пользователь не найден."
+  },
+  "Wrong password": {
+    "message": "Пароль не верный."
+  },
+  "preview_1": {
+    "message": "Удобаная мобильная версия."
+  },
+  "preview_2": {
+    "message": "Используй любимое хранилище!"
+  },
+  "preview_3": {
+    "message": "Создавай DesignMap Проекты."
+  },
+  "preview_4": {
+    "message": "Используй удобное меню."
+  },
+  "preview_5": {
+    "message": "Смотри. Скачивай. Блокируй своиф файлы."
+  },
+  "preview_6": {
+    "message": "Мы кэшируем - работает быстро."
+  },
+  "Authorize": {
+    "message": "Авторизируйтесь"
+  },
+  "ToStartWork": {
+    "message": ", чтобы начать работу"
+  },
+  "Manage accesses": {
+    "message": "Управление доступами проекта"
+  },
+  "ShareLinkDesc": {
+    "message": "Любой пользователь получивший эту ссылку будет способен просмотреть Ваш Проект и оставить для него стикеры."
+  },
+  "ShareReadDesc": {
+    "message": "Позволяет пользователю просматривать Проект и добавлять стикеры."
+  },
+  "ShareEditDesc": {
+    "message": "Позволяет пользователю полностью управлять Проектом."
+  },
+  "Cancel": {
+    "message": "Отмена"
+  },
+  "Save": {
+    "message": "Сохранить"
+  },
+  "Open access": {
+    "message": "Открыть доступ"
+  },
+  "Update": {
+    "message": "Обновить"
+  },
+  "User email": {
+    "message": "Ввидите e-mail"
+  },
+  "Trash": {
+    "message": "Корзина"
+  },
+  "Select File": {
+    "message": "Выбрать файл"
+  },
+  "Select": {
+    "message": "Выбрать"
+  },
+  "Upload": {
+    "message": "Загрузить"
+  },
+  "Files loading in progress": {
+    "message": "Загрузка файлов в процессе"
+  },
+  "There is no any opened project here.": {
+    "message": "Ни один Проект еще не открыт."
+  },
+  "Folder #NAME# was removed.": {
+    "message": "Папка #NAME# была удалена."
+  },
+  "selected": {
+    "message": "выбрано"
+  },
+  "File was added successful.": {
+    "message": "Файл \"#FILE#\" был загружен."
+  },
+  "File was removed successfuly.": {
+    "message": "Файл \"#FILE#\" был удален."
+  },
+  "File was renamed successfuly.": {
+    "message": "Файл \"#OLDNAME#\" был переименован в #NEWNAME#."
+  },
+  "File was updated successfuly.": {
+    "message": "Файл \"#FILE#\" был обнавлен."
+  },
+  "You've successfully removed from your account!": {
+    "message": "Вы успешно открепили #ACCOUNT# аккунт!"
+  },
+  "You've successfully connected your account!": {
+    "message": "Вы успешно прикрепили #ACCOUNT# аккаунт!"
+  },
+  "Share was updated successful": {
+    "message": "Доступы были обнавленены."
+  },
+  "From": {
+    "message": "От"
+  },
+  "There are no any connected storages in your account.": {
+    "message": "Вы еще не подключили ни одного хранилища к вашему аккаунту."
+  },
+  "Object has been restored.": {
+    "message": "Объект #NAME# был восстановлен."
+  },
+  "Object has been removed from trash.": {
+    "message": "Объект #NAME# был удален из корзины безвозвратно."
+  },
+  "This object will be removed irretrievably. Are you sure that you want to do this?": {
+    "message": "Этот объект и его содержимое будут удалены безвозвратно. Вы уверены, что хотите это сделать?"
+  },
+  "Selected objects will be removed irretrievably. Are you sure that you want to do this?": {
+    "message": "Выбранные элементы будут удалены безвозвратно, вы уверены, что хотите это сделать?"
+  },
+  "These object will be removed irretrievably. Are you sure that you want to do this?": {
+    "message": "Все объекты корзины будут удалены безвозвратно, вы уверены что хотите это сделать?"
+  },
+  "Restore": {
+    "message": "Восстановить"
+  },
+  "Removed Files and Folders": {
+    "message": "Удаленные объекты"
+  },
+  "Files": {
+    "message": "Файлы"
+  },
+  "Children": {
+    "message": "Подпапки"
+  },
+  "Path": {
+    "message": "Путь"
+  },
+  "Mime type": {
+    "message": "Тип файла"
+  },
+  "Size": {
+    "message": "Размер"
+  },
+  "Storage": {
+    "message": "Хранилище"
+  },
+  "User will be able to see your project and manage stickers on it.": {
+    "message": "Пользователь сможет увидеть ваш Проект и управлять стикерами."
+  },
+  "User will be able to manage your project completely.": {
+    "message": "Пользоватедь сможет полностью управлять вашим Проектом."
+  },
+  "Create project": {
+    "message": "Введите имя проекта"
+  },
+  "Select project": {
+    "message": "Выбрать Проект"
+  },
+  "Trash bin": {
+    "message": "Корзина"
+  },
+  "Task manager": {
+    "message": "Менеджер задач"
+  },
+  "Selected folders was removed.": {
+    "message": "Выбранные папки были удалены."
+  },
+  "Objects were removed irretrievably.": {
+    "message": "Объекты былы безвозвратно удалены."
+  },
+  "Selected objects were removed irretrievably.": {
+    "message": "Выбранные объекты былы безвозвратно удалены."
+  },
+  "Selected objects were restored.": {
+    "message": "Выбранные объекты былы восстановлены."
+  },
+  "Objects were restored.": {
+    "message": "Объекты былы восстановлены."
+  },
+  "It should be selected at least one user.": {
+    "message": "Должен быть выбран по крайней мере один пользователь."
+  },
+  "Share link for": {
+    "message": "Доступы для "
+  },
+  "shareLinkDesc": {
+    "message": "Любой пользователь получивший данную ссылку сможет просматривать Проект и создавать стикеры."
+  },
+  "For Everybody": {
+    "message": "Для всех"
+  },
+  "Only For": {
+    "message": "Только для"
+  },
+  "User email or login": {
+    "message": "Введите e-mail"
+  },
+  "AreYouSureThatYouWannaDeleteObject": {
+    "message": "Этот объект и его контент будут удалены безвозвратно. Вы уверены что хотите сделать это?"
+  },
+  "AreYouSureThatYouWannaDeleteSelectedObjects": {
+    "message": "Выбранные элементы будут удалены безвозвратно. Вы уверены что хотите сделать это?"
+  },
+  "AreYouSureThatYouWannaDeleteAllObjects": {
+    "message": "Все объекты корзины будут удалены безвозвратно. Вы уверены что хотите сделать это?"
+  },
+  "readerAccessDesc": {
+    "message": "Пользователь сможет просматривать Ваш Проект и добавлять стикеры к нему."
+  },
+  "coAuthorAccessDesc": {
+    "message": "Пользователь сможет полностью управлять вашим Проектом."
+  },
+  "Click to make project sharing": {
+    "message": "Кликни чтобы поднлиться Проектом."
+  },
+  "Click to open file viewer": {
+    "message": "Кликни чтобы открыть галерею"
+  },
+  "Add project": {
+    "message": "Добавить Проект"
+  },
+  "Menu": {
+    "message": "Меню"
+  },
+  "Sticker was added to file": {
+    "message": "К файлу \"#NAME#\" был добавлен стикер."
+  },
+  "Tasks for": {
+    "message": "Задачи для "
+  },
+  "Task name": {
+    "message": "Введите название задачи"
+  },
+  "Task name should be not empty": {
+    "message": "Название задачи не должно быть пустым"
+  },
+  "Status": {
+    "message": "Статус"
+  },
+  "all": {
+    "message": "все"
+  },
+  "expired": {
+    "message": "просроченно"
+  },
+  "in progress": {
+    "message": "в процессе"
+  },
+  "in_progress": {
+    "message": "в процессе"
+  },
+  "completed": {
+    "message": "готово"
+  },
+  "incomplete": {
+    "message": "в ожидании"
+  },
+  "days": {
+    "message": "дня(ей)"
+  },
+  "hours": {
+    "message": "час(ов)"
+  },
+  "left": {
+    "message": "отсалось"
+  },
+  "Add task": {
+    "message": "Введите имя новой задачи"
+  },
+  "Enter title": {
+    "message": "Введите заголовок"
+  },
+  "Description": {
+    "message": "Описание"
+  },
+  "There is no selected task yet": {
+    "message": "Не одна задача еще не выбрана"
+  },
+  "AreYouSureThatYouWannaRemoveFile": {
+    "message": "Вы уверены что хотите удалить файл?"
+  },
+  "AreYouSureThatYouWannaRemoveTask": {
+    "message": "Вы уверены что хотите удалить задачу?"
+  },
+  "Task title should be filled.": {
+    "message": "Заголовок задачи должен быть заполнен."
+  },
+  "Task title should be unique": {
+    "message": "Заголовок задачи должен быть уникальным"
+  },
+  "Change status": {
+    "message": "Изменить статус"
+  },
+  "Assign responsible": {
+    "message": "Назначить ответственного"
+  },
+  "Subtask count": {
+    "message": "Количество подзадач"
+  },
+  "Attach file": {
+    "message": "Добавить файл"
+  },
+  "Remove task": {
+    "message": "Удалить задачу"
+  },
+  "Assignee": {
+    "message": "Ответственный"
+  },
+  "New assignee": {
+    "message": "Новое назначение"
+  },
+  "New task": {
+    "message": "Новая задача"
+  },
+  "You was assigned to task": {
+    "message": "Вы были назначены ответственным на задачу \"#TASK#\"."
+  },
+  "New task was added to project": {
+    "message": "Задача \"#NAME#\" была добавлена к Проекту \"#PROJECT#\"."
+  },
+  "Profile": {
+    "message": "Профиль"
+  },
+  "Settings": {
+    "message": "Настройки"
+  },
+  "Notifications": {
+    "message": "Оповещения"
+  },
+  "Account": {
+    "message": "Аккаунт"
+  },
+  "Select avatar": {
+    "message": "Выберите аватар"
+  },
+  "Change avatar": {
+    "message": "Изменить аватар"
+  },
+  "Or select one of preset avatars": {
+    "message": "Или выберите один готовый"
+  },
+  "Return to uploading": {
+    "message": "Вернуться к загрузке"
+  },
+  "File with this extension is not allowed": {
+    "message": "Файл с таким расширением не допустим"
+  },
+  "Upload file": {
+    "message": "Загрузить файл"
+  },
+  "Some of form fields is not valid": {
+    "message": "Некоторые поля формы были заполнены не верно."
+  },
+  "Users not found": {
+    "message": "Пользователи не найдены..."
+  },
+  "First name": {
+    "message": "Имя"
+  },
+  "Last name": {
+    "message": "Фамилия"
+  },
+  "Birth date": {
+    "message": "Дата рождения"
+  },
+  "Company": {
+    "message": "Компания"
+  },
+  "About me": {
+    "message": "Обо мне"
+  },
+  "Save Settings": {
+    "message": "Сохранить настройки"
+  },
+  "Temporary not supported": {
+    "message": "Временно не поддерживается"
+  },
+  "User was updated.": {
+    "message": "Настройки сохранены."
+  },
+  "Invalid email": {
+    "message": "Неверный email"
+  },
+  "Change password": {
+    "message": "Изменить пароль"
+  },
+  "Password should contain at least 3 symbols": {
+    "message": "Проль должен содержать не менее 3-х символов"
+  },
+  "Enter new password": {
+    "message": "Введите новый пароль"
+  },
+  "Confirm new password": {
+    "message": "Подтвердите новый пароль"
+  },
+  "Stickers and Notifications": {
+    "message": "Стикеры"
+  },
+  "Total stickers count": {
+    "message": "Макс. число стикеров на одно изображение"
+  },
+  "Particular user": {
+    "message": "Макс. число стикеров для конкретного пользователя"
+  },
+  "Sticker user's restriction": {
+    "message": "Владелец Проекта ограничил максимальное количество стикеров на пользователя. Нельзя добавить более #COUNT# стикеров."
+  },
+  "Sticker max count restriction": {
+    "message": "Владелец Проекта ограничил максимальное количество стикеров на изображение. Нельзя добавить более #COUNT# стикеров."
+  },
+  "You can determine when notification will be deleted": {
+    "message": "Оповещения будут удалены через"
+  },
+  "Stickers per image": {
+    "message": "Количество стикеров на изображение"
+  },
+  "Disable": {
+    "message": "Отключить"
+  },
+  "Share was disabled": {
+    "message": "Доступы были отключены."
+  },
+  "Email settings": {
+    "message": "Настройки рассылки"
+  },
+  "Receive designmap news": {
+    "message": "Получать новости Designmap"
+  },
+  "Receive notifications": {
+    "message": "Получать уведомления"
+  },
+  "Receive system alerts": {
+    "message": "Получать системные уведомления"
+  },
+  "Passwords are not matched": {
+    "message": "Пароли не совпадают"
+  },
+  "entryMessageTitle": {
+    "message": "Мы рады приветствовать вас в приложении Deisgnmap!"
+  },
+  "entryMessageBody": {
+    "message": "Designmap - это интсрумент созданный для того, чтобы сделать работу дизайнеров и их клиентов проще и удобнее. Создавай свои дизайн Проекты, делись ими с друзьями или показывай клиентам. Используй менеджер задач, чтобы систематизировать работу."
+  },
+  "entryMessageQ": {
+    "message": "Это займёт 5-7 минут. Доступно ТОЛЬКО СЕЙЧАС."
+  },
+  "entryMessageQTitle": {
+    "message": "Хотите ознакомиться с основными возможностями DesignMap?"
+  },
+  "Click to create your first project": {
+    "message": "Нажмите, чтобы создать свой первый Проект!"
+  },
+  "Project name is not correct": {
+    "message": "Имя Проекта задано не верно"
+  },
+  "Project was created successful": {
+    "message": "Проект был успешно создан!"
+  },
+  "Create": {
+    "message": "Создать"
+  },
+  "Project Name": {
+    "message": "Введите имя Проекта"
+  },
+  "Cannot create project with same name": {
+    "message": "Проекты не могут быть названы одинаково"
+  },
+  "Folder Name": {
+    "message": "Введите имя папки"
+  },
+  "File name": {
+    "message": "Введите имя файла"
+  },
+  "Project name error": {
+    "message": "Не должно быть пустым"
+  },
+  "Remove project": {
+    "message": "Удалить Проект"
+  },
+  "AreYouSureThatYouWannaRemoveProject": {
+    "message": "Вы уверены, что хотите удалить Проект? Его нельзя восстановить."
+  },
+  "Project was removed successfully": {
+    "message": "Проект был успешно удален"
+  },
+  "Account Settings": {
+    "message": "Настройки аккаунта"
+  },
+  "All Notification": {
+    "message": "Все оповещения"
+  },
+  "There are no any connected stores in your account": {
+    "message": "У Вас еще нет прикрепленных файловых хранилищ."
+  },
+  "Click to add one": {
+    "message": "Нажми, чтобы добавить."
+  },
+  "Can't upload file": {
+    "message": "Не удалось загрузить файл"
+  },
+  "Cannot find share's project.": {
+    "message": "Такого Проекта не существует."
+  },
+  "Cannot find share": {
+    "message": "Такого Проекта не существует."
+  },
+  "You don't have access to work with this project.": {
+    "message": "У Вас не хватает прав, чтобы работать с данным Проектом."
+  },
+  "There is no share with same id": {
+    "message": "Такого Проекта не существует."
+  },
+  "areYouSureThatYouWannaCloseTutorial": {
+    "message": "Вы уверены что хотите закончить обучение прямо сейчас?. У Вас не будет возможности его повторить..."
+  },
+  "DesignMap UI Guide": {
+    "message": "Интерфейс DesignMap"
+  },
+  "projectUIMessage": {
+    "message": "Мы хотели бы обратить Ваше внимание на основные интерфейсные элементы приложения DesignMap."
+  },
+  "Got it!": {
+    "message": "Понятно!"
+  },
+  "Share project!": {
+    "message": "Доступы Проекта"
+  },
+  "Folder menu": {
+    "message": "Меню"
+  },
+  "Account menu": {
+    "message": "Меню аккаунта"
+  },
+  "Documentation": {
+    "message": "Документация"
+  },
+  "Creating sub-folder": {
+    "message": "Создайте папку"
+  },
+  "creatingSubFolderMsg": {
+    "message": "Кликните на кнопку, введите имя Папки, нажмите \"Далее\" (или клавишу Enter на клавиатуре)."
+  },
+  "Rename folder": {
+    "message": "Переименуйте папку"
+  },
+  "renameFolderMsg": {
+    "message": "Откройте контекстное меню правой кнопкой мыши или нажмите на кнопку меню в нижнем углу папки, выберите пункт \"Переименовать\", измените имя Папки."
+  },
+  "Open context menu":{
+    "message": "Открыть контекстное меню"
+  },
+  "openContextMenuMsg":{
+    "message": "Откройте контекстное Меню Папки нажатием правой кнопки мыши или нажмите на значек в правом нижнем углу."
+  },
+  "Copy to clipboard":{
+    "message": "Скопировать в буфер"
+  },
+  "Link was copied to your clipboard.":{
+    "message": "Ссылка была скопирована в буфер обмена"
+  },
+  "Account settings": {
+    "message": "Настройка аккаунта"
+  },
+  "The owner of project did not connect cloud drives": {
+    "message": "Владелец проекта не подключил ни одного файлового хранилища."
+  },
+  "accountSettingsMsg": {
+    "message": "Подключите облачное хранилище, чтобы держать Ваши файлы в одном месте. \n\n Откройте \"Меню пользователя\", выберите пункт \"Настройки аккаунта\". Внимание! Хранилище Designmap работает в тестовом режиме."
+  },
+  "Connect cloud drives": {
+    "message": "Подключение облачного хранилица"
+  },
+  "connectStorageMsg": {
+    "message": "Нажмите на кнопку \"+\" чтобы добавить хранилище для интеграции в Designmap. Или нажмите \"Пропустить\". "
+  },
+  "Return to the project": {
+    "message": "Вернуться к Проекту"
+  },
+  "backToProjectMsg": {
+    "message": "Кликните на кнопку \"Назад\" чтобы вернуться к Проекту!"
+  },
+  "Add folder": {
+    "message": "Создать папку"
+  },
+  "addFileMsg": {
+    "message": "Выберите файл со своего устройства и нажмите кнопку \"Загрузить\". Поддерживаемые типы файлов:.jpg, .png, .gif, .ttf, .rif, .bmp, .jpg, .hdr, .ppm, .pbm, .psd, .eps, .ai. Максимальный размер: 150MB"
+  },
+  "Share file": {
+    "message": "Поделитесь файлом"
+  },
+  "shareFileMsg": {
+    "message": "Нажмите на кнопку \"Поделиться\" а затем скопируйте ссылку на файл в буфер обмена."
+  },
+  "addCommentMsg": {
+    "message": "Впишите текст вашего комментария и нажмите на кнопку \"Добавить комментарий\" или нажмите CTRL(CMD)+ENTER"
+  },
+  "Add comment": {
+    "message": "Добавить комментарий"
+  },
+  "Add comment hint": {
+    "message": "Добавьте комментарий"
+  },
+  "Click on image to leave comment": {
+    "message": "Кликните на изображение, чтобы добавить комментарий"
+  },
+  "Open DesignMap Gallery": {
+    "message": "Откройте галерею"
+  },
+  "openGalleryMsg": {
+    "message": "Сделайте двойной щелчек мыши на изображении или выберите пункт \"Открыть\" в контекстом меню."
+  },
+  "Gallery UI Guide": {
+    "message": "Интерфейс галереи"
+  },
+  "galleryUIMsg": {
+    "message": "Мы хотели бы обратить Ваше внимание на базовые элементы интерфейса галереи DesignMap."
+  },
+  "File description": {
+    "message": "Описание файла"
+  },
+  "Remove file": {
+    "message": "Удалить файл"
+  },
+  "Download file": {
+    "message": "Скачать файл"
+  },
+  "Download": {
+    "message": "Скачать"
+  },
+  "Lock": {
+    "message": "Заблокировать"
+  },
+  "File was locked successfully.": {
+    "message": "Файл \"#FILE#\" был успешно заблокирован"
+  },
+  "Unlock": {
+    "message": "Разблокировать"
+  },
+  "On/Off stickers": {
+    "message": "Стикеры"
+  },
+  "Switch on sticker mode": {
+    "message": "Включение режима стикеров"
+  },
+  "stickerModeOnMsg": {
+    "message": "Стикер ― удобный способ сделать пометку в любой области изображения. Он поможет подробно обсудить работу и получить обратную связь от клиента или коллеги."
+  },
+  "Click button!": {
+    "message": "Жми кнопку!"
+  },
+  "Click on image!": {
+    "message": "Жми на изображение!"
+  },
+  "Close gallery": {
+    "message": "Закрытие галереи"
+  },
+  "Close DesignMap gallery.": {
+    "message": "Закрой галерею"
+  },
+  "End of tutorial": {
+    "message": "Заверщение обучения"
+  },
+  "tutorialEndingMsg": {
+    "message": "Поздравляем! Вы прошли базовое обучение основам DesignMap! Желаем Вам интересной работы и хорошего настроения! Оставайтесь с нами! Чтобы узнать больше, перейдите к разделу "
+  },
+  "Finish tutorial": {
+    "message": "Завершить обучение"
+  },
+  "Sort by name": {
+    "message": "Сортировать по имени"
+  },
+  "Sort by date": {
+    "message": "Сортировать по дате"
+  },
+  "Remove all": {
+    "message": "Удалить все"
+  },
+  "Restore all": {
+    "message": "Восстановить все"
+  },
+  "Change date": {
+    "message": "Изменить дату"
+  },
+  "Project menu": {
+    "message": "Работа с Проектами"
+  },
+  "Tutorial Ends": {
+    "message": "Обучение завершено"
+  },
+  "Dashboard": {
+    "message": "Кнопки управления"
+  },
+  "All entities was removed from trash": {
+    "message": "Все элменты были безвозвратно удалены из корзины."
+  },
+  "Selected entities was removed from trash": {
+    "message": "Выбранные элменты были безвозвратно удалены из корзины."
+  },
+  "All entities was restored": {
+    "message": "Все элементы были восстановлены."
+  },
+  "Undo": {
+    "message": "Отменить"
+  },
+  "Description was updated.": {
+    "message": "Описание было обновлено."
+  },
+  "Enter description": {
+    "message": "Введите описание задачи"
+  },
+  "Enter sticker's text": {
+    "message": "Введите текст стикера"
+  },
+  "Folder has been restored.": {
+    "message": "Папка \"#NAME#\" была восстановлена."
+  },
+  "Folder has been removed from trash.": {
+    "message": "Папка \"#NAME#\" была удалена из корзины."
+  },
+  "File has been removed from trash.": {
+    "message": "Файл \"#NAME#\" был удален из корзины."
+  },
+  "File has been restored.": {
+    "message": "Файл \"#NAME#\" был восстановлен."
+  },
+  "Status of task was changed on": {
+    "message": "Статутс задачи \"#NAME#\" был изменен на \"#STATUS#\"."
+  },
+  "New status": {
+    "message": "Изменение статуса"
+  },
+  "Filter": {
+    "message": "Фильтр"
+  },
+  "Open sticker": {
+    "message": "Откройте стикер."
+  },
+  "Enter stickers text": {
+    "message": "Введите текст стикера."
+  },
+  "Close sticker": {
+    "message": "Нажмите на стрелку или CTRL(CMD)+Enter."
+  },
+  "Task was added successfully.": {
+    "message": "Задача была создана."
+  },
+  "Project access was updated": {
+    "message": "Доступы Проекта были обновлены!"
+  },
+  "Link for another users": {
+    "message": "Ссылка на Проект для других пользователей"
+  },
+  "You received an access to project": {
+    "message": "Вы получили доступ к Проекту \"#PROJECT#\"."
+  },
+  "reader": {
+    "message": "Только чтение"
+  },
+  "co-author": {
+    "message": "Соавтор"
+  },
+  "Login": {
+    "message": "Авторизация"
+  },
+  "Forgot password?": {
+    "message": "Забыли пароль?"
+  },
+  "Password": {
+    "message": "Пароль"
+  },
+  "Not supported": {
+    "message": "Извините, но DesignMap не поддерживает Ваш текущий браузер. DesignMap был сделан с использованием технологии веб компонентов, которая не поддерживается Вашим браузером полностью или частично. Чтобы пользоваться DesignMap установите себе один из следующих браузеров: Chrome, FireFox, Edge, Opera, Yandex."
+  },
+  "OK": {
+    "message": "OK"
+  },
+  "New Project": {
+    "message": "Новый Проект"
+  },
+  "Open Project": {
+    "message": "Открыть Проекты"
+  },
+  "Your projects": {
+    "message": "Мои Проекты"
+  },
+  "Available projects": {
+    "message": "Доступные"
+  },
+  "New sticker": {
+    "message": "Новый комментарий"
+  },
+  "New access": {
+    "message": "Добавлен доступ"
+  },
+  "Date": {
+    "message": "Дата"
+  },
+  "path": {
+    "message": "Путь"
+  },
+  "xlink": {
+    "message": "Перейти"
+  },
+  "project": {
+    "message": "Проект"
+  },
+  "file": {
+    "message": "Имя файла"
+  },
+  "There is no any notifications": {
+    "message": "У Вас еще нет ни единого оповещения..."
+  },
+  "You do not have access to change status of this task.": {
+    "message":"У Вас нет доступа чтобы изменить статус этой задачи."
+  },
+  "New project": {
+    "message":"Новый Проект"
+  },
+  "Choose store": {
+    "message":"Выберите облачное хранилище"
+  },
+  "File list": {
+    "message":"Список файлов"
+  },
+  "Confirm": {
+    "message":"Подтверждение"
+  },
+  "Notify": {
+    "message":"Оповещения"
+  },
+  "Support": {
+    "message":"Поддержка"
+  },
+  "Docs": {
+    "message":"Документация"
+  },
+  "Projects": {
+    "message":"Проекты"
+  },
+  "Welcome to the DesignMap!": {
+    "message":"Вы успешно зарегестировались в Designmap! Пожалуйста перейдите в Вашу почту и выполните действия для верификации e-mail."
+  },
+  "Not allowed in beta": {
+    "message":"Не доступно для бета версии!"
+  },
+  "There are no projects yet": {
+    "message":"У вас еще нет проектов..."
+  },
+  "This folder has file with name. Choose another one or change file name.": {
+    "message":"В этой папке уже есть файл с таким именем. Выберите другой или измените имя у этого."
+  },
+  "Send": {
+    "message":"Отправить"
+  },
+  "Forgot password": {
+    "message":"Забыли пароль?"
+  },
+  "return": {
+    "message":"вернуться"
+  },
+  "Restore message": {
+    "message":"Введите Ваш e-mail в поле ниже и кликните кнопку \"Отправить\"."
+  },
+  "There is no user with same e-mail": {
+    "message":"Пользватель с таким e-mail не зарегестирован."
+  },
+  "Cannot find token": {
+    "message":"Не удалось найти токен. Вероятно он просрочен. Попробуйте получить еще один и поторопитесь у Вас только 20 минут."
+  },
+  "You have entered using temporary token": {
+    "message":"Вы вошли используя временный токен. Не забудте сменить пароль!"
+  },
+  "Restore message sent": {
+    "message":"Вы получите письмо с дальнейшими инструкциями на "
+  },
+  "RequestTestingAccount": {
+    "message":"Подать заявку на тестирование"
+  },
+  "Email is not correct": {
+    "message":"Email заполнен не верно."
+  },
+  "There are no found elements": {
+    "message":"Не удалось найти ни одной задачи..."
+  },
+  "You can upload": {
+    "message":"Поддерживаемые форматы: "
+  },
+  "You can upload2": {
+    "message":"Файл не может весить больше чем 150 MB."
+  },
+  "Extra": {
+    "message":"Дополнительные настройки"
+  },
+  "Animation": {
+    "message":"Анимация"
+  },
+  "Animation desc": {
+    "message":"Включить анимацию элементов интерфейса"
+  },
+  "Lock file": {
+    "message":"Заблокированный файл сможете увидеть только Вы."
+  },
+  "Documentation description": {
+    "message":"Здесь Вы найдете всю необходимую информацию о Designmap!"
+  },
+  "Shortcuts": {
+    "message":"Горячие клавиши"
+  },
+  "Shortcuts description": {
+    "message":"Сделай работу в Designmap еще более удобной используя гарячие клавиши!"
+  },
+  "Video tutorials": {
+    "message":"Видео уроки"
+  },
+  "Video tutorials description": {
+    "message":"Изучи базовые возможности Designmap используя быстрые видео уроки!"
+  },
+  "Redo": {
+    "message":"Вернуть изменения"
+  },
+  "Next": {
+    "message":"Далее"
+  },
+  "Not supported for mobile devices": {
+    "message":"Не поддерживается для мобильных устройств"
+  },
+  "Click to go on support page": {
+    "message":"Вопросы"
+  },
+  "Search": {
+    "message":"Поиск"
+  },
+  "Chapters": {
+    "message":"Оглавление"
+  },
+  "You have been approved your email successfully!": {
+    "message":"Вы успешно подтвердили свой e-mail!"
+  },
+  "Your e-mail wasn't approved": {
+    "message":"Ваш e-mail не был подтвержден!"
+  },
+  "Email already approved": {
+    "message":"Ваш e-mail уже подтвержден!"
+  },
+  "Cannot create preview": {
+    "message":"Не удалось создать предпросмотр файла"
+  },
+  "A mail has been sent": {
+    "message":"Письмо было отослано на ваш e-mail."
+  },
+  "Click here": {
+    "message":"Нажмите"
+  },
+  "to send a letter with link to approve": {
+    "message":"чтобы отправить письмо для подтверждения. Иначе Ваш аккаунт будет удален в течении 3-х дней."
+  },
+  "Approve message sent": {
+    "message":"Письмо было отослано на "
+  },
+  "You don't have associated google account.": {
+    "message":"У Вас нет ассоциированного аккаунта Google."
+  },
+  "Google auth success": {
+    "message":"Вы были зарегистрированны с помощью аккаунта Google."
+  },
+  "Signin with Google": {
+    "message":"Войти с Google"
+  },
+  "Signup with Google": {
+    "message":"Регистрация с Google"
+  },
+  "E-mail is not approved": {
+    "message":"Пожалуйста, подтвердите Ваш e-mail. Если вы не получили письмо с ссылокой для подтверждения нажмите \"Выслать ссылку для подтверждения\" в разделе \"Регистрация\"."
+  },
+  "Send me approving link": {
+    "message":"Выслать ссылку для подтверждения"
+  },
+  "Approving link": {
+    "message":"Подтверждение"
+  },
+  "Google account was bound to your account": {
+    "message":"Аккаунт Google был привязан к вашему аккаунту"
+  },
+  "You have signed in with google": {
+    "message":"Вы совершили вход через Google аккунт"
+  },
+  "There is no token": {
+    "message":"Ваш e-mail уже подтвержден"
+  },
+  "Leave a feedback": {
+    "message":"Оставить отзыв"
+  },
+  "Open": {
+    "message": "Открыть"
+  },
+  "Selected elements was removed successfully": {
+    "message": "Выбранные элемнты были успешно удалены."
+  },
+  "Information": {
+    "message": "Информация"
+  },
+  "AreYouSureThatYouWannaCreateProject": {
+    "message": "Вы уверены что хотите создать проект?"
+  },
+  "Create new project": {
+    "message": "Создать новый проект"
+  },
+  "Create Project": {
+    "message": "Создать проект"
+  },
+  "create": {
+    "message": "создайте"
+  },
+  "Drag files here": {
+    "message": "Перетащите сюда файлы или "
+  },
+  "new folder": {
+    "message": "новые элементы"
+  },
+  "Your elements has been recycled": {
+    "message": "Ваши элементы были переработаны"
+  },
+  "Open projects": {
+    "message": "Открыть проекты"
+  },
+  "Mine": {
+    "message": "Мои"
+  },
+  "Available": {
+    "message": "Доступные"
+  },
+  "Accesses": {
+    "message": "Доступы"
+  },
+  "of project": {
+    "message": "проекта"
+  },
+  "You do not have tasks yet": {
+    "message": "У Вас еще нет ни единой задачи..."
+  },
+  "There is no selected project yet...": {
+    "message": "У Вас еще нет ни одного проекта..."
+  },
+  "Trash bin is empty...": {
+    "message": "В корзине ничего нет..."
+  },
+  "Sort": {
+    "message": "Сортировка"
+  },
+  "Info": {
+    "message": "Инфо"
+  },
+  "or": {
+    "message": "или"
+  },
+  "Project name cannot be empty": {
+    "message": "Имя не можетбыть пустым"
+  },
+  "More": {
+    "message": "Еще"
+  },
+  "Rename project": {
+    "message": "Имя Проекта"
+  },
+  "Project accesses": {
+    "message": "Доступы проекта"
+  },
+  "Profile settings": {
+    "message": "Настройки профиля"
+  },
+  "Join us VK": {
+    "message": "Присоединяйся в VK"
+  },
+  "Created": {
+    "message": "Создал"
+  },
+  "false": {
+    "message": "ложь"
+  },
+  "You do not have access to make it": {
+    "message": "У Вас нет прав чтобы выполнить эту операцию"
+  },
+  "Skip": {
+    "message": "Пропустить"
+  },
+  "Files to upload": {
+    "message": "Файлы для загрузки:"
+  },
+  "Storage to upload in": {
+    "message": "Хранилище для загрузки:"
+  },
+  "Designmap storage in demo mode": {
+    "message": "Внимание! На данный момент хранилище Designmap работает в демо режиме. НЕ ЗАГРУЖАЙТЕ в него важные файлы. Они могут быть удалены автоматически."
+  },
+  "Currently Designmap storage works in test mode. You cannot upload files more that 5MB.": {
+    "message": "На данный момент хранилище Designmap работает в тестовом режиме. Вы не можете загрузить туда файлы более 5 МБ"
+  },
+  "Currently Designmap storage works in test mode. You cannot upload more that 10 files here.": {
+    "message": "На данный момент хранилище Designmap работает в тестовом режиме. Вы не можете загрузить больше 10 файлов"
+  },
+  "Project": {
+    "message": "Проект"
+  },
+  "Extension is not allowed": {
+    "message": "Файл такого типа загрузить нельзя"
+  },
+  "This user already added": {
+    "message": "Этот пользовтель уже добавлен"
+  },
+  "": {
+    "message": ""
+  },
+  "You cannot notify yourself": {
+    "message": "Не зачем упомянать себя самого..."
+  },
+  "You cannot add yourself. You are already there!": {
+    "message": "Вы не можете добавить сами себя. У Вас есть возможность управлять своим проектом..."
+  },
+  "Add subtask": {
+    "message": "Введите имя новой подзадачи"
+  },
+  "Google authorization went wrong.": {
+    "message": "Авторизация через Google не удалась..."
+  },
+  "There is no project with same id.": {
+    "message": "Не удалось найти проект..."
+  },
+  "Project is not selected": {
+    "message": "Проект не выбран"
+  },
+  "You cannot create more than 3 projects without premium.": {
+    "message": "Сейчас Вы не можете создать более 3-х проектов. Эта функция доступна только для премиум пользователей."
+  },
+  "You cannot upload files more that 10MB. This function is allowed only for premium users.": {
+    "message": "Сейчас Вы не можете загрузить файлы более 10 Mb. Эта функция доступна только для премиум пользователей."
+  },
+  "You cannot upload more that 100 MB files here. This function is allowed only for premium users.": {
+    "message": "Сейчас Вы не можете загрузить в Designmap более 100 mb. Эта функция доступна только для премиум пользователей."
+  },
+  "Data space": {
+    "message": "Дисковое пространство:"
+  },
+  "Post a comment": {
+    "message": "Добавить комментарий"
+  },
+  "Edit a comment": {
+    "message": "Изменить комментарий"
+  },
+  "Apply to protocol": {
+    "message": "Добавить в протокол"
+  },
+  "Edit": {
+    "message": "Редактировать"
+  },
+  "Write a comment": {
+    "message": "Напишите комментарий"
+  },
+  "AreYouSureThatYouWantToRemoveWholeConversation": {
+    "message": "Вы увеврены, что хотите удалить весь комментарий?"
+  },
+  "It is not your comment. You cannot drag it": {
+    "message": "Это не ваш комментарий. Вы не можете его перетащить."
+  },
+  "Enter your name we want to know you a little bit closer": {
+    "message": "Чтобы продолжить работу, введите Ваше имя или авторизируйтесь, если у Вас есть аккаунт"
+  },
+  "Enter": {
+    "message": "Продолжить"
+  },
+  "Enter your name": {
+    "message": "Введите Ваше имя"
+  },
+  "Click to add a comment": {
+    "message": "Нажмите, чтобы добавить комментарий"
+  },
+  "Try it out": {
+    "message": "Попробовать"
+  },
+  "accessPremiumMsg": {
+    "message": "Добавить к участию в Проекте более 2-х человек можно при поключении премиум аккаунта."
+  },
+  "Activate": {
+    "message": "Подключить"
+  },
+  "No thank you": {
+    "message": "Нет, спасибо"
+  },
+  "More info": {
+    "message": "Подробнее"
+  },
+  "accessOneMsg": {
+    "message": "Добавляй в проект до 10 членов команды, пусть каждый видит полную картину проекта!"
+  },
+  "accessTwoMsg": {
+    "message": "Совместное управление проектом позволит каждому члену команды быть вовлеченным в процесс."
+  },
+  "taskManagerPremiumOneMsg": {
+    "message": "Создавай задачи, <b>назначай ответственных</b>, ставь сроки, следи за временными затратами."
+  },
+  "taskManagerPremiumTwoMsg": {
+    "message": "Удобная система постановки задач прямо из <b>точечных комментариев</b>!"
+  },
+  "projectPremiumOneMsg": {
+    "message": "Хотите создавать проекты <b>без ограничений</b>? Подключите премиум аккаунт, не нужно думать каким проектом <b>пожертвовать</b>, чтобы создать новый."
+  },
+  "chatShowCaseOneMsg": {
+    "message": "<b>Быстрые</b> сообщения для согласования в реальном времени."
+  },
+  "callShowCaseOneMsg": {
+    "message": "Звоните коллегам, наблюдайте за их действиями в <b>реальном времени</b>."
+  },
+  "protocolShowCaseOneMsg": {
+    "message": "Когда обсуждение задач или изменений закончено, Вы может создать <b>протокол обсуждения</b>, отметив в обсуждении самые важные комментарии и задачи. Сущности внесенные в протокол <b>удалить</b> нельзя!"
+  },
+  "Subscribe on premium": {
+    "message": "Подключи премиум аккаунт"
+  },
+  "Faster": {
+    "message": "Сделайте это быстрее!"
+  },
+  "Share this file": {
+    "message": "Поделиться этим файлом"
+  },
+  "Feature in development": {
+    "message": "еще в разработке"
+  },
+  "call": {
+    "message": "\"Звонки\""
+  },
+  "disk": {
+    "message": "\"Диск\""
+  },
+  "chat": {
+    "message": "\"Чат\""
+  },
+  "team": {
+    "message": "\"Команда\""
+  },
+  "projects": {
+    "message": "\"Проекты\""
+  },
+  "task_manager": {
+    "message": "\"Менеджер Задач\""
+  },
+  "Is data space too small?": {
+    "message": "Не хватает дискового пространства?"
+  },
+  "dataSpacePremiumOneMsg": {
+    "message": "5 гб дискового пространства: не думайте о том, сколько файлов ещё можно закинуть! Просто работайте!"
+  },
+  "File menu": {
+    "message": "Меню файла"
+  },
+  "Call": {
+    "message": "Звонок"
+  },
+  "Chat": {
+    "message": "Чат"
+  },
+  "Share": {
+    "message": "Поделиться"
+  },
+  "Close": {
+    "message": "Закрыть"
+  },
+  "Cannot find file": {
+    "message": "Не удалось найти файл... Возможно он был удален"
+  },
+  "Speed up": {
+    "message": "Ускорить"
+  },
+  "Activate premium": {
+    "message": "Активация премиум аккаунта"
+  },
+  "onHome": {
+    "message": "на главную"
+  },
+  "Thank you! We will try to do it quicker!": {
+    "message": "Спасибо! Мы ускоряемся!"
+  },
+  "We are working": {
+    "message": "К сожалению, наша платежная система еще не готова. Мы работаем не поклодая рук, чтобы у Вас появилась возможность, как можно скорее получить доступ ко всем функциям Designmap. Нажмите на кнопку \"Ускорить\", чтобы наши разработчики работали еще быстрее!"
+  },
+  "Cannot upload file with #EXT# extension": {
+    "message": "Система не поддерживает файлы с расширением \"#EXT#\""
+  },
+  "Preview is not available": {
+    "message": "Предпросмотр не доступен"
+  },
+  "protocol": {
+    "message": "Протокол"
+  },
+  "Protocol": {
+    "message": "Протокол"
+  },
+  "Add users in project": {
+    "message": "Выберите пользователей, которые смогут управлять Вашим проектом: <i>Создавать в нем папки, загружать файлы, комментировать изображения и тд</i>. "
+  },
+  "Cut": {
+    "message": "Вырезать"
+  },
+  "Paste": {
+    "message": "Вставить"
+  }
+}

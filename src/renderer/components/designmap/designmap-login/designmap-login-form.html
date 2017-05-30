@@ -1,4 +1,5 @@
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<!-- Components -->
 <link rel="import" href="../../../../../bower_components/google-signin/google-signin-aware.html">
 <link rel="import" href="../../../../../bower_components/i18-n/i18-n.html">
 <link rel="import" href="../../../../../bower_components/paper-input/paper-input.html">
@@ -10,6 +11,10 @@
 <!-- Buttons -->
 <link rel="import" href="../designmap-buttons/designmap-button.html">
 <link rel="import" href="../designmap-buttons/designmap-loading-button.html">
+<!-- Icons -->
+<link rel="import" href="../designmap-icons/designmap-logo-icons.html">
+<!-- Behaviors -->
+<link rel="import" href="../../../behaviors/designmap-messages-behavior.html">
 
 <dom-module id="designmap-login-form">
     <template>
@@ -83,6 +88,10 @@
                 top: 0;
                 z-index: 20;
             }
+            .header .logo-icon {
+                position: relative;
+                top: 10px;
+            }
             .social {
                 position: absolute;
                 width: 100%;
@@ -123,15 +132,16 @@
             }
             .header iron-icon {
                 width: 280px;
-                height: 45px;
+                height: 50px;
             }
             .beta {
                 color: var(--white-color);
                 position: absolute;
                 left: 100%;
-                top: 0;
-                margin-left: -47px;
+                top: 23px;
+                margin-left: -60px;
                 font-size: 12px;
+                width: 100px;
             }
             /** CONTENT **/
             .wrapper > .content {
@@ -254,8 +264,8 @@
         <div class="wrapper">
             <div class="header-phantom"></div>
             <div class="header">
-                <iron-icon icon="designmap-logo:logo"></iron-icon>
-                <div class="beta">beta 3.0</div>
+                <iron-icon class="logo-icon" icon="designmap-logo:logo"></iron-icon>
+                <div class="beta">demo v 0.1</div>
             </div>
             <div class="social">
                 <div class="button-wrapper">
@@ -360,12 +370,6 @@
                             <i18-n msgid="DidNotHaveAccount">Do not have account?</i18-n>
                             <i18-n class="sign-up" msgid="Sign-up">Sign-up!</i18-n>
                         </a>
-                        <a class="msg" hidden$="[[!fakeSupport]]" on-click="goToTheFakeSignUp">
-                            <i18-n class="sign-up" msgid="return">Return</i18-n>
-                        </a>
-                        <!--<a href="https://goo.gl/PbeJAo" target="_blank" class="msg">
-                          <i18-n msgid="RequestTestingAccount">Request testing account</i18-n>
-                        </a>-->
                     </neon-animatable>
                     <!-- Sign up -->
                     <neon-animatable id="animatable2">
@@ -392,46 +396,24 @@
                             <i18-n msgid="frm"></i18-n>
                         </a>
                     </neon-animatable>
-                    <!-- Fake login -->
-                    <neon-animatable id="animatable3">
-                        <div class="fake-signup-title">
-                            <i18-n msgid="Enter your name we want to know you a little bit closer"></i18-n>
-                        </div>
-                        <paper-input id="nameFakeSignup" required
-                                     value="{{fakeName::keyup}}"
-                                     label="[[translate('Enter your name',language,i18Loaded)]]"
-                                     type="text"></paper-input>
-                        <div class="button-set">
-                            <button is="designmap-loading-button" id="fakeSignupButton" thin on-click="fakeSignUp">
-                                <i18-n msgid="Enter">Enter</i18-n>
-                            </button>
-                        </div>
-                        <a class="msg"  on-click="goToTheSignin">
-                            <i18-n msgid="GoToTheLogin"></i18-n>
-                            <i18-n class="sign-up" msgid="Authorization"></i18-n>
-                            <i18-n msgid="frm"></i18-n>
-                        </a>
-                    </neon-animatable>
                 </neon-animated-pages>
             </div>
         </div>
-        <div hidden="[[fakeSupport]]" class="linkers">
-            <a href="https://vk.com/designmap" target="_blank">
-                <i18-n msgid="Join us VK">Join us VK</i18-n>
-            </a>
-        </div>
     </template>
     <script>
+        const axios = require('axios');
+        const {remote} = require('electron');
+        const db = remote.require('./main/db');
+
         Polymer({
             is: 'designmap-login-form',
-            /**
-             * Regular expression allowing to checkout how strong is password.
-             */
-            strongPasswordRegexp: /(?=.*[A-Z])(?=.*[a-z])(?=.*[0-9]).{6,50}/i,
+            behaviors:[
+                Polymer.DesignMapMessagesBehavior
+            ],
             properties: {
                 user: {
                     type: Object,
-                    statePath: 'user'
+                    value: null,
                 },
                 language: {
                     type: String,
@@ -439,65 +421,23 @@
                 },
                 i18Loaded: {
                     type: Boolean,
-                    statePath: 'i18Loaded'
+                    value: false
                 },
                 selected: {
                     type: Number,
                     value: 0
                 },
-                token: {
-                    type: String,
-                    value: null,
-                    observer: 'tokenChanged'
-                },
-                approveToken: {
-                    type: String,
-                    value: null,
-                    observer: 'approveTokenChanged'
-                },
                 clientID: {
                     type: String,
                     value: function () {
-                        return Designmap.oauth.googleDrive.clientID
+                        return true
                     }
-                },
-                restoreMessageSent: {
-                    type: Boolean,
-                    value: false
-                },
-                approveMessageSent: {
-                    type: Boolean,
-                    value: false
-                },
-                fakeSupport: {
-                    type: Boolean,
-                    value: false
                 }
             },
             ready: function () {
-
-            },
-            /**
-             * Entering with temporary token
-             */
-            tokenChanged: function () {
-                if (!this.token || this.token.length < 12) return;
-                this.dispatch('token', this.token).then(function (response) {
-                    if (!response.success) return this.showErrorMessage(response.errors.message, {}, 10000);
-                    // Message
-                    this.showMessage('You have entered using temporary token');
-                }.bind(this))
-            },
-            /**
-             * Approve token is needed for preventing of signing up with
-             * fake email
-             */
-            approveTokenChanged: function () {
-                if (!this.approveToken) return;
-                this.dispatch('approveToken', this.approveToken).then(function (response) {
-                    if (!response.success) return this.showErrorMessage(response.errors.message);
-                    this.showMessage('You have been approved your email successfully!');
-                }.bind(this)).catch(this.manageErrorResponse.bind(this));
+                this.async(function(){
+                    this.i18Loaded = true;
+                },100)
             },
             /**
              * To provide right-left animation in form
@@ -506,14 +446,6 @@
                 this.entryAnimation = 'slide-from-right-animation';
                 this.exitAnimation = 'slide-left-animation';
                 this.selected = 1;
-            },
-            /**
-             * To provide right-left animation in form
-             */
-            goToTheFakeSignUp: function () {
-                this.entryAnimation = 'slide-from-right-animation';
-                this.exitAnimation = 'slide-left-animation';
-                this.selected = 2;
             },
             /**
              * To provide right-left animation in form
@@ -527,27 +459,12 @@
              * Sign up using form
              */
             register: function (e) {
-                e.preventDefault();
-                if (this.$.registerButton.loading) return;
-                if (!(this.$.emailSignup.validate() && this.$.passwordSignup.validate())) return this.showErrorMessage('AuthorizationFormWasFilledNotCorrectly');
-                this.$.registerButton.loading=true;
-                const email = this.$.emailSignup.value;
-                this.dispatch('userSignup', this.$.emailSignup.value, this.$.passwordSignup.value).then(function (response) {
-                    if (!response.success) return this.manageErrorResponse(response);
-                    this.$.emailSignup.value = null;
-                    this.$.passwordSignup.value = null;
-                    this.$.registerButton.loading=false;
-                    // Analytics
-                    this.reachGoal('auth','register',email);
-                }.bind(this)).catch(function(err){
-                    this.$.registerButton.loading=true;
-                    this.manageErrorResponse(err)
-                }.bind(this));
+
             },
             /**
              * Log in using form
              */
-            login: function (e) {
+            login: async function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 if (this.$.signInLoadingButton.loading) return;
@@ -557,17 +474,15 @@
                     return this.showErrorMessage('AuthorizationFormWasFilledNotCorrectly');
                 }
                 const email = this.$.emailSignin.value;
-                this.dispatch('userLogin', this.$.emailSignin.value, this.$.passwordSignin.value).then(function (response) {
-                    this.$.signInLoadingButton.loading = false;
-                    if (!response.success) return this.manageErrorResponse(response);
-                    this.$.emailSignin.value = null;
-                    this.$.passwordSignin.value = null;
-                    // Analytics
-                    this.reachGoal('auth','login',email);
-                }.bind(this)).catch(function (err) {
-                    this.$.signInLoadingButton.loading = false;
-                    this.manageErrorResponse(err);
-                }.bind(this));
+                const password = this.$.passwordSignin.value;
+
+                const response = await axios.post('http://localhost:4000/app/user/login', {email,password});
+                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                const userData = Object.assign({},response.data.user,{user:true});
+                await db.updateAsync({email:userData.email},userData,{upsert:true,returnUpdatedDocs:true});
+                const user = await db.findOneAsync({email:userData.email});
+                const system = remote.system;
+                await db.updateAsync({_id:system._id},{$set:{account:user._id}});
             },
             /**
              * Open panels
@@ -590,102 +505,39 @@
              * forget a password
              */
             creteToken: function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.$$('#restoreLoadingButton').loading) return;
-                this.restoreEmail = this.$$('#restorePasswordEmail').value;
-                this.$$('#restoreLoadingButton').loading = true;
-                if (!this.$$('#restorePasswordEmail').validate()) {
-                    this.$$('#restoreLoadingButton').loading = false;
-                    return this.showErrorMessage('Email is not correct');
-                }
-                const promise = xhr.post(Designmap.config.apiURL + 'token/entry', {email: this.restoreEmail });
-                promise.then(function (response) {
-                    this.$$('#restoreLoadingButton').loading = false;
-                    if (!response.success) return this.manageErrorResponse(response);
-                    this.restoreMessageSent = true;
-                    //this.showMessage('You will receive an email with further instructions on #EMAIL#',{'#EMAIL#':this.restoreEmail },20000);
-                }.bind(this));
+
             },
             /**
              * If didn't received a mail with approving link -
              * resend it
              */
             sendApprovingEmail: function () {
-                this.approvingEmail = this.$$('#approvingEmail').value;
-                this.$$('#approvingButton').loading = true;
-                this.dispatch('reapprove', this.approvingEmail, this.language).then(function (response) {
-                    this.$$('#approvingButton').loading = false;
-                    if (!response.success) return this.showErrorMessage(response.errors.message);
-                    this.approveMessageSent = true;
-                    //this.showMessage('A mail has been sent',{'#EMAIL#':this.approvingEmail });
-                }.bind(this)).catch(function (err) {
-                    this.$$('#approvingButton').loading = false;
-                    this.showErrorMessage(err);
-                }.bind(this))
+
             },
             /**
              * Click on Google Sign In button
              */
             googleAuth: function (e) {
-                var googleUser = gapi.auth2.getAuthInstance()['currentUser'].get();
-                if (googleUser && googleUser.w3) return this.signInWithGoogle(googleUser);
-                this.googleButtonPressed = true;
-                this.$.registerGoogleButton.loading = true;
-                this.$.aware.signIn();
-                // Analytics
-                this.reachGoal('auth','google');
+
             },
             /**
              * Google sign-in success
              */
             googleSigninSuccess: function () {
-                var googleUser = gapi.auth2.getAuthInstance()['currentUser'].get();
-                if(this.googleButtonPressed) this.signInWithGoogle(googleUser);
-                this.$.registerGoogleButton.loading = false;
-                this.googleButtonPressed = false;
+
             },
             /**
              * When google sign in went wrong
              */
             googleSigninFailure: function () {
-                this.showErrorMessage('Google authorization went wrong.');
-                this.$.registerGoogleButton.loading = false;
-                this.googleButtonPressed = false;
+
             },
             /**
              * Sign in with google
              * @param googleUser
              */
             signInWithGoogle: function (googleUser) {
-                this.$.registerGoogleButton.loading = true;
-                this.dispatch('userGoogleSignup', googleUser.w3).then(function (response) {
-                    this.$.registerGoogleButton.loading = false;
-                    if (!response.success) return this.showErrorMessage(response.errors.message);
-                    this.showMessage(response.message, {}, 10000);
-                }.bind(this)).catch(function (err) {
-                    this.$.registerGoogleButton.loading = false;
-                }.bind(this));
-            },
-            /**
-             * Sign up with fake data when
-             * user does not have possibility to login with
-             * its own account
-             */
-            fakeSignUp: function(){
-                const unknownName = this.$.nameFakeSignup.value;
-                if (!unknownName) return;
-                const nameParts = unknownName.split(' ');
-                const user = {
-                    _id: this.generateObjectId(),
-                    fake: true,
-                    profile: {
-                        name: nameParts[0],
-                        lastName: nameParts[1] || ''
-                    }
-                };
-                this.dispatch('_userUpdate', user);
-                localStorage.setItem('designmap:user', JSON.stringify(user));
+
             }
         })
     </script>
