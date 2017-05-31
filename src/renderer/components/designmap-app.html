@@ -5,26 +5,38 @@
 <link rel="import" href="../../../bower_components/iron-iconset-svg/iron-iconset-svg.html">
 <!-- Third -->
 <link rel="import" href="../../../bower_components/i18-n/i18-n-domain.html">
-
 <link rel="import" href="../styles/app-theme.html">
 <!-- Components -->
 <link rel="import" href="./designmap/designmap-login/designmap-login-form.html">
 <link rel="import" href="./designmap/designmap-toolbar/designmap-toolbar.html">
+<!-- Behaviors -->
+<link rel="import" href="../behaviors/designmap-messages-behavior.html">
+<link rel="import" href="../behaviors/designmap-utils-behavior.html">
+
 
 <dom-module id="designmap-app">
     <template>
+        <i18-n-domain id="i18nDomain" locale="[[language]]" messages-url="../locales"></i18-n-domain>
         <iron-pages
                 selected="[[screen]]"
                 attr-for-selected="name"
                 role="main">
-            <designmap-login-form id="login" name="login"></designmap-login-form>
-            <designmap-toolbar id="toolbar" name="toolbar"></designmap-toolbar>
+            <designmap-login-form id="login" user="{{user}}" language="[[language]]" system="{{system}}" name="login"></designmap-login-form>
+            <designmap-toolbar id="toolbar" user="{{user}}" system="{{system}}" name="toolbar"></designmap-toolbar>
         </iron-pages>
     </template>
     <script>
+        const {ipcRenderer} = require('electron');
+        const axios = require('axios');
+        const {remote} = require('electron');
+        const main = remote.require('./main');
+        const db = remote.require('./main/db');
         Polymer({
             is: 'designmap-app',
-            behaviors: [],
+            behaviors: [
+                Polymer.DesignMapMessagesBehavior,
+                Polymer.DesignMapUtilsBehavior
+            ],
             properties: {
                 screen: {
                     type: String,
@@ -37,18 +49,71 @@
                 user: {
                     type: Object,
                     value: {}
+                },
+                language: {
+                    type: String,
+                    computed: '_computeLanguage(system.language)'
+                },
+                projects: {
+                    type: Array,
+                    value: []
+                },
+                config: {
+                    type: Object,
+                    value: {}
                 }
             },
+            listeners: {
+              'login': '_login',
+              'upload': '_uploadFile'
+            },
+            observers: [
+                '_userChanged(user,config)'
+            ],
             /**
              * Establish communication between
              * renderer app and main process.
              * appVarChange channel helps us to
              * change any property of main application
              */
-            ready: function(){
-                ipcRenderer.on('appVarChange',(e,o)=>{
-                    this[o.var] = o.val;
+            ready: function () {
+                ipcRenderer.on('appChange', (e, v, value) => {
+                    this[v] = value;
                 });
+            },
+            _login: async function(e){
+                const {email,password} = e.detail;
+                const response = await axios.post(`${this.config.apiUrl}/app/user/login`, {email,password});
+                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                delete userData._id;
+                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
+                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                this.system.account = this.user._userId;
+                main.showToolbar();
+                this.screen = 'toolbar';
+            },
+            /**
+             * Get all user's projects
+             * @returns {Promise.<void>}
+             * @private
+             */
+            _userChanged: async function (user) {
+                if(!user || !user._userId || !this.config.apiUrl) return;
+                const response = await axios.get(`${this.config.apiUrl}/app/user/projects?email=${user.local.email}&token=${user.system.appToken}`);
+                if(!response.data.success) return this.showErrorMessage('Cannot find user\'s projects');
+                this.projects = response.data.projects;
+            },
+            /**
+             * Upload file!
+             */
+            _uploadFile: async function(e){
+                const formData = new FormData();
+                formData.append("file", e.detail);
+                const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.projects[0]._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
+                if(!response.data.success) return this.showError('Cannot upload file');
+                this.showMessage('Screenshot','Screenshot has been taken!');
             }
         })
     </script>

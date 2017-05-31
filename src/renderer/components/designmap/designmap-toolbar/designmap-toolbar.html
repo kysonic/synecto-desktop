@@ -29,25 +29,24 @@
     const fs = require('fs');
     const path = require('path');
     const getScreen = require('user-media-screenshot');
-    const {ipcRenderer} = require('electron');
     Polymer({
       is: 'designmap-toolbar',
+      behaviors: [
+          Polymer.DesignMapMessagesBehavior
+      ],
       properties: {
 
       },
       ready: function () {
           ipcRenderer.on('ping', (event, message) => {
-          this[message] ? this[message]() : null;
-        });
+            this[message] ? this[message]() : null;
+          });
       },
       makeSnapshot: function(e){
-        getScreen(function(image){
-          var base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
-          fs.writeFile("out.jpg", base64Data, 'base64', function(err) {
-            new Notification('Screenshot', {
-              body: 'Screenshot has been taken'
-            })
-          });
+        getScreen((image)=>{
+          const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+
+          this.fire('upload',base64Data);
         });
       }
     });

@@ -1,7 +1,7 @@
 <script>
     Polymer.DesignMapMessagesBehavior = {
         ready: function(){
-            this.i18nDomain = document.querySelector('#i18nDomain');
+            this.i18nDomain = document.querySelector('designmap-app').$.i18nDomain;
         },
         showMessage: function(title,message,replacement){
             let msg = this.i18nDomain.getMsg(message) || message;
@@ -36,7 +36,7 @@
          */
         translate: function(msg,language,i18Loaded) {
           if(!msg) return msg;
-          this.i18nDomain = this.i18nDomain || document.querySelector('#i18nDomain');
+          this.i18nDomain = this.i18nDomain || document.querySelector('designmap-app').$.i18nDomain;
           return !this.i18nDomain ? msg : this.i18nDomain.getMsg(msg) || msg;
         }
     }

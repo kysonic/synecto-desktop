@@ -5,9 +5,11 @@
 
 const electron = require('electron');
 const {app, globalShortcut, BrowserWindow, Menu, Tray} = electron;
+const osLocale = require('os-locale');
 
 const path = require('path');
 const url = require('url');
+const config = require('./config');
 
 const WINDOW_DIMS = {width: 250,height:80};
 
@@ -15,17 +17,21 @@ const WINDOW_DIMS = {width: 250,height:80};
 
 const db = require('./main/db');
 
+let browserLanguage = 'en';
+
+osLocale().then(locale => browserLanguage=locale.substr(0,2));
 
 let tray = null;
 let system = null;
 let user = null;
+let screen = 'login';
 
 db.loadDatabase(async (err)=>{
     if(err) throw new Error(err);
     system = await db.findOneAsync({system:true});
-    if(!system) system = await db.insertAsync({system: true, account: false});
+    if(!system) system = await db.insertAsync({system: true, account: false, language: browserLanguage});
     if(!system.account) return this.showLoginForm();
-    user = await db.findOneAsync({user:true,_id:system.account});
+    user = await db.findOneAsync({user:true,_userId:system.account});
     this.showToolbar();
 });
 
@@ -37,13 +43,13 @@ let mainWindow
 
 
 
-function createWindow () {
+const createWindow =  ()=>{
     // Create the browser window.
     mainWindow = new BrowserWindow({width: WINDOW_DIMS.width, height: WINDOW_DIMS.height, show:false, frame: false, resizable: true})
 
     // and load the index.html of the main.
     mainWindow.loadURL(url.format({
-        pathname: path.join(__dirname, 'index.html'),
+        pathname: path.join(__dirname, './renderer/index.html'),
         protocol: 'file:',
         slashes: true
     }))
@@ -56,6 +62,14 @@ function createWindow () {
     globalShortcut.register('Command+Option+4',()=>{
         mainWindow.webContents.send('ping', 'makeSnapshot');
     });
+
+    mainWindow.webContents.on('did-finish-load',()=>{
+        mainWindow.webContents.send('appChange','system',system);
+        mainWindow.webContents.send('appChange','user',user);
+        mainWindow.webContents.send('appChange','screen',screen);
+        mainWindow.webContents.send('appChange','config',config);
+    });
+
     // Emitted when the window is closed.
     mainWindow.on('closed', function () {
         // Dereference the window object, usually you would store windows
@@ -88,21 +102,26 @@ app.on('activate', function () {
     }
 });
 
-module.exports.showLoginForm = function(){
+function showLoginForm(){
     mainWindow.center();
-    const currentPosition = mainWindow.getPosition();
-    mainWindow.setPosition(currentPosition[0]-120,currentPosition[1]);
     mainWindow.setSize(470,575);
     mainWindow.show();
-    mainWindow.webContents.send('appVarChange', {var:'screen',val:'login'});
     tray?tray.destroy():null;
-};
+}
+
+module.exports.logout = async function(){
+    await db.updateAsync({_id:system._id},{$set:{account:false}});
+    showLoginForm();
+    mainWindow.webContents.send('appChange','user',null);
+    mainWindow.webContents.send('appChange','screen','login');
+}
+
+module.exports.showLoginForm = showLoginForm.bind(this);
 
 module.exports.showToolbar = function(){
-    mainWindow.setSize(200,575);
     mainWindow.hide();
-    mainWindow.webContents.send('appVarChange', {var:'screen',val:'toolbar'});
     this.setupTray();
+    mainWindow.setSize(200,575);
 }
 
 module.exports.setupTray = function(){
@@ -110,6 +129,7 @@ module.exports.setupTray = function(){
 
     const contextMenu = Menu.buildFromTemplate([
         {label: 'Take a shot', type: 'normal',click: ()=>{mainWindow.webContents.send('ping', 'makeSnapshot');}},
+        {label: 'Logout', type: 'normal',click: this.logout },
         {label: 'Exit', type: 'normal', click:()=>{app.quit();}}
     ]);
 
@@ -122,3 +142,5 @@ module.exports.setupTray = function(){
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     });
 }
+
+
