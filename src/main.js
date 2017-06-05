@@ -26,6 +26,8 @@ let system = null;
 let user = null;
 let screen = 'login';
 
+app.dock.hide();
+
 db.loadDatabase(async (err)=>{
     if(err) throw new Error(err);
     system = await db.findOneAsync({system:true});
@@ -77,6 +79,11 @@ const createWindow =  ()=>{
         // in an array if your main supports multi windows, this is the time
         // when you should delete the corresponding element.
         mainWindow = null
+    })
+
+    // Emitted when the window is closed.
+    mainWindow.on('blur', function () {
+        mainWindow.hide();
     })
 }
 
@@ -158,5 +165,30 @@ module.exports.createOverlayWindow = function(){
         overlayWindow = null
     });
 };
+
+module.exports.makeFramedScreenShot = function(data){
+    mainWindow.webContents.send('makeFramedScreenShot',data);
+}
+
+module.exports.closeOverlayWindow = function(data){
+    overlayWindow.destroy();
+}
+
+module.exports.hideMainWindow = function(){
+    mainWindow.hide();
+}
+module.exports.showMainWindow = function(){
+    mainWindow.show();
+}
+module.setLoadingSize = function(){
+    mainWindow.setSize(200,200);
+}
+module.setToolbarSize = function(){
+    mainWindow.setSize(400,390);
+}
+
+module.exports.hideOverlayWindow = function(){
+    overlayWindow.hide();
+}
 
 

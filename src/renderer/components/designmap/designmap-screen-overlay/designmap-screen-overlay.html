@@ -175,11 +175,14 @@
                  data-direction="leftCenter"></div>
         </div>
         <div id="panel" hidden$="[[draw]]" class="panel">
-            <iron-icon icon="icons:clear" title="CLOSE" on-click="makeAreaScreenShot"></iron-icon>
-            <iron-icon icon="icons:done" title="DONE" on-click="cancelAreaScreenShot"></iron-icon>
+            <iron-icon icon="icons:clear" title="CLOSE" on-click="cancelFramedScreenShot"></iron-icon>
+            <iron-icon icon="icons:done" title="DONE" on-click="makeFramedScreenShot"></iron-icon>
         </div>
     </template>
     <script>
+        const {takeFramedScreen} = require('./libs/screenshot');
+        const {remote} = require('electron');
+        const main = remote.require('./main');
         Polymer({
             is: 'designmap-screen-overlay',
             behaviors: [],
@@ -377,11 +380,16 @@
                     document.removeEventListener('mouseup', _stop);
                 }
             },
-            makeAreaScreenShot: function(){
-                this.fire('make-area-screen-shot',{startPoint:this.startPoint,endPoint:this.endPoint});
+            makeFramedScreenShot: function(){
+                main.hideOverlayWindow();
+                takeFramedScreen({startPoint:this.startPoint,endPoint:this.endPoint},(image)=>{
+                    const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+                    main.makeFramedScreenShot(base64Data);
+                    main.closeOverlayWindow();
+                });
             },
-            cancelAreaScreenShot: function(){
-                this.fire('cancel-area-screen-shot');
+            cancelFramedScreenShot: function(){
+                main.closeOverlayWindow();
             }
         })
     </script>

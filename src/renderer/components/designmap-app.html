@@ -11,6 +11,7 @@
 <!-- Components -->
 <link rel="import" href="./designmap/designmap-login/designmap-login-form.html">
 <link rel="import" href="./designmap/designmap-toolbar/designmap-toolbar.html">
+<link rel="import" href="./designmap/designmap-ui/designmap-loading.html">
 <!-- Behaviors -->
 <link rel="import" href="../behaviors/designmap-messages-behavior.html">
 <link rel="import" href="../behaviors/designmap-utils-behavior.html">
@@ -25,12 +26,12 @@
                 role="main">
             <designmap-login-form id="login" user="{{user}}" language="[[language]]" system="{{system}}" name="login"></designmap-login-form>
             <designmap-toolbar id="toolbar" project="[[project]]" projects="[[projects]]" user="{{user}}" system="{{system}}" name="toolbar"></designmap-toolbar>
+            <designmap-loading id="loading" name="loading"></designmap-loading>
         </iron-pages>
     </template>
     <script>
         const {ipcRenderer} = require('electron');
         const axios = require('axios');
-        const main = remote.require('./main');
         const db = remote.require('./main/db');
         Polymer({
             is: 'designmap-app',
@@ -71,7 +72,8 @@
             listeners: {
               'login': '_login',
               'upload': '_uploadFile',
-              'select-project': '_selectProject'
+              'select-project': '_selectProject',
+              'page-change': '_changePage'
             },
             observers: [
                 '_userChanged(user,config)'
@@ -83,9 +85,10 @@
              * change any property of main application
              */
             ready: function () {
-                ipcRenderer.on('appChange', (e, v, value) => {
+                ipcRenderer.on('appChange', (e, v, value)=> {
                     this[v] = value;
                 });
+                ipcRenderer.on('makeFramedScreenShot', (e,data)=>this._uploadFile({detail:data}));
             },
             _login: async function(e){
                 const {email,password} = e.detail;
@@ -116,11 +119,16 @@
              * Upload file!
              */
             _uploadFile: async function(e){
+                this.screen = 'loading';
+                main.showMainWindow();
                 const formData = new FormData();
                 formData.append("file", e.detail);
                 const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
                 if(!response.data.success) return this.showError('Cannot upload file');
                 this.showMessage('Screenshot','Screenshot has been taken!');
+                main.hideMainWindow();
+                //main.setToolbarSize();
+                this.screen = 'toolbar';
             },
             /**
              * Select project to upload in
