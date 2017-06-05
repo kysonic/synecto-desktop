@@ -1,56 +1,142 @@
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="./designmap-project-select.html">
+<link rel="import" href="../designmap-buttons/designmap-loading-button.html">
 
 <dom-module id="designmap-toolbar">
 
-  <template>
-    <style>
-      /* local DOM styles go here */
-      :host {
-        height: 100%;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-      }
-      button {
-        /*-webkit-main-region: drag*/
-        width: 100px;
-        height: 40px;
-        border-radius: 10px;
-        background: #a06271;
-        color: #fff;
-        border: none;
-        cursor: pointer;
-      }
-    </style>
-    <button on-click="makeSnapshot">Make a snapshot</button>
-  </template>
+    <template>
+        <style>
+            .header {
+                height: 40px;
+                width: 100%;
+                background-color: var(--blue-darkest-color);
+                display: flex;
+                align-items: center;
+                justify-content: flex-end;
+            }
 
-  <script>
-    const fs = require('fs');
-    const path = require('path');
-    const getScreen = require('user-media-screenshot');
-    Polymer({
-      is: 'designmap-toolbar',
-      behaviors: [
-          Polymer.DesignMapMessagesBehavior
-      ],
-      properties: {
+            .content {
+                padding: 30px;
+                background-color: var(--white-color);
+            }
 
-      },
-      ready: function () {
-          ipcRenderer.on('ping', (event, message) => {
-            this[message] ? this[message]() : null;
-          });
-      },
-      makeSnapshot: function(e){
-        getScreen((image)=>{
-          const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+            .question,.gear {
+                padding: 5px;
+                cursor: pointer;
+                transition: .2s background;
+                border-radius: 50%;
+            }
 
-          this.fire('upload',base64Data);
+            .question:hover, .gear:hover {
+                background: var(--blue-color);
+                transition: .2s background;
+            }
+
+            .upload-button {
+                margin-top: 30px;
+            }
+
+            .title {
+                position: absolute;
+                width: calc(100% - 60px);
+                text-align: center;
+                z-index: 20;
+                margin: 30px 0;
+            }
+            .title hr {
+                border-color: var(--gray-lightenest-color);
+                background: var(--gray-lightenest-color);
+                opacity: 0.3;
+            }
+            .title .text {
+                position: absolute;
+                color: var(--gray-darky-color);
+                font-weight: 100;
+                font-size: 16px;
+                text-align: center;
+                width: 100%;
+                background: var(--white-color);
+            }
+            .title .text i18-n {
+                position: relative;
+                top: -22px;
+                padding: 0 10px;
+                background: var(--white-color);
+            }
+            .button-set {
+                margin-top: 73px;
+                display: flex;
+                justify-content: space-around;
+            }
+            .button-set > button {
+                display: inline-block;
+                width: calc(50% - 10px);
+                font-size: 15px;
+                padding: 12px 5px;
+            }
+            .button-set > button:first-child {
+                margin-left: 0;
+            }
+        </style>
+        <div class="header">
+            <iron-icon class="gear" icon="designmap:gear"></iron-icon>
+            <iron-icon class="question" icon="designmap:question"></iron-icon>
+        </div>
+        <div class="content">
+            <designmap-project-select project="[[project]]" projects="[[projects]]"></designmap-project-select>
+            <button is="designmap-loading-button" on-click="openFileDialog" fit blue thin class="upload-button"><i18-n msgid="Upload">Upload</i18-n></button>
+            <div class="title">
+                <div class="text">
+                    <hr/>
+                    <i18-n msgid="or capture">or capture</i18-n>
+                </div>
+            </div>
+            <div class="button-set">
+                <button is="designmap-button" on-click="makeFullScreenShot" blue-border>
+                    <i18-n msgid="Full Screen">Full Screen</i18-n>
+                </button>
+                <button is="designmap-button" on-click="makeFrameScreenShot" blue-border dashed>
+                    <i18-n msgid="Selected Area">Selected Area</i18-n>
+                </button>
+            </div>
+        </div>
+    </template>
+
+    <script>
+        const {remote} = require('electron');
+        const {getFullScreen} = require('./libs/screenshot');
+        Polymer({
+            is: 'designmap-toolbar',
+            behaviors: [
+                Polymer.DesignMapMessagesBehavior
+            ],
+            properties: {
+                project: {
+                    type: Object,
+                    value: {}
+                },
+                projects: {
+                    type: Array,
+                    value: []
+                }
+            },
+            ready: function () {
+                ipcRenderer.on('makeSnapshot', this.makeFullScreenShot);
+            },
+            makeFullScreenShot: function () {
+                getFullScreen((image) => {
+                    const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+                    this.fire('upload', base64Data);
+                });
+            },
+            makeFrameScreenShot: function(){
+                main.createOverlayWindow();
+            },
+            openFileDialog: function(){
+                //console.log(remote.dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
+            }
         });
-      }
-    });
-  </script>
+    </script>
 
 </dom-module>
 

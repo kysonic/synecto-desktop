@@ -1426,5 +1426,17 @@
   },
   "Paste": {
     "message": "Paste"
+  },
+  "Screenshot will be upload in": {
+    "message": "File/Screenshot will be upload in"
+  },
+  "or capture": {
+    "message": "or capture"
+  },
+  "Full Screen": {
+    "message": "Full screen"
+  },
+  "Selected Area": {
+    "message": "Selected area"
   }
 }

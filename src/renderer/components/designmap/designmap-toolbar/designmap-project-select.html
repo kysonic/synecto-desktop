@@ -1,0 +1,105 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../designmap-ui/designmap-dropdown.html">
+
+<dom-module id="designmap-project-select">
+    <template>
+        <style>
+            :host {
+                font-family: 'Open Sans', sans-serif;
+                font-weight: 100;
+                color: var(--gray-darkend-color);
+                --designmap-dropdown-triangle-mixin: {
+                    margin-left: 110px;
+                    top: -9px;
+                };
+                --designmap-dropdown-triangle-border-mixin: {
+                    margin-left: 108px;
+                    border-color: transparent transparent #ccc transparent;
+                    top: -10px;
+                    z-index: -1;
+                }
+            }
+            .label {
+                font-size: 12px;
+            }
+            .wrap {
+                position: relative;
+                cursor: pointer;
+            }
+            .project-name {
+                display: inline-block;
+                vertical-align: middle;
+                font-size: 28px;
+                font-weight: 500;
+                color: var(--blue-darkest-color);
+            }
+            .refresh {
+                vertical-align: bottom;
+                position: absolute;
+                left: 100%;
+                margin-left: -30px;
+                top: 12px;
+                transition: .2s transform;
+            }
+            .wrap:hover .refresh {
+                transform: rotate(90deg);
+                transition: .2s transform;
+            }
+
+            .wrap:hover .project-name {
+                /*color: var(--blue-super-dark-color);*/
+            }
+            .project-list {
+                padding: 0;
+                margin: 0;
+                list-style: none;
+            }
+            .project-list li {
+                color: var(--blue-darkest-color);
+                cursor: pointer;
+                padding: 10px;
+                transition: .2s background;
+            }
+            .project-list li:hover {
+                transition: .2s background;
+                background: var(--gray-lightenest-color);
+            }
+        </style>
+        <div class="label"><i18-n msgid="Screenshot will be upload in">Screenshot will be upload in</i18-n></div>
+        <div class="wrap" on-click="openDropdown">
+            <div class="project-name">[[project.name]]</div>
+            <iron-icon class="refresh" icon="designmap:refresh"></iron-icon>
+        </div>
+        <designmap-dropdown vertical-offset="45" horizontal-offset="60" tri-border previous
+                            id="projectList">
+            <ul class="project-list">
+                <template is="dom-repeat" items="[[projects]]" as="project">
+                    <li on-click="selectProject">[[project.name]]</li>
+                </template>
+            </ul>
+        </designmap-dropdown>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-project-select',
+            behaviors: [],
+            properties: {
+                projects: {
+                    type: Array,
+                    value: []
+                },
+                project: {
+                    type: Object,
+                    value: {}
+                }
+            },
+            openDropdown: function () {
+                this.$.projectList.open();
+            },
+            selectProject: function(e){
+                this.fire('select-project',e.model.project);
+                this.$.projectList.close();
+            }
+        })
+    </script>
+</dom-module>

@@ -1,0 +1,191 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/iron-dropdown/iron-dropdown.html">
+<!-- Mixins -->
+<link rel="import" href="../../../behaviors/deisgnmap-animation-behavior.html">
+
+<dom-module is="designmap-dropdown">
+    <template>
+        <style>
+            :host {
+                position: absolute;
+                z-index: 998;
+
+                --designmap-dropdown-background: var(--white-color);
+                --designmap-dropdown-triangle-border-color: var(--white-color);
+                --designmap-dropdown-text: var(--gray-darkend-color);
+            }
+
+            .dropdown-content {
+                width: 280px;
+                position: relative;
+                background: var(--designmap-dropdown-background) !important;
+                max-width: 280px;
+                padding: 30px;
+                overflow: visible !important;
+                @apply(--designmap-dropdown-mixin);
+            }
+            .dropdown-content ::content .row {
+                width: 100%;
+                height: 26px;
+                margin-top: 30px;
+                font-family: 'Open Sans', sans-serif;
+                font-weight: 100;
+                font-size: 18px;
+                display: flex;
+                align-items: center;
+            }
+            .dropdown-content ::content  .row:first-child {
+                margin-top: 0;
+            }
+            .dropdown-content ::content .row iron-icon {
+                display: inline-block;
+                vertical-align: top;
+            }
+            .dropdown-content ::content .row .text {
+                display: inline-block;
+                margin-left: 10px;
+                line-height: 26px;
+                vertical-align: top;
+                cursor: pointer;
+                color: var(--designmap-dropdown-text);
+            }
+            .dropdown-content ::content  .row .text:hover {
+                text-decoration: underline;
+            }
+
+            iron-dropdown {
+                @apply(--designmap-dropdown-iron-dropdown-mixin);
+            }
+            /** TRI **/
+            .triangle, .triangle-border {
+                z-index: 10;
+                position: absolute;
+                left: 50%;
+                margin-left: 45px;
+                top: -10px;
+                width: 0;
+                height: 0;
+
+                border-style: solid;
+                border-width: 0 10px 10px 10px;
+                border-color: transparent transparent var(--designmap-dropdown-background) transparent;
+
+                @apply(--designmap-dropdown-triangle-mixin);
+            }
+            :host([left]) .triangle, :host([left]) .triangle-border  {
+                left: 0;
+                margin-left: -10px;
+                top: 50%;
+                margin-top: -15px;
+
+                border-width: 10px 20px 10px 0;
+                border-color: transparent var(--designmap-dropdown-background) transparent transparent;
+
+                @apply(--designmap-dropdown-triangle-mixin);
+            }
+            .triangle-border {
+                display: none;
+                z-index: 9;
+                border-style: solid;
+                border-width: 0 12px 12px 12px;
+                border-color: transparent transparent var(--designmap-dropdown-triangle-border-color) transparent;
+                @apply(--designmap-dropdown-triangle-border-mixin);
+            }
+            :host([tri-border]) .triangle-border {
+                display: block;
+            }
+            :host([tri-right]) .triangle, :host([tri-right]) .triangle-border  {
+                left: 100%;
+                margin-left: 0px;
+                top: 7px;
+                margin-top: 0;
+                border-width: 10px 0 10px 15px;
+                border-color: transparent transparent transparent var(--white-color) !important;
+            }
+            :host([tri-right]) .triangle-border {
+                margin-top: -1px;
+                border-width: 11px 0 11px 16px;
+                border-color: transparent transparent transparent var(--gray-color) !important;
+            }
+        </style>
+        <iron-dropdown id="dropdown"
+                       opened="{{opened}}"
+                       no-cancel-on-outside-click="[[noCancelOnOutsideClick]]"
+                       hotizontal-align="center"
+                       position-target="[[target]]"
+                       vertical-offset="[[verticalOffset]]"
+                       horizontal-offset="[[horizontalOffset]]"
+                       open-animation-config="[[computeOpenAnimation(left)]]"
+                       close-animation-config="[[computeCloseAnimation(left)]]">
+            <div class="dropdown-content">
+                <content select="*"></content>
+                <div class="triangle"></div>
+                <div class="triangle-border"></div>
+            </div>
+        </iron-dropdown>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-dropdown',
+            behaviors: [
+                Polymer.DesignmapAnimationSet
+            ],
+            properties: {
+                opened: {
+                    type: Boolean,
+                    value: false
+                },
+                target: {
+                    type: Object
+                },
+                parent: {
+                    type: Boolean,
+                    value: false
+                },
+                previous: {
+                    type: Boolean,
+                    value: false
+                },
+                noCancelOnOutsideClick: {
+                    type: Boolean,
+                    value: false
+                },
+                verticalOffset: {
+                    type: Number,
+                    value: 0
+                },
+                horizontalOffset: {
+                    type: Number,
+                    value: 0
+                },
+                left: {
+                    type: Boolean,
+                    value: false
+                },
+                triRight: {
+                    type: Boolean,
+                    value: false
+                }
+            },
+            ready: function () {
+                if (this.parent) this.target = this.parentNode;
+                if (this.previous) this.target = this.previousElementSibling;
+            },
+            open: function () {
+                this.$.dropdown.open();
+            },
+            close: function () {
+                this.$.dropdown.close();
+            },
+            toggle: function () {
+                this.$.dropdown.toggle();
+            },
+            computeOpenAnimation: function (left) {
+                return left ? this.slideLeftOpenAnimation : this.slideTopOpenAnimation;
+            },
+            computeCloseAnimation: function (left) {
+                return left ? this.slideLeftCloseAnimation : this.slideTopCloseAnimation;
+            }
+        })
+    </script>
+</dom-module>

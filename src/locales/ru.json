@@ -1432,5 +1432,17 @@
   },
   "Paste": {
     "message": "Вставить"
+  },
+  "Screenshot will be upload in": {
+    "message": "Файл/Скриншот будет загружен в"
+  },
+  "or capture": {
+    "message": "или сделать скриншот"
+  },
+  "Full Screen": {
+    "message": "Весь экран"
+  },
+  "Selected Area": {
+    "message": "Выбранная зона"
   }
 }

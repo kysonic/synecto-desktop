@@ -61,6 +61,14 @@
                 background: rgba(0,0,0,0.05);
                 transition: background .2s;
             }
+            :host([blue]) {
+                background: var(--blue-darkest-color);
+                border-color: var(--blue-darkest-color);
+            }
+            :host([blue]:hover) {
+                background:  var(--blue-super-dark-color);
+                transition: background .2s;
+            }
         </style>
         <content></content>
         <div hidden$="[[!loading]]" class="loading"></div>

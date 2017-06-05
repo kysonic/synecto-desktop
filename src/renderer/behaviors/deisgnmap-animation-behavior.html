@@ -1,0 +1,274 @@
+<link rel="import" href="../../../bower_components/neon-animation/neon-animation-runner-behavior.html">
+<link rel="import" href="../../../bower_components/neon-animation/neon-animations.html">
+
+<script>
+    /**
+     * Animation set contains configurations for
+     * different animations
+     */
+    Polymer.DesignmapAnimationSet = {
+        properties: {
+            defaultOpenAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'scale-up-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-in-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            },
+            defaultCloseAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'scale-down-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-out-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            },
+            slideTopOpenAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'slide-from-top-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-in-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            },
+            slideLeftOpenAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'slide-from-left-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-in-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            },
+            slideTopCloseAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'slide-down-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-out-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            },
+            slideLeftCloseAnimation: {
+                type: Object,
+                value: function() {
+                    return [
+                        {
+                            name: 'slide-right-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        },
+                        {
+                            name: 'fade-out-animation',
+                            timing: {
+                                delay: 0,
+                                duration: 200
+                            }
+                        }];
+                }
+            }
+        }
+    }
+    /**
+     * Web animation Mixin! Contains tools for web animation management.
+     * @type {{defaultProps: {duration: number, easing: string, iterations: number, direction: string, delay: number, fill: string}, playStackAnimations: DesignMapWebAnimationBehavior.playStackAnimations, _processStack: DesignMapWebAnimationBehavior._processStack, shakeAnimation: DesignMapWebAnimationBehavior.shakeAnimation, fadeOutAnimation: DesignMapWebAnimationBehavior.fadeOutAnimation, slideFromTopAnimation: DesignMapWebAnimationBehavior.slideFromTopAnimation, scaleUpAnimation: DesignMapWebAnimationBehavior.scaleUpAnimation, scaleDownAnimation: DesignMapWebAnimationBehavior.scaleDownAnimation, fadeInAnimation: DesignMapWebAnimationBehavior.fadeInAnimation, fadeOutAnimation: DesignMapWebAnimationBehavior.fadeOutAnimation, shrinkDown: DesignMapWebAnimationBehavior.shrinkDown, shrinkUp: DesignMapWebAnimationBehavior.shrinkUp}}
+     */
+    Polymer.DesignMapWebAnimationBehavior = {
+        /**
+         * Default animation properties
+         * could be overwritten by props in ceratin
+         * animation
+         */
+        defaultProps: {
+            duration: 300,
+            easing: 'cubic-bezier(1, 1, 1, 1)',
+            iterations: 1,
+            direction: 'normal',
+            delay: 0,
+            fill: 'none'
+        },
+        /**
+         * Play several animation one
+         * by one
+         */
+        playStackAnimations: function(stackArray){
+            return Promise.all(this._processStack(stackArray));
+        },
+        /**
+         * Turn animation array
+         * into special array of functions for
+         * waterfall
+         */
+        _processStack: function(stackArray){
+            return stackArray.map(function(animation){
+                return new Promise(function(resolve,reject){
+                    animation.addEventListener('finish',resolve);
+                    animation.play();
+                });
+            })
+        },
+        /**
+         * Shake it
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        shakeAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {'transform':'scale(0)',opacity:0},
+                {'transform':'scale(1.1)',opacity:0.5},
+                {'transform':'scale(0.9)',opacity:1},
+                {'transform':'scale(1.1)',opacity:1},
+                {'transform':'scale(0.9)',opacity:1},
+                {'transform':'scale(1)',opacity:1}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Fade out
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        fadeOutAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {opacity:1},
+                {opacity:0}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        } ,
+        /**
+         * Slide drop top
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        slideFromTopAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {transform:'translateY(-100px)',opacity:0},
+                {transform:'translateY(0)', opacity:1}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Scale up
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        scaleUpAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {transform:'scale(0)',opacity:0},
+                {transform:'scale(1)',opacity:1}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Scale down
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        scaleDownAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {transform:'scale(1)',opacity:1},
+                {transform:'scale(0)',opacity:0}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Fade in
+         * @param node - node to animate
+         * @param props - animation properties
+         * @returns {*|Promise}
+         */
+        fadeInAnimation: function(node,props){
+            return new Animation(new KeyframeEffect(node,[
+                {opacity:0},
+                {opacity:1}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Shrink down animation
+         * @param node - node to animate
+         * @param props - animation properties
+         * @param shrinkFrom - shrink from
+         * @returns {*|Promise}
+         */
+        shrinkDown: function(node,props,shrinkFrom){
+            return new Animation(new KeyframeEffect(node,[
+                {flexBasis: shrinkFrom+'px'},
+                {flexBasis: '0px'}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        },
+        /**
+         * Shrink up animation
+         * @param node - node to animate
+         * @param props - animation properties
+         * @param shrinkTo - shrink from
+         * @returns {*|Promise}
+         */
+        shrinkUp: function(node,props,shrinkTo){
+            return new Animation(new KeyframeEffect(node,[
+                {flexBasis: '0px'},
+                {flexBasis: shrinkTo+'px'}
+            ],Object.assign(this.defaultProps,props)), node.ownerDocument.timeline);
+        }
+    }
+</script>

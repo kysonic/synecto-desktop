@@ -63,6 +63,21 @@
                 transition: background .2s;
             }
 
+            :host([blue-border]) {
+                color: var(--blue-darkest-color);
+                border-color: var(--blue-darky-color);
+                transition: background .2s;
+            }
+            :host([blue-border]:hover) {
+                background: rgba(256,256,256,0.3);
+                color: var(--blue-super-dark-color);
+                border-color: var(--blue-super-dark-color);
+                transition: background .2s;
+            }
+            :host([dashed]) {
+                border-style: dashed;
+            }
+
         </style>
         <content></content>
     </template>

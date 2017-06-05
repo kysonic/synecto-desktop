@@ -19,6 +19,7 @@
     "paper-input": "^1.1.23",
     "iron-a11y-keys": "^1.0.7",
     "neon-animation": "PolymerElements/neon-animation#^1.2.4",
-    "iron-pages": "PolymerElements/iron-pages#^2.0.0"
+    "iron-pages": "PolymerElements/iron-pages#^2.0.0",
+    "iron-dropdown": "PolymerElements/iron-dropdown#^2.0.0"
   }
 }

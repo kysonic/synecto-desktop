@@ -4,7 +4,7 @@
   "description": "Pure electron + polymer app without router",
   "main": "main.js",
   "scripts": {
-    "start": "electron ."
+    "start": "electron ./src/main.js"
   },
   "author": "",
   "license": "ISC",

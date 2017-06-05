@@ -1,0 +1,388 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+
+<dom-module id="designmap-screen-overlay">
+    <template>
+        <style>
+            :host {
+                display: block;
+                position: relative;
+                overflow: hidden;
+                width: 100%;
+                height: 100%;
+                --background: rgba(0, 0, 0, 0.5);
+            }
+
+            *[hidden] {
+                display: none !important;
+            }
+
+            .drawOverlay {
+                width: 100%;
+                height: 100%;
+                cursor: crosshair;
+            }
+
+            .drawOverlay.usual {
+                cursor: default;
+            }
+
+            .tile {
+                position: absolute;
+                background: var(--background);
+                width: 50%;
+                height: 50%;
+            }
+
+            .top {
+                left: 0;
+                top: 0;
+            }
+
+            .right {
+                left: 50%;
+                top: 0;
+            }
+
+            .bottom {
+                left: 0;
+                top: 50%;
+            }
+
+            .left {
+                left: 50%;
+                top: 50%;
+            }
+            /** Dragger **/
+            .dragger {
+                position: absolute;
+                border: 2px solid var(--white-color);
+                cursor: move;
+                display: none;
+            }
+            /** Markers **/
+            .marker {
+                border-radius: 50%;
+                background: var(--white-color);
+                width: 8px;
+                height: 8px;
+                position: absolute;
+                left: 0;
+                top: 0;
+                cursor: hand;
+                z-index: 1000;
+                border: 1px solid #292929;
+            }
+
+            #marker1 {
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: nw-resize;
+            }
+
+            #marker2 {
+                left: 50%;
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: n-resize;
+            }
+
+            #marker3 {
+                left: 100%;
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: ne-resize;
+            }
+
+            #marker4 {
+                left: 100%;
+                top: 50%;
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: e-resize;
+            }
+
+            #marker5 {
+                left: 100%;
+                top: 100%;
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: se-resize;
+            }
+
+            #marker6 {
+                left: 50%;
+                top: 100%;
+                margin-left: -4px;
+                margin-top: -4px;
+                cursor: s-resize;
+            }
+
+            #marker7 {
+                left: 0%;
+                top: 100%;
+                margin-left: -6px;
+                margin-top: -4px;
+                cursor: sw-resize;
+            }
+
+            #marker8 {
+                left: 0%;
+                top: 50%;
+                margin-left: -6px;
+                margin-top: -4px;
+                cursor: w-resize;
+            }
+            /** Panel **/
+            .panel {
+                position: absolute;
+                width: 20px;
+                height: 60px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: flex-end;
+            }
+            .panel iron-icon {
+                --iron-icon-stoke-color: var(--white-color);
+                --iron-icon-fill-color: var(--white-color);
+                cursor: pointer;
+            }
+        </style>
+        
+        <div class$="drawOverlay [[_computeDraw(draw)]]" on-mousedown="_drawArea">
+            <div id="top" class="tile top"></div>
+            <div id="right" class="tile right"></div>
+            <div id="bottom" class="tile bottom"></div>
+            <div id="left" class="tile left"></div>
+        </div>
+        <div id="dragger" hidden$="[[draw]]" class="dragger" on-mousedown="_dragArea">
+            <div class="marker cannot-drag" id="marker1" on-mousedown="_resizeDragger"
+                 data-direction="leftTop"></div>
+            <div class="marker cannot-drag" id="marker2" on-mousedown="_resizeDragger"
+                 data-direction="centerTop"></div>
+            <div class="marker cannot-drag" id="marker3" on-mousedown="_resizeDragger"
+                 data-direction="rightTop"></div>
+            <div class="marker cannot-drag" id="marker4" on-mousedown="_resizeDragger"
+                 data-direction="rightCenter"></div>
+            <div class="marker cannot-drag" id="marker5" on-mousedown="_resizeDragger"
+                 data-direction="rightBottom"></div>
+            <div class="marker cannot-drag" id="marker6" on-mousedown="_resizeDragger"
+                 data-direction="centerBottom"></div>
+            <div class="marker cannot-drag" id="marker7" on-mousedown="_resizeDragger"
+                 data-direction="leftBottom"></div>
+            <div class="marker cannot-drag" id="marker8" on-mousedown="_resizeDragger"
+                 data-direction="leftCenter"></div>
+        </div>
+        <div id="panel" hidden$="[[draw]]" class="panel">
+            <iron-icon icon="icons:clear" title="CLOSE" on-click="makeAreaScreenShot"></iron-icon>
+            <iron-icon icon="icons:done" title="DONE" on-click="cancelAreaScreenShot"></iron-icon>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-screen-overlay',
+            behaviors: [],
+            properties: {
+                draw: {
+                    type: Boolean,
+                    value: true
+                },
+                startPoint: {
+                    type: Object,
+                    value: {x: 100, y: 100}
+                },
+                endPoint: {
+                    type: Object,
+                    value: {x: 100, y: 200}
+                }
+            },
+            observers: [
+                'change(startPoint.x,startPoint.y,endPoint.x,endPoint.y)'
+            ],
+            change: function (sX, sY, eX, eY) {
+                this._renderArea(sX, sY, eX, eY);
+                this._renderDragger(sX, sY, eX, eY);
+                this._renderPanel(sX, sY, eX, eY);
+            },
+            _renderArea: function (sX, sY, eX, eY) {
+                const width = window.innerWidth;
+                const height = window.innerHeight;
+                // Top
+                this.$.top.style.left = 0;
+                this.$.top.style.top = 0;
+                this.$.top.style.width = '100%';
+                this.$.top.style.height = sY + 'px';
+                // Right
+                this.$.right.style.left = eX + 'px';
+                this.$.right.style.top = sY + 'px';
+                this.$.right.style.width = (width - eX) + 'px';
+                this.$.right.style.height = (eY - sY) + 'px';
+                // Bottom
+                this.$.bottom.style.left = sX + 'px';
+                this.$.bottom.style.top = eY + 'px';
+                this.$.bottom.style.width = (width - sX) + 'px';
+                this.$.bottom.style.height = (height - eY) + 'px';
+                // Left
+                this.$.left.style.left = 0;
+                this.$.left.style.top = sY + 'px';
+                this.$.left.style.width = sX + 'px';
+                this.$.left.style.height = (height - sY) + 'px';
+            },
+            _renderDragger: function(sX, sY, eX, eY){
+                this.$.dragger.style.left = sX - 3 + 'px';
+                this.$.dragger.style.top = sY - 3 + 'px';
+                this.$.dragger.style.width = eX - sX + 2 + 'px';
+                this.$.dragger.style.height = eY - sY + 2 + 'px';
+            },
+            _renderPanel: function(sX, sY, eX, eY){
+                this.$.panel.style.left = eX + 10 + 'px';
+                this.$.panel.style.top = eY - 55 + 'px';
+            },
+            _drawArea: function(e){
+                if(!this.draw) return;
+
+                this.startPoint.x = e.pageX;
+                this.startPoint.y = e.pageY;
+
+                document.addEventListener('mousemove', _drag);
+                document.addEventListener('mouseup', _stop);
+
+                const _this = this;
+
+                function _drag(e) {
+                    _this.endPoint.x = e.pageX;
+                    _this.endPoint.y = e.pageY;
+                    const deltaX = _this.endPoint.x - _this.startPoint.x;
+                    const deltaY = _this.endPoint.y - _this.startPoint.y;
+
+                    if(deltaX>0 && deltaY>0) return _this.change(_this.startPoint.x,_this.startPoint.y,_this.endPoint.x,_this.endPoint.y);
+                    if(deltaX<0 && deltaY>0) return _this.change(_this.endPoint.x,_this.startPoint.y,_this.startPoint.x,_this.endPoint.y);
+                    if(deltaX<0 && deltaY<0) return _this.change(_this.endPoint.x,_this.endPoint.y,_this.startPoint.x,_this.startPoint.y);
+                    if(deltaX>0 && deltaY<0) return _this.change(_this.startPoint.x,_this.endPoint.y,_this.endPoint.x,_this.startPoint.y);
+                }
+
+                function _stop(e) {
+                    document.removeEventListener('mousemove', _drag);
+                    document.removeEventListener('mouseup', _stop);
+                    _this.draw = false;
+                    _this.$.dragger.style.display = 'block';
+                }
+
+                return false;
+            },
+            _computeDraw: function(draw){
+                return !draw?'usual':'';
+            },
+            _resizeDragger: function(e){
+                e.stopPropagation();
+                const direction = e.target.dataset.direction;
+
+                document.addEventListener('mousemove', _drag);
+                document.addEventListener('mouseup', _stop);
+
+                const _this = this;
+
+                function _drag(e) {
+                    _this['_'+direction+'Handler'].call(_this,e.pageX, e.pageY);
+                }
+
+                function _stop(e) {
+                    document.removeEventListener('mousemove', _drag);
+                    document.removeEventListener('mouseup', _stop);
+                }
+            },
+            _leftTopHandler: function(eX,eY){
+                if(eX > this.endPoint.x) return;
+                if(eY > this.endPoint.y) return;
+                this.startPoint.x = eX;
+                this.startPoint.y = eY;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _centerTopHandler: function(eX,eY){
+                if(eY > this.endPoint.y) return;
+                this.startPoint.y = eY;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _rightTopHandler: function(eX,eY){
+                if(eX<this.startPoint.x || eX > window.innerWidth-5) return;
+                if(eY>window.innerHeight) return;
+                this.startPoint.y = eY;
+                this.endPoint.x = eX;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _rightCenterHandler: function(eX,eY){
+                if(eX < this.startPoint.x || eX > window.innerWidth-5) return;
+                this.endPoint.x = eX;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _rightBottomHandler: function(eX,eY){
+                if(eX < this.startPoint.x || eX > window.innerWidth-5) return;
+                if(eY > window.innerHeight - 5 || eY < this.startPoint.y) return;
+                this.endPoint.x = eX;
+                this.endPoint.y = eY;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _centerBottomHandler: function(eX,eY){
+                if(eY>window.innerHeight-5 || eY<this.startPoint.y) return;
+                this.endPoint.y = eY;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _leftBottomHandler: function(eX,eY){
+                if(eY<0 || eY>window.innerHeight-5) return;
+                if(eX<0 || eX>this.endPoint.x) return;
+                this.startPoint.x = eX;
+                this.endPoint.y = eY;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _leftCenterHandler: function(eX,eY){
+                if(eX<0 || eX>this.endPoint.x) return;
+                this.startPoint.x = eX;
+                this.change(this.startPoint.x,this.startPoint.y,this.endPoint.x,this.endPoint.y);
+            },
+            _dragArea: function(e){
+
+                this.startX = e.pageX;
+                this.startY = e.pageY;
+
+                document.addEventListener('mousemove', _drag);
+                document.addEventListener('mouseup', _stop);
+
+                const _this = this;
+
+                function _drag(e) {
+                    const dX = _this.startX - e.pageX;
+                    const dY = _this.startY - e.pageY;
+
+                    const sX = _this.startPoint.x - dX;
+                    const sY = _this.startPoint.y - dY;
+                    const eX = _this.endPoint.x - dX;
+                    const eY = _this.endPoint.y - dY;
+
+                    _this.startX = e.pageX;
+                    _this.startY = e.pageY;
+
+                    if(sX<0 || eX>window.innerWidth-8 || sY<0 || eY>window.innerHeight - 8) return;
+
+                    _this.startPoint.x = sX;
+                    _this.startPoint.y = sY;
+                    _this.endPoint.x = eX;
+                    _this.endPoint.y = eY;
+
+                    _this.change(sX,sY,eX,eY);
+                }
+
+                function _stop(e) {
+                    document.removeEventListener('mousemove', _drag);
+                    document.removeEventListener('mouseup', _stop);
+                }
+            },
+            makeAreaScreenShot: function(){
+                this.fire('make-area-screen-shot',{startPoint:this.startPoint,endPoint:this.endPoint});
+            },
+            cancelAreaScreenShot: function(){
+                this.fire('cancel-area-screen-shot');
+            }
+        })
+    </script>
+</dom-module>

@@ -11,7 +11,7 @@ const path = require('path');
 const url = require('url');
 const config = require('./config');
 
-const WINDOW_DIMS = {width: 250,height:80};
+const WINDOW_DIMS = {width: 400,height:390};
 
 // Data store
 
@@ -39,7 +39,8 @@ db.loadDatabase(async (err)=>{
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
-let mainWindow
+let mainWindow,
+    overlayWindow
 
 
 
@@ -56,11 +57,11 @@ const createWindow =  ()=>{
 
     //mainWindow.webContents.openDevTools()
     globalShortcut.register('Control+PrintScreen',()=>{
-        mainWindow.webContents.send('ping', 'makeSnapshot');
+        mainWindow.webContents.send('makeSnapshot');
     });
 
     globalShortcut.register('Command+Option+4',()=>{
-        mainWindow.webContents.send('ping', 'makeSnapshot');
+        mainWindow.webContents.send('makeSnapshot');
     });
 
     mainWindow.webContents.on('did-finish-load',()=>{
@@ -121,14 +122,15 @@ module.exports.showLoginForm = showLoginForm.bind(this);
 module.exports.showToolbar = function(){
     mainWindow.hide();
     this.setupTray();
-    mainWindow.setSize(200,575);
+    mainWindow.setSize(400,390);
+    screen="toolbar";
 }
 
 module.exports.setupTray = function(){
     tray = new Tray(path.join(__dirname,'../assets/images/tray.png'))
 
     const contextMenu = Menu.buildFromTemplate([
-        {label: 'Take a shot', type: 'normal',click: ()=>{mainWindow.webContents.send('ping', 'makeSnapshot');}},
+        {label: 'Take a shot', type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
         {label: 'Logout', type: 'normal',click: this.logout },
         {label: 'Exit', type: 'normal', click:()=>{app.quit();}}
     ]);
@@ -138,9 +140,23 @@ module.exports.setupTray = function(){
 
     tray.on('right-click', () => {
         const {x,y,width} = tray.getBounds();
-        mainWindow.setPosition(x-WINDOW_DIMS.width+width,y-WINDOW_DIMS.height);
         mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+        mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
     });
 }
+
+module.exports.createOverlayWindow = function(){
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
+    overlayWindow = new BrowserWindow({fullscreen:false, width: width, height: height, show:true, transparent:true, frame: false, resizable: false});
+    overlayWindow.loadURL(url.format({
+        pathname: path.join(__dirname, './renderer/overlay.html'),
+        protocol: 'file:',
+        slashes: true
+    }));
+    // Clean up
+    overlayWindow.on('closed', function () {
+        overlayWindow = null
+    });
+};
 
 
