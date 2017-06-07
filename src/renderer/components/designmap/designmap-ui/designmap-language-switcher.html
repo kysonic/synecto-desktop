@@ -1,0 +1,71 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../behaviors/designmap-utils-behavior.html">
+
+
+<dom-module is="designmap-language-switcher">
+    <template>
+        <style>
+            :host {
+                font-size: 18px;
+            }
+            .language-button {
+                display: inline-block;
+                padding: 2px 12px;
+                border-radius: 30px;
+                color: var(--gray-darkend-color);
+                cursor: pointer;
+                margin-left: 4px;
+            }
+            .language-button.selected {
+                border: 1px solid var(--gray-darkend-color);
+            }
+
+        </style>
+        <template is="dom-repeat" items="[[languages]]" as="lang">
+            <div class$="[[computeClass(index,selected)]]" on-click="checkLanguage">[[lang.text]]</div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-language-switcher',
+            behaviors: [
+                Polymer.DesignMapUtilsBehavior
+            ],
+            properties: {
+                languages: {
+                    type: Array,
+                    value: [
+                        {code: 'ru', text: 'Рус'},
+                        {code: 'en', text: 'Eng'}
+                    ]
+                },
+                system: {
+                    type: Object,
+                    value: {}
+                },
+                selected: {
+                    type: Number,
+                    value: 0
+                },
+                language: {
+                    type: String,
+                    computed: '_computeLanguage(system.language)',
+                    observer: '_languageChanged'
+                }
+            },
+            checkLanguage: function (e) {
+                console.log(e.model.index);
+            },
+            computeClass: function (index, selected) {
+                return index == selected ? 'selected language-button' : 'language-button';
+            },
+            _languageChanged: function (language) {
+                this.languages.forEach(function (lng, index) {
+                    if (lng.code == language) {
+                        this.selected = index;
+                    }
+                }.bind(this));
+            }
+        })
+    </script>
+</dom-module>

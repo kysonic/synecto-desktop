@@ -2,6 +2,16 @@
     Polymer.DesignMapUtilsBehavior = {
         _computeLanguage: function(lng) {
             return lng;
+        },
+        /**
+         * Remove folder name from appearance of file.
+         */
+        cutFileName: function(file){
+            if(!file || !file.data || !file.data.name) return;
+            file.data.name = file.data.name.replace(file.data.uid+"-","");
+            file.data.name = file.data.name.replace(file.folder+"-","");
+            file.data.name = file.data.name.replace(file.project+"-","");
+            return file.data.name;
         }
     }
 </script>

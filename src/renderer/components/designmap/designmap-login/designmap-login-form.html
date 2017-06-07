@@ -33,7 +33,7 @@
                 min-width: 450px;
                 color: var(--designmap-login-form-color);
 
-                --paper-input-container-color:  var(--designmap-login-form-color);
+                --paper-input-container-color: var(--designmap-login-form-color);
                 --paper-input-container-focus-color: var(--designmap-login-form-color);
                 --paper-input-container-input: {
                     color: var(--designmap-login-form-color);
@@ -46,21 +46,26 @@
                     z-index: 10;
                 };
             }
+
             *[hidden] {
                 display: none !important;
             }
+
             :host([fake-support]) {
                 background: transparent;
             }
+
             .forgot-message {
                 margin-top: 15px;
                 text-align: center;
             }
+
             .forgot-button {
                 display: block;
                 margin: 12px auto !important;
                 margin-bottom: 0 !important;
             }
+
             .wrapper {
                 width: 100%;
                 max-width: 500px;
@@ -69,8 +74,9 @@
                 position: relative;
                 bottom: 20px;
             }
+
             /** HEADER **/
-            .header, .header-phantom{
+            .header, .header-phantom {
                 height: 150px;
                 width: 100%;
                 background: var(--designmap-login-form-header);
@@ -79,19 +85,23 @@
                 align-items: center;
                 justify-content: center;
             }
+
             .header-phantom {
                 height: 270px;
                 background: var(--white-color);
             }
+
             .header {
                 position: absolute;
                 top: 0;
                 z-index: 20;
             }
+
             .header .logo-icon {
                 position: relative;
                 top: 10px;
             }
+
             .social {
                 position: absolute;
                 width: 100%;
@@ -101,23 +111,28 @@
                 z-index: 20;
                 background: var(--white-color);
             }
+
             .social .button-wrapper {
                 padding: 0 75px;
             }
+
             .social button {
                 margin-top: 39px;
             }
+
             .title {
                 position: absolute;
                 width: 100%;
                 text-align: center;
                 z-index: 20;
             }
+
             .title hr {
                 border-color: var(--gray-lightenest-color);
                 background: var(--gray-lightenest-color);
                 opacity: 0.3;
             }
+
             .title .text {
                 position: absolute;
                 color: var(--gray-darky-color);
@@ -130,10 +145,12 @@
                 top: -10px;
                 background: var(--white-color);
             }
+
             .header iron-icon {
                 width: 320px;
                 height: 50px;
             }
+
             .beta {
                 color: var(--white-color);
                 position: absolute;
@@ -143,28 +160,34 @@
                 font-size: 12px;
                 width: 100px;
             }
+
             /** CONTENT **/
             .wrapper > .content {
                 background: var(--designmap-login-form-content);
                 height: 100%;
                 padding: 20px 75px;
             }
+
             .wrapper button {
                 display: inline-block;
                 background: var(--blue-darker-color);
                 color: var(--white-color);
                 width: 100%;
             }
+
             .wrapper > .content button:hover {
                 background: var(--blue-super-dark-color);
             }
+
             .wrapper > .content .button-set {
                 text-align: center;
             }
+
             .wrapper > .content .button-set button {
                 display: inline-block;
                 width: 100%;
             }
+
             .wrapper > .content .msg, .msg {
                 display: block;
                 width: 100%;
@@ -174,16 +197,19 @@
                 font-size: 12px;
                 color: var(--blue-super-dark-color);
             }
+
             .wrapper > .content .msg:hover {
                 text-decoration: underline;
             }
+
             .wrapper > .content .forgot-msg {
                 display: inline-block;
                 cursor: pointer;
                 margin: 15px 0 9px 0;
                 font-size: 12px;
             }
-            .wrapper > .content  .forgot-msg:hover {
+
+            .wrapper > .content .forgot-msg:hover {
                 text-decoration: underline;
             }
 
@@ -191,6 +217,7 @@
                 color: var(--orange-color);
                 font-weight: bold;
             }
+
             /** Forgot password **/
             .forgot-password-form, .approval-form {
                 position: absolute;
@@ -201,16 +228,19 @@
                 transition: top .5s cubic-bezier(0.23, 1, 0.32, 1);
                 height: 325px;
             }
-            .forgot-password-form .content,.approval-form .content {
+
+            .forgot-password-form .content, .approval-form .content {
                 background: transparent;
                 height: 100%;
                 padding: 20px 75px;
             }
+
             .forgot-password-form .panel-title, .approval-form .panel-title {
                 width: 100%;
                 text-align: center;
                 font-size: 22px;
             }
+
             .forgot-password-form .msg, .approval-form .msg {
                 margin-top: 5px;
             }
@@ -225,6 +255,7 @@
                 padding-left: 5px;
                 padding-right: 5px;
             }
+
             .google-btn.twl {
                 font-size: 15px;
                 padding-top: 13px;
@@ -232,35 +263,33 @@
                 padding-left: 5px;
                 padding-right: 5px;
             }
+
             .twl:not(.google-btn) {
                 font-size: 16px;
                 padding-top: 12px;
                 padding-bottom: 12px;
                 vertical-align: top;
             }
+
             .linkers {
                 text-align: left;
                 width: 512px;
                 position: relative;
                 bottom: 20px;
             }
+
             .linkers a {
                 color: var(--gray-darky-color);
                 padding: 5px;
                 font-size: 12px;
                 font-weight: 100;
             }
+
             .fake-signup-title {
                 text-align: center;
                 padding-top: 33px;
             }
         </style>
-        <!--<google-signin-aware id="aware"
-                             on-google-signin-aware-success="googleSigninSuccess"
-                             on-google-signin-aware-error="googleSigninFailure"
-                             on-google-signin-aware-signed-out="googleSigninFailure"
-                             client-id="{{clientID}}"
-                             hosted-domain="{{hostedDomain}}"></google-signin-aware>-->
         <div class="wrapper">
             <div class="header-phantom"></div>
             <div class="header">
@@ -285,7 +314,7 @@
             <div class="forgot-password-form" id="forgotPasswordForm">
                 <div class="content" id="forgotPasswordFormContent">
                     <div class="panel-title">
-                        <i18-n msgid="Forgot password">Forgot password?</i18-n>
+                        <i18-n msgid="Forgot password?">Forgot password?</i18-n>
                     </div>
                     <div class="forgot-message">
                         <i18-n msgid="Restore message" hidden$="[[restoreMessageSent]]"></i18-n>
@@ -348,7 +377,8 @@
                                      exit-animation="[[exitAnimation]]">
                     <!-- Sign in -->
                     <neon-animatable id="animatable1">
-                        <paper-input is="iron-input" id="emailSignin" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
+                        <paper-input is="iron-input" id="emailSignin" required
+                                     pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
                                      on-cahange="authEmailChanged"
                                      label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
                                      type="email"></paper-input>
@@ -401,11 +431,9 @@
         </div>
     </template>
     <script>
-
-
         Polymer({
             is: 'designmap-login-form',
-            behaviors:[
+            behaviors: [
                 Polymer.DesignMapMessagesBehavior
             ],
             properties: {
@@ -419,6 +447,10 @@
                     value: null,
                     notify: true
                 },
+                config: {
+                    type: Object,
+                    value: {}
+                },
                 language: {
                     type: String,
                     value: 'en'
@@ -431,17 +463,19 @@
                     type: Number,
                     value: 0
                 },
-                clientID: {
-                    type: String,
-                    value: function () {
-                        return true
-                    }
+                approveMessageSent: {
+                    type: Boolean,
+                    value: false
+                },
+                restoreMessageSent: {
+                    type: Boolean,
+                    value: false
                 }
             },
             ready: function () {
-                this.async(function(){
+                this.async(function () {
                     this.i18Loaded = true;
-                },100)
+                }, 100)
             },
             /**
              * To provide right-left animation in form
@@ -463,7 +497,18 @@
              * Sign up using form
              */
             register: function (e) {
-
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.$.registerButton.loading) return;
+                this.$.registerButton.loading = true;
+                if (!(this.$.emailSignup.validate() && this.$.passwordSignup.validate())) {
+                    this.$.registerButton.loading = false;
+                    return this.showErrorMessage('AuthorizationFormWasFilledNotCorrectly');
+                }
+                const email = this.$.emailSignup.value;
+                const password = this.$.passwordSignup.value;
+                this.fire('register', {email: email, password: password});
+                this.$.registerButton.loading = false;
 
             },
             /**
@@ -481,7 +526,7 @@
                 const email = this.$.emailSignin.value;
                 const password = this.$.passwordSignin.value;
 
-                this.fire('login',{email:email,password:password});
+                this.fire('login', {email: email, password: password});
                 this.$.signInLoadingButton.loading = false;
             },
             /**
@@ -504,40 +549,35 @@
              * Create token for entering if user
              * forget a password
              */
-            creteToken: function (e) {
-
+            creteToken: async function (e) {
+                e.preventDefault();
+                e.stopPropagation();
+                if (this.$$('#restoreLoadingButton').loading) return;
+                this.restoreEmail = this.$$('#restorePasswordEmail').value;
+                this.$$('#restoreLoadingButton').loading = true;
+                if (!this.$$('#restorePasswordEmail').validate()) {
+                    this.$$('#restoreLoadingButton').loading = false;
+                    return this.showErrorMessage('EmailError');
+                }
+                const response = await axios.post(`${this.config.apiUrl}/token/entry`, {email: this.restoreEmail });
+                this.$$('#restoreLoadingButton').loading = false;
+                if (!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                this.restoreMessageSent = true;
             },
             /**
-             * If didn't received a mail with approving link -
+             * If use do not receive a mail with approving link -
              * resend it
              */
-            sendApprovingEmail: function () {
-
+            sendApprovingEmail: async function () {
+                this.approvingEmail = this.$$('#approvingEmail').value;
+                this.$$('#approvingButton').loading = true;
+                await axios.get(`${this.config.apiUrl}/token/reapprove?email=${this.approvingEmail}&lang=${this.language}`);
+                this.$$('#approvingButton').loading = false;
+                this.approveMessageSent = true;
             },
-            /**
-             * Click on Google Sign In button
-             */
-            googleAuth: function (e) {
-
-            },
-            /**
-             * Google sign-in success
-             */
-            googleSigninSuccess: function () {
-
-            },
-            /**
-             * When google sign in went wrong
-             */
-            googleSigninFailure: function () {
-
-            },
-            /**
-             * Sign in with google
-             * @param googleUser
-             */
-            signInWithGoogle: function (googleUser) {
-
+            googleAuth: async function(){
+                const profile = await main.gogoleSignIn();
+                this.fire('google-signin',profile);
             }
         })
     </script>

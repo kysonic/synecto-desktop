@@ -12,9 +12,11 @@
 <link rel="import" href="./designmap/designmap-login/designmap-login-form.html">
 <link rel="import" href="./designmap/designmap-toolbar/designmap-toolbar.html">
 <link rel="import" href="./designmap/designmap-ui/designmap-loading.html">
+<link rel="import" href="./designmap/designmap-settings/designmap-settings.html">
 <!-- Behaviors -->
 <link rel="import" href="../behaviors/designmap-messages-behavior.html">
 <link rel="import" href="../behaviors/designmap-utils-behavior.html">
+<link rel="import" href="../behaviors/designmap-socket-behavior.html">
 
 
 <dom-module id="designmap-app">
@@ -24,20 +26,22 @@
                 selected="[[screen]]"
                 attr-for-selected="name"
                 role="main">
-            <designmap-login-form id="login" user="{{user}}" language="[[language]]" system="{{system}}" name="login"></designmap-login-form>
+            <designmap-login-form id="login" user="{{user}}" config="[[config]]" language="[[language]]" system="{{system}}" name="login"></designmap-login-form>
             <designmap-toolbar id="toolbar" project="[[project]]" projects="[[projects]]" user="{{user}}" system="{{system}}" name="toolbar"></designmap-toolbar>
             <designmap-loading id="loading" name="loading"></designmap-loading>
+            <designmap-settings id="settings" user="[[user]]" config="[[config]]" system="{{system}}"  name="settings"></designmap-settings>
         </iron-pages>
     </template>
     <script>
-        const {ipcRenderer} = require('electron');
+        const {ipcRenderer,clipboard} = require('electron');
         const axios = require('axios');
         const db = remote.require('./main/db');
         Polymer({
             is: 'designmap-app',
             behaviors: [
                 Polymer.DesignMapMessagesBehavior,
-                Polymer.DesignMapUtilsBehavior
+                Polymer.DesignMapUtilsBehavior,
+                Polymer.DesignmapSocketBehavior
             ],
             properties: {
                 screen: {
@@ -47,6 +51,10 @@
                 system: {
                     type: Object,
                     value: {}
+                },
+                browserLanguage: {
+                    type: String,
+                    value: ''
                 },
                 user: {
                     type: Object,
@@ -71,12 +79,15 @@
             },
             listeners: {
               'login': '_login',
+              'google-signin': '_googleSignIn',
+              'register': '_register',
               'upload': '_uploadFile',
-              'select-project': '_selectProject',
-              'page-change': '_changePage'
+              'upload-directly': '_uploadFilesDirectly',
+              'select-project': '_selectProject'
             },
             observers: [
-                '_userChanged(user,config)'
+                '_userChanged(user,config)',
+                '_projectChanged(project,config)'
             ],
             /**
              * Establish communication between
@@ -85,21 +96,49 @@
              * change any property of main application
              */
             ready: function () {
-                ipcRenderer.on('appChange', (e, v, value)=> {
-                    this[v] = value;
-                });
+                ipcRenderer.on('appChange', (e, v, value)=> {this[v] = value;});
                 ipcRenderer.on('makeFramedScreenShot', (e,data)=>this._uploadFile({detail:data}));
             },
             _login: async function(e){
                 const {email,password} = e.detail;
                 const response = await axios.post(`${this.config.apiUrl}/app/user/login`, {email,password});
                 if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                // Update user in app store
                 const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
                 delete userData._id;
                 await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
                 this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
                 await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
                 this.system.account = this.user._userId;
+                main.showToolbar();
+                this.screen = 'toolbar';
+            },
+            _googleSignIn: async function (e) {
+                const gaData = e.detail;
+                const response = await axios.post(`${this.config.apiUrl}/app/user/google-registration`, {user:gaData});
+                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                // Update user in app store
+                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                delete userData._id;
+                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
+                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                this.system.account = this.user._userId;
+                main.showToolbar();
+                this.screen = 'toolbar';
+            },
+            _register: async function(e){
+                const {email,password} = e.detail;
+                const response = await axios.post(`${this.config.apiUrl}/app/user/register`, {email,password,lang:this.browserLanguage});
+                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                // Update user in app store
+                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                delete userData._id;
+                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
+                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                this.system.account = this.user._userId;
+                // Toolbar
                 main.showToolbar();
                 this.screen = 'toolbar';
             },
@@ -125,9 +164,27 @@
                 formData.append("file", e.detail);
                 const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
                 if(!response.data.success) return this.showError('Cannot upload file');
-                this.showMessage('Screenshot','Screenshot has been taken!');
+                this.showMessage(this.translate('Screenshot'),this.translate('Screenshot has been taken!'));
                 main.hideMainWindow();
+                Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
+                clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
                 //main.setToolbarSize();
+                this.screen = 'toolbar';
+            },
+            /**
+             * Upload files by "Upload" button
+             */
+            _uploadFilesDirectly: async function(e){
+                this.screen = 'loading';
+                main.showMainWindow();
+                const formData = new FormData();
+                const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
+                formData.append("file", e.detail.file);
+                if(!response.data.success) return this.showError('Cannot upload file');
+                this.showMessage(this.translate('File'),this.replaceExpressions(this.translate(`File "#FILENAME#" was uploaded successfully!`),{'#FILENAME#':this.cutFileName(response.data.file)}));
+                main.hideMainWindow();
+                Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
+                clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
                 this.screen = 'toolbar';
             },
             /**
@@ -136,7 +193,16 @@
              */
             _selectProject: function(e){
                 this.project = e.detail;
+            },
+            /**
+             * When project is changed we have to
+             * switch socket channel
+             * @private
+             */
+            _projectChanged: function(project,config) {
+                if(!project._id || !config.apiUrl) return;
+                this.setupSocket(project._id,'project',config.apiUrl);
             }
-        })
+        });
     </script>
 </dom-module>

@@ -1,0 +1,137 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+<dom-module is="designmap-file-button">
+    <template>
+        <style>
+            :host {
+                display: inline-block;
+                background: transparent;
+                border: 2px solid var(--white-color);
+                color: var(--white-color);
+                text-align: center;
+                padding: 10px 2em;
+                font-size: 18px;
+                margin: 10px 0;
+                cursor: pointer;
+                transition: background .2s;
+                /**/
+                overflow: hidden;
+                position: relative;
+            }
+            #files {
+                cursor: pointer;
+                position: absolute;
+                opacity: 0;
+                width: 100%;
+                height: 100%;
+                top: 0;
+                left: 0;
+            }
+            #file::-webkit-file-upload-button {
+                cursor: pointer;
+            }
+            :host(:hover) {
+                background: rgba(256,256,256,0.5);
+                transition: background .2s;
+            }
+            :host([fit]) {
+                width: 100%;
+                padding: 10px 0;
+            }
+            :host([thin]) {
+                border: 1px solid var(--white-color);
+                font-family: 'Open Sans', sans-serif;
+                font-weight: 300;
+            }
+            #content {
+                visibility: hidden;
+            }
+            label {
+                width: 100%;
+                height: 100%;
+                position: absolute;
+                left:0px;
+                top: 0px;
+                padding: 10px 0em;
+                background: var(--blue-darkest-color);
+            }
+            :host(:hover) label {
+                background: var(--blue-color);
+            }
+
+            :host([gray]) {
+                color: var(--gray-darkend-color);
+                border-color: var(--gray-darkend-color);
+            }
+            :host([gray]:hover) {
+                background: rgba(0,0,0,0.05);
+                transition: background .2s;
+            }
+
+            :host([blue]) {
+                color: var(--white-color);
+                border-color: var(--blue-darky-color);
+                background: var(--blue-darkest-color);
+                transition: background .2s;
+            }
+            :host([blue]:hover) {
+                background: var(--blue-darky-color);;
+                transition: background .2s;
+            }
+
+        </style>
+        <input id="files" type="file" on-change="changeFiles" multiple="[[multiple]]" name="[[name]]" >
+        <content></content>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-file-button',
+            properties: {
+                name: {
+                    type: String
+                },
+                multiple:{
+                    type: String
+                },
+                files: {
+                    type: Array,
+                    value: [],
+                    notify:true
+                },
+                allowedExtension: {
+                    type: Array
+                },
+                label: {
+                  type: String,
+                  value: 'Choose file'
+                }
+            },
+            /**
+             * If files was changed
+             */
+            changeFiles: function(){
+                this.fire('change');
+                [].forEach.call(this.$.files.files,function(file){
+                    var splitter = file.name.split('.');
+                    var ext = '.'+splitter[splitter.length-1];
+                    if(this.allowedExtension && this.allowedExtension.length && this.allowedExtension.indexOf(ext.toLowerCase())==-1) return this.fire('notallowed',{ext:ext});
+                    this.push('files',file);
+                }.bind(this));
+
+            },
+            /**
+             * Reset file input.
+             */
+            reset: function(){
+                this.$.files.value = '';
+                this.files = [];
+            },
+            /**
+             * Process label
+             */
+            processLabel: function(label){
+              return label;
+            }
+        })
+    </script>
+</dom-module>

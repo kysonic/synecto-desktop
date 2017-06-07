@@ -1,6 +1,7 @@
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
 <link rel="import" href="./designmap-project-select.html">
 <link rel="import" href="../designmap-buttons/designmap-loading-button.html">
+<link rel="import" href="../designmap-buttons/designmap-file-button.html">
 
 <dom-module id="designmap-toolbar">
 
@@ -20,7 +21,7 @@
                 background-color: var(--white-color);
             }
 
-            .question,.gear {
+            .question, .gear {
                 padding: 5px;
                 cursor: pointer;
                 transition: .2s background;
@@ -43,11 +44,13 @@
                 z-index: 20;
                 margin: 30px 0;
             }
+
             .title hr {
                 border-color: var(--gray-lightenest-color);
                 background: var(--gray-lightenest-color);
                 opacity: 0.3;
             }
+
             .title .text {
                 position: absolute;
                 color: var(--gray-darky-color);
@@ -57,34 +60,52 @@
                 width: 100%;
                 background: var(--white-color);
             }
+
             .title .text i18-n {
                 position: relative;
                 top: -22px;
                 padding: 0 10px;
                 background: var(--white-color);
             }
+
             .button-set {
                 margin-top: 73px;
                 display: flex;
                 justify-content: space-around;
             }
+
             .button-set > button {
                 display: inline-block;
                 width: calc(50% - 10px);
                 font-size: 15px;
                 padding: 12px 5px;
             }
+
             .button-set > button:first-child {
                 margin-left: 0;
             }
+            designmap-file-button {
+                margin-top: 25px;
+                margin-bottom: 0;
+            }
         </style>
         <div class="header">
-            <iron-icon class="gear" icon="designmap:gear"></iron-icon>
+            <iron-icon class="gear" icon="designmap:gear" on-click="goToSettings"></iron-icon>
             <iron-icon class="question" icon="designmap:question"></iron-icon>
         </div>
         <div class="content">
             <designmap-project-select project="[[project]]" projects="[[projects]]"></designmap-project-select>
-            <button is="designmap-loading-button" on-click="openFileDialog" fit blue thin class="upload-button"><i18-n msgid="Upload">Upload</i18-n></button>
+            <!--<button is="designmap-loading-button" on-click="openFileDialog" fit blue thin class="upload-button">
+                <i18-n msgid="Upload">Upload</i18-n>
+            </button>-->
+            <designmap-file-button fit blue thin name="files[]"
+                                   files="{{buttonFiles}}"
+                                   allowed-extension="[[allowedExtension]]"
+                                   class="upload-button"
+                                   on-change="_buttonFilesChanged"
+                                   on-notallowed="_showFilesNotAllowedError" multiple="multiple" id="files">
+                <i18-n msgid="Upload">Upload</i18-n>
+            </designmap-file-button>
             <div class="title">
                 <div class="text">
                     <hr/>
@@ -105,7 +126,12 @@
     <script>
         const {remote} = require('electron');
         const main = remote.require('./main');
+        const bluebird = require('bluebird');
+        const fs = require('fs');
+        const path = require('path');
+        const readFileAsync = bluebird.promisify(fs.readFile);
         const {takeFullScreen} = require('./libs/screenshot');
+        const concat = require('concat-stream');
         Polymer({
             is: 'designmap-toolbar',
             behaviors: [
@@ -116,27 +142,51 @@
                     type: Object,
                     value: {}
                 },
+                allowedExtension: {
+                    type: Array,
+                    value: [".jpg", ".png", ".gif", ".ttf", ".bmp", ".jpg", ".psd", ".eps", ".ai", ".pdf", ".zip", ".rar", ".txt", ".docx", ".ttf", ".eot"]
+                },
                 projects: {
+                    type: Array,
+                    value: []
+                },
+                buttonFiles: {
                     type: Array,
                     value: []
                 }
             },
             ready: function () {
-                ipcRenderer.on('makeSnapshot', this.makeFullScreenShot);
+                ipcRenderer.on('makeSnapshot', this.makeFullScreenShot.bind(this));
+                ipcRenderer.on('makeFramedSnapshot', this.makeFrameScreenShot.bind(this));
+                ipcRenderer.on('uploadFiles', this.openFileDialog.bind(this));
+                this.app = document.querySelector('designmap-app');
             },
             makeFullScreenShot: function () {
                 main.hideMainWindow();
-                takeFullScreen((image)=>{
+                takeFullScreen((image) => {
                     const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
                     this.fire('upload', base64Data);
                 });
             },
-            makeFrameScreenShot: function(){
+            makeFrameScreenShot: function () {
                 main.hideMainWindow();
                 main.createOverlayWindow();
             },
-            openFileDialog: function(){
-                //console.log(remote.dialog.showOpenDialog({properties: ['openFile', 'openDirectory', 'multiSelections']}))
+            openFileDialog: async function () {
+                this.$.files.$.files.click();
+            },
+            _buttonFilesChanged: async function () {
+                if (!this.buttonFiles.length) return;
+                for (let file of this.buttonFiles) {
+                    await this.app._uploadFilesDirectly({detail: {file: file}});
+                }
+                this.buttonFiles = [];
+            },
+            _showFilesNotAllowedError: function(){
+                this.showErrorMessage('File with this extension cannot be uploaded in Designmap.')
+            },
+            goToSettings: function(){
+                this.app.screen = 'settings';
             }
         });
     </script>

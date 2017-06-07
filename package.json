@@ -17,6 +17,8 @@
   "dependencies": {
     "axios": "^0.16.1",
     "bluebird": "^3.5.0",
+    "concat-stream": "^1.6.0",
+    "electron-google-oauth": "^2.0.0",
     "nedb": "^1.8.0",
     "os-locale": "^2.0.0"
   }

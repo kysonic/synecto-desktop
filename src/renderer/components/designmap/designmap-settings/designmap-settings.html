@@ -1,0 +1,132 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
+<link rel="import" href="../designmap-ui/designmap-language-switcher.html">
+<link rel="import" href="../designmap-ui/designmap-avatar-projector.html">
+
+<dom-module id="designmap-settings">
+    <template>
+        <style>
+            :host {
+                --designmap-avatar-projector-mixin: {
+                    width: 50px;
+                    height: 50px;
+                    line-height: 50px;
+                };
+                --designmap-avatar-projector-text-mixin: {
+                    font-size: 24px;
+                }
+            }
+            *[hidden] {
+                display: none !important;
+            }
+            .header {
+                height: 40px;
+                width: 100%;
+                background-color: var(--blue-darkest-color);
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+            }
+
+            .content {
+                padding: 30px;
+                background-color: var(--white-color);
+            }
+
+            .question, .gear {
+                padding: 5px;
+                cursor: pointer;
+                transition: .2s background;
+                border-radius: 50%;
+                --iron-icon-stoke-color: var(--white-color);
+                --iron-icon-fill-color: var(--white-color);
+            }
+
+            .question:hover, .gear:hover {
+                background: var(--blue-color);
+                transition: .2s background;
+            }
+            .block {
+                display: flex;
+                align-items: center;
+            }
+
+            .user {
+                display: flex;
+                align-items: center;
+                justify-content: flex-start;
+            }
+            .name {
+                color: var(--gray-darkend-color);
+                font-size: 20px;
+                display: flex;
+                align-items: center;
+            }
+            .name .firstName, .name .lastName {
+                display: inline-block;
+            }
+
+            .name .lastName {
+                margin-left: 10px;
+            }
+            .name .email {
+                font-weight: 100;
+                font-size: 14px;
+            }
+            .name .email.big {
+                font-size: 20px;
+            }
+        </style>
+        <div class="header">
+            <iron-icon class="gear" icon="icons:arrow-back" on-click="goToToolbar"></iron-icon>
+            <iron-icon class="question" icon="designmap:question"></iron-icon>
+        </div>
+        <div class="content">
+            <div class="block">
+                <div class="user">
+                    <designmap-avatar-projector user="[[user]]" config="[[config]]"></designmap-avatar-projector>
+                    <div class="name">
+                        <div class="firstName">[[user.name]]</div>
+                        <div class="lastName">[[user.lastName]]</div>
+                        <div class$="email [[_isThereName(user)]]">[[user.local.email]]</div>
+                    </div>
+                </div>
+                <div class="logout">
+                    <i18-n msgid="Signout">Signout</i18-n>
+                </div>
+            </div>
+            <label><i18-n msgid="Change language">Change language</i18-n></label>
+            <designmap-language-switcher system="[[system]]"></designmap-language-switcher>
+        </div>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-settings',
+            behaviors: [],
+            properties: {
+                system: {
+                    type: Object,
+                    value: {}
+                },
+                config: {
+                    type: Object,
+                    value: {}
+                },
+                user: {
+                    type: Object,
+                    value: {}
+                }
+            },
+            ready: function(){
+                this.app = document.querySelector('designmap-app');
+            },
+            goToToolbar: function(){
+                this.app.screen = 'toolbar';
+            },
+            _isThereName: function(user) {
+                const isThereName = user.profile && (user.profile.name || user.profile.lastName);
+                return isThereName?'small':'big';
+            }
+        })
+    </script>
+</dom-module>

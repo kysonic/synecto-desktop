@@ -1,0 +1,37 @@
+<script>
+    Polymer.DesignmapSocketBehavior = {
+        /**
+         * Setup socket
+         */
+        setupSocket: function (roomId, type, apiUrl) {
+            this.type = type;
+            //if (Designmap[type+'Socket']) Designmap[type+'Socket'].disconnect();
+            if (!Designmap[type+'Socket']) {
+                this.roomId = roomId;
+                // Connect to appropriate room created specially for this project.
+                Designmap[type+'Socket'] = io.connect(apiUrl, {query: 'room=' + roomId});
+                this.setupSocketSubscribers(type);
+            } else if(roomId) {
+                if(this.roomId==roomId) return;
+                this.roomId = roomId;
+                // Change room
+                Designmap[type+'Socket'].emit('change-room',{room:this.roomId});
+                console.log('Change '+type+' room on '+this.roomId);
+            }
+        },
+        /**
+         * Socket subscribers
+         */
+        setupSocketSubscribers: function (type) {
+            Designmap[type+'Socket'].on('connect', function () {
+                console.log('DesignMap '+type+' socket is connected. Room ='+this.roomId);
+            }.bind(this));
+        },
+        /**
+         * Add custom socket subscriber
+         */
+        addSocketSubscriber: function(type,name,cb){
+            Designmap[type+'Socket'].on(name,cb);
+        }
+    }
+</script>

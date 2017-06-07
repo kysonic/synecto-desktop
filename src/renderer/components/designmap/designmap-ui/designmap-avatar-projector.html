@@ -1,0 +1,84 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+
+<dom-module is="designmap-avatar-projector">
+    <template>
+        <style>
+            /** ASSIGNED **/
+            :host {
+                display: block;
+                position: relative;
+                overflow: hidden;
+                width: 30px;
+                height: 30px;
+                border-radius: 50%;
+                color: var(--white-color);
+                background: var(--blue-color);
+                font-family: 'Open Sans'; font-weight: 300;
+                font-size: 20px;
+                text-transform: uppercase;
+                text-align: center;
+                line-height: 30px;
+                cursor: pointer;
+                @apply(--designmap-avatar-projector-mixin);
+            }
+            :host img {
+                width: 100%;
+                height: 100%;
+                max-width: 100%;
+                vertical-align: top;
+            }
+            :host:hover .details{
+                display: block;
+                animation: appearance .3s forwards 1s;
+                transition: opacity .3s 1s;
+            }
+
+            .text {
+                font-size: 14px;
+                @apply(--designmap-avatar-projector-text-mixin);
+            }
+
+            @keyframes appearance {
+                from {
+                    opacity: 0;
+                }
+                to {
+                    opacity: 1;
+                }
+            }
+
+        </style>
+        <template is="dom-if" if="[[user.profile.avatar]]">
+            <img src="[[computeAvatarPath(user.profile.avatar)]]" title="[[user.local.email]]">
+        </template>
+        <template is="dom-if" if="[[!user.profile.avatar]]">
+            <div class="text"> [[computeName(user)]]</div>
+        </template>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-avatar-projector',
+            behaviors: [Polymer.DesignMapUtilsBehavior],
+            properties: {
+                user: {
+                    type: Object,
+                    value: {}
+                },
+                config: {
+                    type: Object,
+                    value: {}
+                }
+            },
+            computeAvatarPath: function (path) {
+                if (!path) return '';
+                if (/images/.test(path)) return path + '?v=' + this.generateUid();
+                return this.config.apiURL + path + '?v=' + this.generateUid();
+            },
+            computeName: function (user) {
+                if (typeof user == 'string') return '...';
+                if(!user.profile) return '...';
+                return user ? user.profile.name && user.lastName ? user.profile.name[0] + user.profile.lastName[0] : user.local.email[0] : 'XX';
+            }
+        })
+    </script>
+</dom-module>

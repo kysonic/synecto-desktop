@@ -1,11 +1,26 @@
 /**
- * It is an entry point of entire Designmap SCR Application
+ * It is an entry point of entire Designmapp
  * Here we go with windows, keys, trays and another stuff.
  */
 
 const electron = require('electron');
 const {app, globalShortcut, BrowserWindow, Menu, Tray} = electron;
 const osLocale = require('os-locale');
+const locales = {
+    ru: require('./locales/ru.json'),
+    en: require('./locales/en.json')
+}
+
+const axios = require('axios');
+
+const electronGoogleOauth = require('electron-google-oauth');
+
+let browserLanguage = 'en';
+
+osLocale().then(locale => browserLanguage=locale.substr(0,2));
+
+// Configs
+app.setName('Designmap');
 
 const path = require('path');
 const url = require('url');
@@ -13,20 +28,29 @@ const config = require('./config');
 
 const WINDOW_DIMS = {width: 400,height:390};
 
+const os = /^win/.test(process.platform) ? 'win':'mac';
+
+const HOT_KEYS = {
+    win: {
+        makeFullScreenShot: 'PrintScreen',
+        makeFramedScreenShot: 'Ctrl+PrintScreen',
+        uploadFiles: 'Ctrl+Alt+U'
+    },
+    mac: {
+        makeFullScreenShot: 'Cmd+4',
+        makeFramedScreenShot: 'Cmd+Option+4',
+        uploadFiles: 'Cmd+Option+U'
+    }
+}
+
 // Data store
 
 const db = require('./main/db');
-
-let browserLanguage = 'en';
-
-osLocale().then(locale => browserLanguage=locale.substr(0,2));
 
 let tray = null;
 let system = null;
 let user = null;
 let screen = 'login';
-
-app.dock.hide();
 
 db.loadDatabase(async (err)=>{
     if(err) throw new Error(err);
@@ -58,19 +82,18 @@ const createWindow =  ()=>{
     }))
 
     //mainWindow.webContents.openDevTools()
-    globalShortcut.register('Control+PrintScreen',()=>{
-        mainWindow.webContents.send('makeSnapshot');
-    });
-
-    globalShortcut.register('Command+Option+4',()=>{
-        mainWindow.webContents.send('makeSnapshot');
-    });
+    // ShortCuts
+    globalShortcut.register(HOT_KEYS[os].makeFullScreenShot,()=>mainWindow.webContents.send('makeSnapshot'));
+    globalShortcut.register(HOT_KEYS[os].makeFramedScreenShot,()=>mainWindow.webContents.send('makeFramedSnapshot'));
+    /*globalShortcut.register(HOT_KEYS[os].uploadFiles,()=>mainWindow.webContents.send('uploadFiles'));*/
 
     mainWindow.webContents.on('did-finish-load',()=>{
         mainWindow.webContents.send('appChange','system',system);
         mainWindow.webContents.send('appChange','user',user);
         mainWindow.webContents.send('appChange','screen',screen);
+        mainWindow.webContents.send('appChange','browserLanguage',browserLanguage);
         mainWindow.webContents.send('appChange','config',config);
+        mainWindow.center();
     });
 
     // Emitted when the window is closed.
@@ -83,7 +106,7 @@ const createWindow =  ()=>{
 
     // Emitted when the window is closed.
     mainWindow.on('blur', function () {
-        mainWindow.hide();
+        if(user) mainWindow.hide();
     })
 }
 
@@ -122,6 +145,7 @@ module.exports.logout = async function(){
     showLoginForm();
     mainWindow.webContents.send('appChange','user',null);
     mainWindow.webContents.send('appChange','screen','login');
+    app.dock.show();
 }
 
 module.exports.showLoginForm = showLoginForm.bind(this);
@@ -134,22 +158,21 @@ module.exports.showToolbar = function(){
 }
 
 module.exports.setupTray = function(){
-    tray = new Tray(path.join(__dirname,'../assets/images/tray.png'))
-
+    tray = new Tray(path.join(__dirname,'../assets/images/tray.png'));
     const contextMenu = Menu.buildFromTemplate([
-        {label: 'Take a shot', type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
-        {label: 'Logout', type: 'normal',click: this.logout },
-        {label: 'Exit', type: 'normal', click:()=>{app.quit();}}
+        {label: _translate('Open dashboard'), type: 'normal',click: this.openDashBoard},
+        {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
+        {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
+        /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
+        {label: _translate('Logout'), type: 'normal',click: this.logout },
+        {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
     ]);
 
     tray.setToolTip('Designmap');
     tray.setContextMenu(contextMenu);
 
-    tray.on('right-click', () => {
-        const {x,y,width} = tray.getBounds();
-        mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-        mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
-    });
+    tray.on('right-click', this.openDashBoard);
+    app.dock.hide();
 }
 
 module.exports.createOverlayWindow = function(){
@@ -166,14 +189,12 @@ module.exports.createOverlayWindow = function(){
     });
 };
 
-module.exports.makeFramedScreenShot = function(data){
-    mainWindow.webContents.send('makeFramedScreenShot',data);
+module.exports.makeFramedScreenShot = function(data) {
+    mainWindow.webContents.send('makeFramedScreenShot', data);
 }
-
 module.exports.closeOverlayWindow = function(data){
     overlayWindow.destroy();
 }
-
 module.exports.hideMainWindow = function(){
     mainWindow.hide();
 }
@@ -186,9 +207,56 @@ module.setLoadingSize = function(){
 module.setToolbarSize = function(){
     mainWindow.setSize(400,390);
 }
-
 module.exports.hideOverlayWindow = function(){
     overlayWindow.hide();
 }
+module.exports.openDashBoard = function(){
+    const {x,y,width} = tray.getBounds();
+    mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
+    mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
+}
+
+function _translate(msg) {
+    const translated = locales[system.language][msg];
+    return translated?translated.message:msg;
+}
+
+const browserWindowParams = {
+    'use-content-size': true,
+    center: true,
+    show: true,
+    resizable: false,
+    'always-on-top': true,
+    'standard-window': true,
+    'auto-hide-menu-bar': true,
+    'node-integration': false
+};
+
+
+
+module.exports.gogoleSignIn = async function(){
+    let goaData = await db.findOneAsync({'goa':true});
+    if(!goaData) goaData = await _fetchGoaData();
+    const response = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${goaData.access_token}`);
+    return response.data;
+}
+
+async function _fetchGoaData(){
+    const googleOauth = electronGoogleOauth(browserWindowParams);
+    // retrieve access token and refresh token
+    const goaData = await googleOauth.getAccessToken(
+        ['https://www.googleapis.com/auth/plus.me',
+         'https://www.googleapis.com/auth/userinfo.profile',
+         'openid','email','profile'
+        ],
+        '32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com',
+        'cg_-cpgzt3xgemmquOmvNq5L'
+    );
+    // Save creds in db
+    await db.updateAsync({'goa':true},Object.assign({goa:true},goaData),{upsert:true});
+    return goaData;
+}
+
+
 
 

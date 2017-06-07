@@ -1,5 +1,6 @@
 module.exports = {
     apiUrl: "http://localhost:4000",
+    frontUrl: "http://localhost:5000",
     oauth: {
         dropBox: {
             clientID: '8fvewpw5l3mxxye',
