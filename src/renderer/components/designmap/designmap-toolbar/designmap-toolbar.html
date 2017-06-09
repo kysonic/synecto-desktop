@@ -15,6 +15,12 @@
                 align-items: center;
                 justify-content: flex-end;
             }
+            .grab {
+                flex: 20;
+                -webkit-app-region: drag;
+                height: 40px;
+                cursor: move;
+            }
 
             .content {
                 padding: 30px;
@@ -93,7 +99,8 @@
                 margin-bottom: 0;
             }
         </style>
-        <div class="header" style="-webkit-app-region: drag">
+        <div class="header">
+            <div class="grab"></div>
             <iron-icon class="gear" icon="designmap:gear" on-click="goToSettings"></iron-icon>
             <iron-icon class="question" icon="designmap:question"></iron-icon>
         </div>

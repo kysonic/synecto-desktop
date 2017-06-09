@@ -13,7 +13,8 @@
   "dependencies": {
     "polymer": "Polymer/polymer#^1.0.0",
     "socket.io-client": "^1.7.2",
-    "iron-icon": "PolymerElements/iron-icon#^1.0.0",
+    "iron-icon": "kysonic/iron-icon#designmap",
+    "iron-iconset-svg": "kysonic/iron-iconset-svg#designmap",
     "iron-icons": "PolymerElements/iron-icons#^1.0.0",
     "google-signin": "GoogleWebComponents/google-signin#^1.3.7",
     "i18-n": "kysonic/i18-n#^1.2.2",

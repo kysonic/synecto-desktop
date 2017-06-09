@@ -7,9 +7,11 @@
             let msg = this.i18nDomain.getMsg(message) || message;
             if(replacement) msg = this.replaceExpressions(msg,replacement);
             // Show message
+
             new Notification(title, {
                 body: message
             });
+
         },
         showErrorMessage: function(message,replacement){
             let msg = this.i18nDomain.getMsg(message) || message;

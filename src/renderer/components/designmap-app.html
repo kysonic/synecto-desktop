@@ -21,6 +21,15 @@
 
 <dom-module id="designmap-app">
     <template>
+        <style>
+            :host {
+                display: block;
+                height: calc(100vh - 3px);
+            }
+            :host(.win) {
+                border: 1px solid #979797;
+            }
+        </style>
         <i18-n-domain id="i18nDomain" locale="[[language]]" messages-url="../locales"></i18-n-domain>
         <iron-pages
                 selected="[[screen]]"
@@ -88,7 +97,8 @@
             observers: [
                 '_userChanged(user,config)',
                 '_projectChanged(project,config)',
-                '_updateLanguage(system.language)'
+                '_updateLanguage(system.language)',
+                '_osChanged(config.os)'
             ],
             /**
              * Establish communication between
@@ -221,6 +231,9 @@
                 system.language = language;
                 await db.updateAsync({_id:this.system._id},{$set:{language:language}});
                 main._changeLanguage(language);
+            },
+            _osChanged: function(os){
+                if(os) this.classList.add(os);
             }
         });
     </script>

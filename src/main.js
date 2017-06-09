@@ -4,7 +4,7 @@
  */
 
 const electron = require('electron');
-const {app, globalShortcut, BrowserWindow, Menu, Tray} = electron;
+const {app, globalShortcut, BrowserWindow, Menu, Tray, Notification} = electron;
 const osLocale = require('os-locale');
 const locales = {
     ru: require('./locales/ru.json'),
@@ -30,16 +30,16 @@ const WINDOW_DIMS = {width: 400,height:390};
 
 const os = /^win/.test(process.platform) ? 'win':'mac';
 
+config.os = os;
+
 const HOT_KEYS = {
     win: {
         makeFullScreenShot: 'PrintScreen',
         makeFramedScreenShot: 'Ctrl+PrintScreen',
-        uploadFiles: 'Ctrl+Alt+U'
     },
     mac: {
         makeFullScreenShot: 'Cmd+4',
-        makeFramedScreenShot: 'Cmd+Option+4',
-        uploadFiles: 'Cmd+Option+U'
+        makeFramedScreenShot: 'Cmd+Option+4'
     }
 }
 
@@ -173,8 +173,8 @@ module.exports.setupTray = function(){
     tray.setToolTip('Designmap');
     tray.setContextMenu(contextMenu);
 
-    tray.on(os=='mac'?'right-click':'left-click', this.openDashBoard);
-    app.dock.hide();
+    tray.on(os=='mac'?'right-click':'click', this.openDashBoard);
+    if(app.dock) app.dock.hide();
 }
 
 module.exports.createOverlayWindow = function(){
@@ -204,7 +204,7 @@ module.exports.showMainWindow = function(){
     mainWindow.show();
 }
 module.exports.setLoadingSize = function(){
-    mainWindow.setSize(400,140,true);
+    mainWindow.setSize(400,150,true);
 }
 module.exports.setToolbarSize = function(){
     mainWindow.setSize(400,390);
