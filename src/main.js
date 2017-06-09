@@ -13,7 +13,7 @@ const locales = {
 
 const axios = require('axios');
 
-const electronGoogleOauth = require('electron-google-oauth');
+const gapi = require('./main/gapi');
 
 let browserLanguage = 'en';
 
@@ -106,7 +106,7 @@ const createWindow =  ()=>{
 
     // Emitted when the window is closed.
     mainWindow.on('blur', function () {
-        if(user) mainWindow.hide();
+        if(system && system.account) mainWindow.hide();
     })
 }
 
@@ -141,11 +141,13 @@ function showLoginForm(){
 }
 
 module.exports.logout = async function(){
+    system.account = false;
     await db.updateAsync({_id:system._id},{$set:{account:false}});
     showLoginForm();
     mainWindow.webContents.send('appChange','user',null);
     mainWindow.webContents.send('appChange','screen','login');
     app.dock.show();
+    mainWindow.show();
 }
 
 module.exports.showLoginForm = showLoginForm.bind(this);
@@ -171,7 +173,7 @@ module.exports.setupTray = function(){
     tray.setToolTip('Designmap');
     tray.setContextMenu(contextMenu);
 
-    tray.on('right-click', this.openDashBoard);
+    tray.on(os=='mac'?'right-click':'left-click', this.openDashBoard);
     app.dock.hide();
 }
 
@@ -201,10 +203,10 @@ module.exports.hideMainWindow = function(){
 module.exports.showMainWindow = function(){
     mainWindow.show();
 }
-module.setLoadingSize = function(){
-    mainWindow.setSize(200,200);
+module.exports.setLoadingSize = function(){
+    mainWindow.setSize(400,140,true);
 }
-module.setToolbarSize = function(){
+module.exports.setToolbarSize = function(){
     mainWindow.setSize(400,390);
 }
 module.exports.hideOverlayWindow = function(){
@@ -217,7 +219,7 @@ module.exports.openDashBoard = function(){
 }
 
 function _translate(msg) {
-    const translated = locales[system.language][msg];
+    const translated = locales[system.language]?locales[system.language][msg]:null;
     return translated?translated.message:msg;
 }
 
@@ -232,19 +234,36 @@ const browserWindowParams = {
     'node-integration': false
 };
 
+const googleClient = gapi(browserWindowParams);
+
 
 
 module.exports.gogoleSignIn = async function(){
     let goaData = await db.findOneAsync({'goa':true});
     if(!goaData) goaData = await _fetchGoaData();
+    if(goaData.foulDate<new Date().getTime()) goaData = await _refreshToken(goaData);
     const response = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${goaData.access_token}`);
     return response.data;
 }
 
+module.exports._changeLanguage = async function(language){
+    system.language = language;
+    if(!tray) return;
+    const contextMenu = Menu.buildFromTemplate([
+        {label: _translate('Open dashboard'), type: 'normal',click: this.openDashBoard},
+        {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
+        {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
+        /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
+        {label: _translate('Logout'), type: 'normal',click: this.logout },
+        {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
+    ]);
+    tray.setContextMenu(contextMenu);
+}
+
 async function _fetchGoaData(){
-    const googleOauth = electronGoogleOauth(browserWindowParams);
+
     // retrieve access token and refresh token
-    const goaData = await googleOauth.getAccessToken(
+    const goaData = await googleClient.getAccessToken(
         ['https://www.googleapis.com/auth/plus.me',
          'https://www.googleapis.com/auth/userinfo.profile',
          'openid','email','profile'
@@ -252,9 +271,20 @@ async function _fetchGoaData(){
         '32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com',
         'cg_-cpgzt3xgemmquOmvNq5L'
     );
+    // Establish expiration date
+    const d = new Date();
+    goaData.foulDate = d.getTime() + goaData.expires_in*1000;
     // Save creds in db
     await db.updateAsync({'goa':true},Object.assign({goa:true},goaData),{upsert:true});
     return goaData;
+}
+
+async function _refreshToken(goaData){
+    const response = await googleClient.refreshToken('32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com','cg_-cpgzt3xgemmquOmvNq5L',goaData.refresh_token);
+    const updatedGoa = Object.assign(goaData,response);
+    updatedGoa.foulDate = new Date().getTime() + response.expires_in*1000;
+    await db.updateAsync({'goa':true},updatedGoa,{upsert:true});
+    return updatedGoa;
 }
 
 

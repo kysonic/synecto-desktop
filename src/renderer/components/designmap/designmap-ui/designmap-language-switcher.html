@@ -53,8 +53,12 @@
                     observer: '_languageChanged'
                 }
             },
+            ready: function(){
+                this.app = document.querySelector('designmap-app');
+            },
             checkLanguage: function (e) {
-                console.log(e.model.index);
+                this.selected = e.model.index;
+                this.app.set('system.language',this.languages[e.model.index].code);
             },
             computeClass: function (index, selected) {
                 return index == selected ? 'selected language-button' : 'language-button';

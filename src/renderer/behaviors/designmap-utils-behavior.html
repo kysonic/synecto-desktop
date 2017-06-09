@@ -12,6 +12,16 @@
             file.data.name = file.data.name.replace(file.folder+"-","");
             file.data.name = file.data.name.replace(file.project+"-","");
             return file.data.name;
+        },
+        /**
+         * Additional function allowing to
+         * create unique id for
+         * @param len - length
+         * @returns {string}
+         */
+        generateUid: function (len) {
+            len = len || 7;
+            return Math.random().toString(35).substr(2, len).replace(/\d+/, '');
         }
     }
 </script>

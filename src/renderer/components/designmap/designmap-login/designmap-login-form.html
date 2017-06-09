@@ -15,6 +15,7 @@
 <link rel="import" href="../designmap-icons/designmap-logo-icons.html">
 <!-- Behaviors -->
 <link rel="import" href="../../../behaviors/designmap-messages-behavior.html">
+<link rel="import" href="../../../behaviors/designmap-utils-behavior.html">
 
 <dom-module id="designmap-login-form">
     <template>
@@ -292,7 +293,7 @@
         </style>
         <div class="wrapper">
             <div class="header-phantom"></div>
-            <div class="header">
+            <div class="header" style="-webkit-app-region: drag">
                 <iron-icon class="logo-icon" icon="designmap-logo:logo"></iron-icon>
                 <div class="beta">demo v 0.1</div>
             </div>
@@ -326,7 +327,7 @@
                     <template is="dom-if" if="[[!restoreMessageSent]]">
                         <paper-input id="restorePasswordEmail" required
                                      pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
-                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18nLoaded)]]"
                                      type="email"></paper-input>
                         <iron-a11y-keys id="a11ForgotPassword" keys="enter" target="[[this.$.restorePasswordEmail]]"
                                         on-keys-pressed="creteToken"></iron-a11y-keys>
@@ -356,7 +357,7 @@
                     <template is="dom-if" if="[[!approveMessageSent]]">
                         <paper-input id="approvingEmail" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
                                      label="E-mail"
-                                     error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     error-message="[[translate('EmailError',language,i18nLoaded)]]"
                                      type="email"></paper-input>
                         <iron-a11y-keys id="a11ApprovingEmail" keys="enter" target="[[this.$.approvingEmail]]"
                                         on-keys-pressed="sendApprovingEmail"></iron-a11y-keys>
@@ -380,13 +381,13 @@
                         <paper-input is="iron-input" id="emailSignin" required
                                      pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
                                      on-cahange="authEmailChanged"
-                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18nLoaded)]]"
                                      type="email"></paper-input>
                         <iron-a11y-keys id="a11One" keys="enter" target="[[this.$.emailSignin]]"
                                         on-keys-pressed="login"></iron-a11y-keys>
                         <paper-input id="passwordSignin" required name="passwordSignin" auto-validate pattern=".{4,}"
-                                     error-message="[[translate('PasswordError',language,i18Loaded)]]"
-                                     label="[[translate('Password',language,i18Loaded)]]"
+                                     error-message="[[translate('PasswordError',language,i18nLoaded)]]"
+                                     label="[[translate('Password',language,i18nLoaded)]]"
                                      type="password"></paper-input>
                         <a class="forgot-msg" on-click="openPanel" data-panel="forgotPasswordForm">
                             <i18-n msgid="Forgot password?">Forgot password?</i18-n>
@@ -405,13 +406,13 @@
                     <neon-animatable id="animatable2">
                         <paper-input id="emailSignup" required pattern="[a-zA-Z0-9-_]*.[a-zA-Z0-9-_]*@\w*.\w.\S*"
                                      value="{{registerEmail::keyup}}"
-                                     label="E-mail" error-message="[[translate('EmailError',language,i18Loaded)]]"
+                                     label="E-mail" error-message="[[translate('EmailError',language,i18nLoaded)]]"
                                      type="email"></paper-input>
                         <iron-a11y-keys id="a11Two" keys="enter" target="[[this.$.emailSignup]]"
                                         on-keys-pressed="register"></iron-a11y-keys>
                         <paper-input id="passwordSignup" required name="passwordSignup" on-input="checkoutPassword"
-                                     pattern=".{4,}" error-message="[[translate('PasswordError',language,i18Loaded)]]"
-                                     label="[[translate('Password',language,i18Loaded)]]" type="password"></paper-input>
+                                     pattern=".{4,}" error-message="[[translate('PasswordError',language,i18nLoaded)]]"
+                                     label="[[translate('Password',language,i18nLoaded)]]" type="password"></paper-input>
                         <a class="forgot-msg" on-click="openPanel" data-panel="approvingForm">
                             <i18-n msgid="Send me approving link">Send me approving link</i18-n>
                         </a>
@@ -434,7 +435,8 @@
         Polymer({
             is: 'designmap-login-form',
             behaviors: [
-                Polymer.DesignMapMessagesBehavior
+                Polymer.DesignMapMessagesBehavior,
+                Polymer.DesignMapUtilsBehavior
             ],
             properties: {
                 user: {
@@ -447,17 +449,17 @@
                     value: null,
                     notify: true
                 },
+                i18nLoaded:{
+                    type: Boolean,
+                    value: false
+                },
                 config: {
                     type: Object,
                     value: {}
                 },
                 language: {
                     type: String,
-                    value: 'en'
-                },
-                i18Loaded: {
-                    type: Boolean,
-                    value: false
+                    computed:'_computeLanguage(system.language)'
                 },
                 selected: {
                     type: Number,
@@ -471,11 +473,6 @@
                     type: Boolean,
                     value: false
                 }
-            },
-            ready: function () {
-                this.async(function () {
-                    this.i18Loaded = true;
-                }, 100)
             },
             /**
              * To provide right-left animation in form
@@ -527,7 +524,6 @@
                 const password = this.$.passwordSignin.value;
 
                 this.fire('login', {email: email, password: password});
-                this.$.signInLoadingButton.loading = false;
             },
             /**
              * Open panels
@@ -576,8 +572,9 @@
                 this.approveMessageSent = true;
             },
             googleAuth: async function(){
+                this.$.registerGoogleButton.loading = true;
                 const profile = await main.gogoleSignIn();
-                this.fire('google-signin',profile);
+                if(profile) this.fire('google-signin',profile);
             }
         })
     </script>

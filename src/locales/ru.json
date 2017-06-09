@@ -135,6 +135,15 @@
     "message": "Файл с таким разрешением не может быть загружен в Designmap."
   },
   "Signout": {
-    "message": "выйти"
+    "message": "Выйти"
+  },
+  "Change language": {
+    "message": "Сменить язык"
+  },
+  "Data space:": {
+    "message": "Дисковое пространство:"
+  },
+  "Password": {
+    "message": "Пароль"
   }
 }

@@ -21,6 +21,7 @@
     "iron-a11y-keys": "^1.0.7",
     "neon-animation": "PolymerElements/neon-animation#^1.2.4",
     "iron-pages": "PolymerElements/iron-pages#^1.0.9",
-    "iron-dropdown": "PolymerElements/iron-dropdown#^1.5.6"
+    "iron-dropdown": "PolymerElements/iron-dropdown#^1.5.6",
+    "paper-progress": "PolymerElements/paper-progress#^1.0.11"
   }
 }

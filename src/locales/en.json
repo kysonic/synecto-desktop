@@ -81,10 +81,10 @@
     "message": "Take a framed screenshot"
   },
   "Logout": {
-    "message": "Выйти из аккаунта"
+    "message": "Logout"
   },
   "Exit": {
-    "message": "Закрыть приложение"
+    "message": "Quit"
   },
   "Upload": {
     "message": "Upload"
@@ -132,6 +132,15 @@
     "message": "File with this extension cannot be uploaded in Designmap."
   },
   "Signout": {
-    "message": "logout"
+    "message": "Logout"
+  },
+  "Change language": {
+    "message": "Change language"
+  },
+  "Data space:": {
+    "message": "Data space:"
+  },
+  "Password": {
+    "message": "Password"
   }
 }

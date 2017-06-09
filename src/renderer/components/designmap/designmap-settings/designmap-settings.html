@@ -2,6 +2,7 @@
 <link rel="import" href="../../../../../bower_components/iron-icons/iron-icons.html">
 <link rel="import" href="../designmap-ui/designmap-language-switcher.html">
 <link rel="import" href="../designmap-ui/designmap-avatar-projector.html">
+<link rel="import" href="../designmap-ui/designmap-storage-bar.html">
 
 <dom-module id="designmap-settings">
     <template>
@@ -31,6 +32,10 @@
             .content {
                 padding: 30px;
                 background-color: var(--white-color);
+                display: flex;
+                flex-direction: column;
+                justify-content: space-between;
+                height: 285px;
             }
 
             .question, .gear {
@@ -41,6 +46,12 @@
                 --iron-icon-stoke-color: var(--white-color);
                 --iron-icon-fill-color: var(--white-color);
             }
+            .gear {
+                margin-left: 5px;
+            }
+            .question {
+                margin-right: 5px;
+            }
 
             .question:hover, .gear:hover {
                 background: var(--blue-color);
@@ -49,6 +60,7 @@
             .block {
                 display: flex;
                 align-items: center;
+                justify-content: space-between;
             }
 
             .user {
@@ -60,14 +72,17 @@
                 color: var(--gray-darkend-color);
                 font-size: 20px;
                 display: flex;
-                align-items: center;
+                flex-direction: column;
+                align-items: flex-start;
+                justify-content: center;
+                margin-left: 5px;
             }
             .name .firstName, .name .lastName {
                 display: inline-block;
             }
 
             .name .lastName {
-                margin-left: 10px;
+                margin-left: 2px;
             }
             .name .email {
                 font-weight: 100;
@@ -76,8 +91,26 @@
             .name .email.big {
                 font-size: 20px;
             }
+            .logout {
+                color: var(--blue-darky-color);
+                cursor: pointer;
+            }
+            .logout:hover {
+                text-decoration: underline;
+            }
+            label {
+                font-size: 18px;
+                font-weight: 100;
+                color: var(--gray-darkend-color);
+            }
+            .block.offset {
+                margin: 30px 0;
+            }
+            .block.column {
+                flex-direction: column;
+            }
         </style>
-        <div class="header">
+        <div class="header" style="-webkit-app-region: drag">
             <iron-icon class="gear" icon="icons:arrow-back" on-click="goToToolbar"></iron-icon>
             <iron-icon class="question" icon="designmap:question"></iron-icon>
         </div>
@@ -86,17 +119,27 @@
                 <div class="user">
                     <designmap-avatar-projector user="[[user]]" config="[[config]]"></designmap-avatar-projector>
                     <div class="name">
-                        <div class="firstName">[[user.name]]</div>
-                        <div class="lastName">[[user.lastName]]</div>
-                        <div class$="email [[_isThereName(user)]]">[[user.local.email]]</div>
+                        <div class="n" hidden$="[[!_isThereName(user)]]">
+                            <div class="firstName">[[user.profile.name]]</div>
+                            <div class="lastName">[[user.profile.lastName]]</div>
+                        </div>
+                        <div class$="email [[_computeEmailClass(user)]]">[[user.local.email]]</div>
                     </div>
                 </div>
-                <div class="logout">
+                <!--<div class="logout">
+                    <i18-n msgid="Signout">Signout</i18-n>
+                </div>-->
+            </div>
+            <div class="block column" style="position: relative; bottom:15px">
+                <label style="margin-bottom: 3px; "><i18-n msgid="Data space:">Data space:</i18-n></label>
+                <designmap-storage-bar id="bar" user="[[user]]"></designmap-storage-bar>
+            </div>
+            <div class="block">
+                <designmap-language-switcher system="[[system]]"></designmap-language-switcher>
+                <div class="logout" on-click="logout">
                     <i18-n msgid="Signout">Signout</i18-n>
                 </div>
             </div>
-            <label><i18-n msgid="Change language">Change language</i18-n></label>
-            <designmap-language-switcher system="[[system]]"></designmap-language-switcher>
         </div>
     </template>
     <script>
@@ -123,9 +166,17 @@
             goToToolbar: function(){
                 this.app.screen = 'toolbar';
             },
-            _isThereName: function(user) {
+            _computeEmailClass: function(user) {
+                if(!user) return;
                 const isThereName = user.profile && (user.profile.name || user.profile.lastName);
                 return isThereName?'small':'big';
+            },
+            _isThereName: function(user) {
+                if(!user) return;
+                return user.profile && (user.profile.name || user.profile.lastName);
+            },
+            logout: function(){
+                main.logout();
             }
         })
     </script>

@@ -1,0 +1,70 @@
+<link rel="import" href="../../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../../bower_components/paper-progress/paper-progress.html">
+
+<dom-module id="designmap-storage-bar">
+    <template>
+        <style>
+            :host {
+                display: block;
+                width: 100%;
+                position: relative;
+                --paper-progress-container-color: var(--blue-darky-color);
+                --paper-progress-active-color: var(--orange-color);
+                --paper-progress-container: {
+                    height: 20px !important;
+                    border-radius: 3px;
+                }
+            }
+            paper-progress {
+                width: 100%;
+            }
+            .numbers {
+                color: var(--white-color);
+                position: absolute;
+                top: -2px;
+                left: 50%;
+                margin-left: -45px;
+            }
+        </style>
+        <paper-progress value="[[value]]"></paper-progress>
+        <div class="numbers">[[_computeNumbers(user.system.*,max,value)]]</div>
+    </template>
+    <script>
+        Polymer({
+            is: 'designmap-storage-bar',
+            properties: {
+                user: {
+                    type: Object,
+                    value: {},
+                    observer: 'userChanged'
+                },
+                value: {
+                    type: Number,
+                    computed: '_computeProgress(user)'
+                },
+                max: {
+                    type: Number,
+                    computed: '_computeMax(user.isPremium)'
+                }
+            },
+            _computeProgress: function(user){
+                if(!user || !user.system) return 0;
+                const s3Uploads = user.system.s3Uploads;
+                return 100 - ((s3Uploads*100)/this.max);
+            },
+            _computeMax: function(){
+                if(!this.user) return;
+                const isPremium = this.user.isPremium;
+                return !isPremium ? '100' : '3000';
+            },
+            _computeNumbers: function(s4,max){
+                if(!this.user || !this.user.system) return '0/0';
+                const s3Uploads = this.user.system.s3Uploads;
+                return s3Uploads?s3Uploads.toFixed(2)+'/'+max+ ' MB':'---';
+            },
+            userChanged: function(user){
+                this.value = this._computeProgress(user);
+            }
+        })
+    </script>
+</dom-module>

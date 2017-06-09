@@ -71,12 +71,12 @@
             },
             computeAvatarPath: function (path) {
                 if (!path) return '';
-                if (/images/.test(path)) return path + '?v=' + this.generateUid();
+                if (/images/.test(path)) return path.replace('/images/','../../assets/') + '?v=' + this.generateUid();
                 return this.config.apiURL + path + '?v=' + this.generateUid();
             },
             computeName: function (user) {
                 if (typeof user == 'string') return '...';
-                if(!user.profile) return '...';
+                if(!user || !user.profile) return '...';
                 return user ? user.profile.name && user.lastName ? user.profile.name[0] + user.profile.lastName[0] : user.local.email[0] : 'XX';
             }
         })
