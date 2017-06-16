@@ -5,6 +5,7 @@ const path = require('path');
 const fs = require('fs');
 const { spawn } = require('child_process')
 const {app,dialog} = require('electron');
+const fork = require('child_process').fork;
 
 const locales = {
     ru: require('../../assets/locales/ru.json'),
@@ -41,15 +42,11 @@ class Updater {
                 file.on('finish', function() {
                     const newPath = path.join(__dirname,'../../../','app.'+data.version+'.update');
                     const newPathAsar = path.join(__dirname,'../../../','app.asar');
-                    if(fs.existsSync(newPath)) fs.unlinkSync(newPath);
-                    if(fs.existsSync(newPathAsar)) fs.unlinkSync(newPathAsar);
                     const stream = fs.createReadStream(dbFilePath).pipe(fs.createWriteStream(newPath));
                     stream.on('finish',()=>{
-                        fs.rename(newPath,newPathAsar,()=>{
-                            app.relaunch({args: process.argv.slice(1).concat(['--relaunch'])})
-                            app.exit(0)
-                        });
-                    })
+                        const child = fork(path.join(__dirname,'./replacer.js'),[],{env:{FROM:newPath,TO:newPathAsar},stdio: 'pipe'});
+                        app.exit(0);
+                    });
                     file.close(()=>{});
                 });
             }).on('error', function(err) {
