@@ -8,7 +8,7 @@
     "pack": "build --dir",
     "dist": "build"
   },
-  "author": "Antton Miroshnichenko",
+  "author": "Anton Miroshnichenko",
   "license": "ISC",
   "devDependencies": {
     "electron": "^1.4.15"
@@ -17,11 +17,14 @@
     "node": ">=6.9.0 <7.10.0"
   },
   "dependencies": {
+    "auto-updater": "^1.0.2",
     "axios": "^0.16.1",
     "bluebird": "^3.5.0",
     "electron-google-oauth": "^2.0.0",
+    "mkdirp": "^0.5.1",
     "nedb": "^1.8.0",
-    "os-locale": "^2.0.0"
+    "os-locale": "^2.0.0",
+    "request-promise": "^4.2.1"
   },
   "build": {
     "appId": "com.electron.designmapp",

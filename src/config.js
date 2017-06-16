@@ -1,6 +1,7 @@
 module.exports = {
-    apiUrl: "https://server.designmap.ru",
-    frontUrl: "https://app.designmap.ru",
+    updateServerUrl:"http://localhost:4000",
+    apiUrl: "http://localhost:4000",
+    frontUrl: "http://localhost:5000",
     oauth: {
         dropBox: {
             clientID: '8fvewpw5l3mxxye',

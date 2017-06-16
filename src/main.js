@@ -3,9 +3,10 @@
  * Here we go with windows, keys, trays and another stuff.
  */
 const electron = require("electron");
-const {app, globalShortcut, BrowserWindow, Menu, Tray, Notification} = electron;
+const {app, globalShortcut, BrowserWindow, Menu, Tray,autoUpdater} = electron;
 const osLocale = require("os-locale");
 const co = require('co');
+const Updater = require('./main/updater');
 
 const locales = {
     ru: require('../assets/locales/ru.json'),
@@ -17,6 +18,7 @@ const gapi = require('./main/gapi');
 let browserLanguage = 'en';
 
 osLocale().then(locale => browserLanguage=locale.substr(0,2));
+
 
 // Configs
 app.setName('Designmap');
@@ -42,6 +44,11 @@ const HOT_KEYS = {
     }
 }
 
+// Auto updating
+const appVersion = require('../package.json').version;
+const updateFeedUrl = `${config.updateServerUrl}/app/updates/latest`;
+
+
 // Data store
 
 const db = require('./main/db');
@@ -58,6 +65,15 @@ db.loadDatabase(co.wrap(function * (err) {
     if(!system.account) return showLoginForm();
     user = yield db.findOneAsync({user:true,_userId:system.account});
     showToolbar();
+    // Check updates after a few seconds after start
+    const updater =new Updater({updateFeedUrl,os,appVersion,system});
+    setTimeout(()=>{
+        updater.checkForUpdates(()=>{
+            setLoadingSize();
+            mainWindow.show();
+            mainWindow.webContents.send('appChange','screen','loading');
+        });
+    },1000)
 }));
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -102,7 +118,7 @@ const createWindow =  ()=>{
     // Emitted when the window is closed.
     mainWindow.on('blur', function () {
         if(system && system.account) mainWindow.hide();
-    })
+    });
 }
 
 

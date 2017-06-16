@@ -142,5 +142,17 @@
   },
   "Password": {
     "message": "Password"
+  },
+  "Yes": {
+    "message": "Yes"
+  },
+  "No": {
+    "message": "No"
+  },
+  "New Release": {
+    "message": "New Release"
+  },
+  "Do yo want to update?": {
+    "message": "Designmapp have released new version! Press \"Yes\" if you want to update an app. After downloading Designmap will be reloaded automatically."
   }
 }
