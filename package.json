@@ -1,25 +1,44 @@
 {
-  "name": "electron-pure-polymer",
-  "version": "1.0.0",
-  "description": "Pure electron + polymer app without router",
-  "main": "main.js",
+  "name": "designmapp",
+  "version": "0.0.1",
+  "description": "Designmapp allows you to create screenshots and upload fiels directly in designmap. http://designmap.ru",
+  "main": "./src/main.js",
   "scripts": {
-    "start": "electron ./src/main.js"
+    "start": "electron ./src/main.js",
+    "pack": "build --dir",
+    "dist": "build"
   },
-  "author": "",
+  "author": "Antton Miroshnichenko",
   "license": "ISC",
   "devDependencies": {
-    "electron": "^1.4.15",
-    "electron-packager": "^8.5.1",
-    "electron-process": "^0.2.0",
-    "user-media-screenshot": "^1.0.2"
+    "electron": "^1.4.15"
+  },
+  "engines": {
+    "node": ">=6.9.0 <7.10.0"
   },
   "dependencies": {
     "axios": "^0.16.1",
     "bluebird": "^3.5.0",
-    "concat-stream": "^1.6.0",
     "electron-google-oauth": "^2.0.0",
     "nedb": "^1.8.0",
     "os-locale": "^2.0.0"
+  },
+  "build": {
+    "appId": "com.electron.designmapp",
+    "mac": {
+      "category": "Screenshots"
+    },
+    "files": [
+      "./src/**/*.*",
+      "./node_modules/**/*.*",
+      "./bower_components/**/*.*",
+      "./assets/**/*.*",
+      "!**/node_modules/*/{CHANGELOG.md,README.md,README,readme.md,readme,test,__tests__,tests,powered-test,example,examples,*.d.ts}",
+      "!**/node_modules/.bin",
+      "!**/*.{o,hprof,orig,pyc,pyo,rbc}",
+      "!**/._*",
+      "!**/{.DS_Store,.git,.hg,.svn,CVS,RCS,SCCS,__pycache__,thumbs.db,.gitignore,.gitattributes,.editorconfig,.flowconfig,.yarn-metadata.json,.idea,appveyor.yml,.travis.yml,circle.yml,npm-debug.log,.nyc_output,yarn.lock,.yarn-integrity}"
+    ],
+    "asar": true
   }
 }

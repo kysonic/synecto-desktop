@@ -432,6 +432,7 @@
         </div>
     </template>
     <script>
+        var co = require('co');
         Polymer({
             is: 'designmap-login-form',
             behaviors: [
@@ -511,7 +512,7 @@
             /**
              * Log in using form
              */
-            login: async function (e) {
+            login: function (e) {
                 e.preventDefault();
                 e.stopPropagation();
                 if (this.$.signInLoadingButton.loading) return;
@@ -545,37 +546,43 @@
              * Create token for entering if user
              * forget a password
              */
-            creteToken: async function (e) {
-                e.preventDefault();
-                e.stopPropagation();
-                if (this.$$('#restoreLoadingButton').loading) return;
-                this.restoreEmail = this.$$('#restorePasswordEmail').value;
-                this.$$('#restoreLoadingButton').loading = true;
-                if (!this.$$('#restorePasswordEmail').validate()) {
+            creteToken: co.wrap(
+                function * (e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    if (this.$$('#restoreLoadingButton').loading) return;
+                    this.restoreEmail = this.$$('#restorePasswordEmail').value;
+                    this.$$('#restoreLoadingButton').loading = true;
+                    if (!this.$$('#restorePasswordEmail').validate()) {
+                        this.$$('#restoreLoadingButton').loading = false;
+                        return this.showErrorMessage('EmailError');
+                    }
+                    const response = yield axios.post(`${this.config.apiUrl}/token/entry`, {email: this.restoreEmail });
                     this.$$('#restoreLoadingButton').loading = false;
-                    return this.showErrorMessage('EmailError');
+                    if (!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                    this.restoreMessageSent = true;
                 }
-                const response = await axios.post(`${this.config.apiUrl}/token/entry`, {email: this.restoreEmail });
-                this.$$('#restoreLoadingButton').loading = false;
-                if (!response.data.success) return this.showErrorMessage(response.data.errors.message);
-                this.restoreMessageSent = true;
-            },
+            ),
             /**
              * If use do not receive a mail with approving link -
              * resend it
              */
-            sendApprovingEmail: async function () {
-                this.approvingEmail = this.$$('#approvingEmail').value;
-                this.$$('#approvingButton').loading = true;
-                await axios.get(`${this.config.apiUrl}/token/reapprove?email=${this.approvingEmail}&lang=${this.language}`);
-                this.$$('#approvingButton').loading = false;
-                this.approveMessageSent = true;
-            },
-            googleAuth: async function(){
-                this.$.registerGoogleButton.loading = true;
-                const profile = await main.gogoleSignIn();
-                if(profile) this.fire('google-signin',profile);
-            }
+            sendApprovingEmail: co.wrap(
+                function * () {
+                    this.approvingEmail = this.$$('#approvingEmail').value;
+                    this.$$('#approvingButton').loading = true;
+                    yield axios.get(`${this.config.apiUrl}/token/reapprove?email=${this.approvingEmail}&lang=${this.language}`);
+                    this.$$('#approvingButton').loading = false;
+                    this.approveMessageSent = true;
+                }
+            ),
+            googleAuth: co.wrap(
+                function * (){
+                    this.$.registerGoogleButton.loading = true;
+                    const profile = yield main.gogoleSignIn();
+                    if(profile) this.fire('google-signin',profile);
+                }
+            )
         })
     </script>
 </dom-module>

@@ -30,7 +30,7 @@
                 border: 1px solid #979797;
             }
         </style>
-        <i18-n-domain id="i18nDomain" locale="[[language]]" messages-url="../locales"></i18-n-domain>
+        <i18-n-domain id="i18nDomain" locale="[[language]]" messages-url="../../assets/locales"></i18-n-domain>
         <iron-pages
                 selected="[[screen]]"
                 attr-for-selected="name"
@@ -113,103 +113,115 @@
                     this.$.login.i18nLoaded = true;
                 }.bind(this));
             },
-            _login: async function(e){
-                const {email,password} = e.detail;
-                const response = await axios.post(`${this.config.apiUrl}/app/user/login`, {email,password});
-                this.$.login.$.signInLoadingButton.loading = false;
-                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
-                // Update user in app store
-                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
-                delete userData._id;
-                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
-                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
-                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
-                this.system.account = this.user._userId;
-                main.showToolbar();
-                this.screen = 'toolbar';
-            },
-            _googleSignIn: async function (e) {
-                const gaData = e.detail;
-                const response = await axios.post(`${this.config.apiUrl}/app/user/google-registration`, {user:gaData});
-                this.$.login.$.registerGoogleButton.loading = false;
-                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
-                // Update user in app store
-                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
-                delete userData._id;
-                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
-                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
-                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
-                this.system.account = this.user._userId;
-                this.screen = 'toolbar';
-                main.showToolbar();
-            },
-            _register: async function(e){
-                const {email,password} = e.detail;
-                const response = await axios.post(`${this.config.apiUrl}/app/user/register`, {email,password,lang:this.browserLanguage});
-                this.$.login.$.registerButton.loading = false;
-                if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
-                // Update user in app store
-                const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
-                delete userData._id;
-                await db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
-                this.user = await db.findOneAsync({"user":true,"local.email":userData.local.email});
-                await db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
-                this.system.account = this.user._userId;
-                // Toolbar
-                this.screen = 'toolbar';
-                main.showToolbar();
-            },
+            _login: co.wrap(
+                function * (e){
+                    const {email,password} = e.detail;
+                    const response = yield axios.post(`${this.config.apiUrl}/app/user/login`, {email,password});
+                    this.$.login.$.signInLoadingButton.loading = false;
+                    if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                    // Update user in app store
+                    const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                    delete userData._id;
+                    yield db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                    this.user = yield db.findOneAsync({"user":true,"local.email":userData.local.email});
+                    yield db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                    this.system.account = this.user._userId;
+                    main.showToolbar();
+                    this.screen = 'toolbar';
+                }
+            ),
+            _googleSignIn: co.wrap(
+                function * (e) {
+                    const gaData = e.detail;
+                    const response = yield axios.post(`${this.config.apiUrl}/app/user/google-registration`, {user:gaData});
+                    this.$.login.$.registerGoogleButton.loading = false;
+                    if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                    // Update user in app store
+                    const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                    delete userData._id;
+                    yield db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                    this.user = yield db.findOneAsync({"user":true,"local.email":userData.local.email});
+                    yield db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                    this.system.account = this.user._userId;
+                    this.screen = 'toolbar';
+                    main.showToolbar();
+                }
+            ),
+            _register: co.wrap(
+                function * (e){
+                    const {email,password} = e.detail;
+                    const response = yield axios.post(`${this.config.apiUrl}/app/user/register`, {email,password,lang:this.browserLanguage});
+                    this.$.login.$.registerButton.loading = false;
+                    if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                    // Update user in app store
+                    const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                    delete userData._id;
+                    yield db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
+                    this.user = yield db.findOneAsync({"user":true,"local.email":userData.local.email});
+                    yield db.updateAsync({_id:this.system._id},{$set:{account:this.user._userId}});
+                    this.system.account = this.user._userId;
+                    // Toolbar
+                    this.screen = 'toolbar';
+                    main.showToolbar();
+                }
+            ),
             /**
              * Get all user's projects
              * @returns {Promise.<void>}
              * @private
              */
-            _userChanged: async function (user) {
-                if(!user || !user._userId || !this.config.apiUrl) return;
-                const response = await axios.get(`${this.config.apiUrl}/app/user/projects?email=${user.local.email}&token=${user.system.appToken}`);
-                if(!response.data.success) return this.showErrorMessage('Cannot find user\'s projects');
-                this.projects = response.data.projects;
-                this.project = this.projects[0];
-                const updatedUser = Object.assign(user,{profile:response.data.user.profile,isPremium:response.data.user.isPremium,system:response.data.user.system});
-                this.$.settings.$.bar.user = {};
-                this.$.settings.$.bar.user = updatedUser;
-            },
+            _userChanged: co.wrap(
+                function * (user) {
+                    if(!user || !user._userId || !this.config.apiUrl) return;
+                    const response = yield axios.get(`${this.config.apiUrl}/app/user/projects?email=${user.local.email}&token=${user.system.appToken}`);
+                    if(!response.data.success) return this.showErrorMessage('Cannot find user\'s projects');
+                    this.projects = response.data.projects;
+                    this.project = this.projects[0];
+                    const updatedUser = Object.assign(user,{profile:response.data.user.profile,isPremium:response.data.user.isPremium,system:response.data.user.system});
+                    this.$.settings.$.bar.user = {};
+                    this.$.settings.$.bar.user = updatedUser;
+                }
+            ),
             /**
              * Upload file!
              */
-            _uploadFile: async function(e){
-                main.setLoadingSize();
-                this.screen = 'loading';
-                main.showMainWindow();
-                const formData = new FormData();
-                formData.append("file", e.detail);
-                const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
-                if(!response.data.success) return this.showError('Cannot upload file');
-                this.showMessage(this.translate('Screenshot'),this.translate('Screenshot has been taken!'));
-                main.hideMainWindow();
-                Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
-                clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
-                main.setToolbarSize();
-                this.screen = 'toolbar';
-            },
+            _uploadFile: co.wrap(
+                function * (e){
+                    main.setLoadingSize();
+                    this.screen = 'loading';
+                    main.showMainWindow();
+                    const formData = new FormData();
+                    formData.append("file", e.detail);
+                    const response = yield axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
+                    if(!response.data.success) return this.showError('Cannot upload file');
+                    this.showMessage(this.translate('Screenshot'),this.translate('Screenshot has been taken!'));
+                    main.hideMainWindow();
+                    Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
+                    clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
+                    main.setToolbarSize();
+                    this.screen = 'toolbar';
+                }
+            ),
             /**
              * Upload files by "Upload" button
              */
-            _uploadFilesDirectly: async function(e){
-                main.setLoadingSize();
-                this.screen = 'loading';
-                main.showMainWindow();
-                const formData = new FormData();
-                formData.append("file", e.detail.file);
-                const response = await axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
-                if(!response.data.success) return this.showError('Cannot upload file');
-                this.showMessage(this.translate('File'),this.replaceExpressions(this.translate(`File "#FILENAME#" was uploaded successfully!`),{'#FILENAME#':this.cutFileName(response.data.file)}));
-                main.hideMainWindow();
-                Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
-                clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
-                main.setToolbarSize();
-                this.screen = 'toolbar';
-            },
+            _uploadFilesDirectly: co.wrap(
+                function * (e){
+                    main.setLoadingSize();
+                    this.screen = 'loading';
+                    main.showMainWindow();
+                    const formData = new FormData();
+                    formData.append("file", e.detail.file);
+                    const response = yield axios.post(`${this.config.apiUrl}/app/file?project=${this.project._id}&email=${this.user.local.email}&token=${this.user.system.appToken}`,formData);
+                    if(!response.data.success) return this.showError('Cannot upload file');
+                    this.showMessage(this.translate('File'),this.replaceExpressions(this.translate(`File "#FILENAME#" was uploaded successfully!`),{'#FILENAME#':this.cutFileName(response.data.file)}));
+                    main.hideMainWindow();
+                    Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
+                    clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
+                    main.setToolbarSize();
+                    this.screen = 'toolbar';
+                }
+            ),
             /**
              * Select project to upload in
              * @private
@@ -226,12 +238,14 @@
                 if(!project._id || !config.apiUrl) return;
                 this.setupSocket(project._id,'project',config.apiUrl);
             },
-            _updateLanguage: async function(language) {
-                const system = await db.findOneAsync({system:true});
-                system.language = language;
-                await db.updateAsync({_id:this.system._id},{$set:{language:language}});
-                main._changeLanguage(language);
-            },
+            _updateLanguage: co.wrap(
+                function * (language) {
+                    const system = yield db.findOneAsync({system:true});
+                    system.language = language;
+                    yield db.updateAsync({_id:this.system._id},{$set:{language:language}});
+                    main._changeLanguage(language);
+                }
+            ),
             _osChanged: function(os){
                 if(os) this.classList.add(os);
             }

@@ -2,17 +2,16 @@
  * It is an entry point of entire Designmapp
  * Here we go with windows, keys, trays and another stuff.
  */
-
-const electron = require('electron');
+const electron = require("electron");
 const {app, globalShortcut, BrowserWindow, Menu, Tray, Notification} = electron;
-const osLocale = require('os-locale');
+const osLocale = require("os-locale");
+const co = require('co');
+
 const locales = {
-    ru: require('./locales/ru.json'),
-    en: require('./locales/en.json')
+    ru: require('../assets/locales/ru.json'),
+    en: require('../assets/locales/en.json')
 }
-
 const axios = require('axios');
-
 const gapi = require('./main/gapi');
 
 let browserLanguage = 'en';
@@ -52,23 +51,19 @@ let system = null;
 let user = null;
 let screen = 'login';
 
-db.loadDatabase(async (err)=>{
+db.loadDatabase(co.wrap(function * (err) {
     if(err) throw new Error(err);
-    system = await db.findOneAsync({system:true});
-    if(!system) system = await db.insertAsync({system: true, account: false, language: browserLanguage});
-    if(!system.account) return this.showLoginForm();
-    user = await db.findOneAsync({user:true,_userId:system.account});
-    this.showToolbar();
-});
-
-
+    system = yield db.findOneAsync({system:true});
+    if(!system) system = yield db.insertAsync({system: true, account: false, language: browserLanguage});
+    if(!system.account) return showLoginForm();
+    user = yield db.findOneAsync({user:true,_userId:system.account});
+    showToolbar();
+}));
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
 let mainWindow,
     overlayWindow
-
-
 
 const createWindow =  ()=>{
     // Create the browser window.
@@ -140,45 +135,44 @@ function showLoginForm(){
     tray?tray.destroy():null;
 }
 
-module.exports.logout = async function(){
+const logout = co.wrap(function * logout(){
     system.account = false;
-    await db.updateAsync({_id:system._id},{$set:{account:false}});
+    yield db.updateAsync({_id:system._id},{$set:{account:false}});
     showLoginForm();
     mainWindow.webContents.send('appChange','user',null);
     mainWindow.webContents.send('appChange','screen','login');
-    app.dock.show();
+    if(app.dock) app.dock.show();
     mainWindow.show();
-}
+});
 
-module.exports.showLoginForm = showLoginForm.bind(this);
 
-module.exports.showToolbar = function(){
+function showToolbar(){
     mainWindow.hide();
-    this.setupTray();
+    setupTray();
     mainWindow.setSize(400,390);
     screen="toolbar";
 }
 
-module.exports.setupTray = function(){
+function setupTray(){
     tray = new Tray(path.join(__dirname,'../assets/images/tray.png'));
     const contextMenu = Menu.buildFromTemplate([
-        {label: _translate('Open dashboard'), type: 'normal',click: this.openDashBoard},
+        {label: _translate('Open dashboard'), type: 'normal',click: openDashBoard},
         {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
         {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
         /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
-        {label: _translate('Logout'), type: 'normal',click: this.logout },
+        {label: _translate('Logout'), type: 'normal',click: logout },
         {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
     ]);
 
     tray.setToolTip('Designmap');
     tray.setContextMenu(contextMenu);
 
-    tray.on(os=='mac'?'right-click':'click', this.openDashBoard);
+    tray.on(os=='mac'?'right-click':'click', openDashBoard);
     if(app.dock) app.dock.hide();
 }
 
-module.exports.createOverlayWindow = function(){
-    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize
+function createOverlayWindow(){
+    const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
     overlayWindow = new BrowserWindow({fullscreen:false, width: width, height: height, show:true, transparent:true, frame: false, resizable: false});
     overlayWindow.loadURL(url.format({
         pathname: path.join(__dirname, './renderer/overlay.html'),
@@ -191,28 +185,28 @@ module.exports.createOverlayWindow = function(){
     });
 };
 
-module.exports.makeFramedScreenShot = function(data) {
+function makeFramedScreenShot(data) {
     mainWindow.webContents.send('makeFramedScreenShot', data);
 }
-module.exports.closeOverlayWindow = function(data){
+function closeOverlayWindow(data){
     overlayWindow.destroy();
 }
-module.exports.hideMainWindow = function(){
+function hideMainWindow(){
     mainWindow.hide();
 }
-module.exports.showMainWindow = function(){
+function showMainWindow(){
     mainWindow.show();
 }
-module.exports.setLoadingSize = function(){
+function setLoadingSize(){
     mainWindow.setSize(400,150,true);
 }
-module.exports.setToolbarSize = function(){
+function setToolbarSize(){
     mainWindow.setSize(400,390);
 }
-module.exports.hideOverlayWindow = function(){
+function hideOverlayWindow(){
     overlayWindow.hide();
 }
-module.exports.openDashBoard = function(){
+function openDashBoard(){
     const {x,y,width} = tray.getBounds();
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
     mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
@@ -237,20 +231,20 @@ const browserWindowParams = {
 const googleClient = gapi(browserWindowParams);
 
 
-
-module.exports.gogoleSignIn = async function(){
-    let goaData = await db.findOneAsync({'goa':true});
-    if(!goaData) goaData = await _fetchGoaData();
-    if(goaData.foulDate<new Date().getTime()) goaData = await _refreshToken(goaData);
-    const response = await axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${goaData.access_token}`);
+const gogoleSignIn = co.wrap(function * gogoleSignIn(){
+    let goaData = yield db.findOneAsync({'goa':true});
+    if(!goaData) goaData = yield _fetchGoaData();
+    if(goaData.foulDate<new Date().getTime()) goaData = yield _refreshToken(goaData);
+    const response = yield axios.get(`https://www.googleapis.com/oauth2/v2/userinfo?access_token=${goaData.access_token}`);
     return response.data;
-}
+});
 
-module.exports._changeLanguage = async function(language){
+
+const _changeLanguage = co.wrap(function * _changeLanguage(language){
     system.language = language;
     if(!tray) return;
     const contextMenu = Menu.buildFromTemplate([
-        {label: _translate('Open dashboard'), type: 'normal',click: this.openDashBoard},
+        {label: _translate('Open dashboard'), type: 'normal',click: openDashBoard},
         {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
         {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
         /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
@@ -258,34 +252,39 @@ module.exports._changeLanguage = async function(language){
         {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
     ]);
     tray.setContextMenu(contextMenu);
-}
+});
 
-async function _fetchGoaData(){
+const _fetchGoaData = co.wrap(
+    function * _fetchGoaData(){
+        // retrieve access token and refresh token
+        const goaData = yield googleClient.getAccessToken(
+            ['https://www.googleapis.com/auth/plus.me',
+                'https://www.googleapis.com/auth/userinfo.profile',
+                'openid','email','profile'
+            ],
+            '32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com',
+            'cg_-cpgzt3xgemmquOmvNq5L'
+        );
+        // Establish expiration date
+        const d = new Date();
+        goaData.foulDate = d.getTime() + goaData.expires_in*1000;
+        // Save creds in db
+        yield db.updateAsync({'goa':true},Object.assign({goa:true},goaData),{upsert:true});
+        return goaData;
+    }
+)
 
-    // retrieve access token and refresh token
-    const goaData = await googleClient.getAccessToken(
-        ['https://www.googleapis.com/auth/plus.me',
-         'https://www.googleapis.com/auth/userinfo.profile',
-         'openid','email','profile'
-        ],
-        '32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com',
-        'cg_-cpgzt3xgemmquOmvNq5L'
-    );
-    // Establish expiration date
-    const d = new Date();
-    goaData.foulDate = d.getTime() + goaData.expires_in*1000;
-    // Save creds in db
-    await db.updateAsync({'goa':true},Object.assign({goa:true},goaData),{upsert:true});
-    return goaData;
-}
-
-async function _refreshToken(goaData){
-    const response = await googleClient.refreshToken('32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com','cg_-cpgzt3xgemmquOmvNq5L',goaData.refresh_token);
+const _refreshToken = co.wrap(function * refreshToken(goaData){
+    const response = yield googleClient.refreshToken('32127497436-69kgln3ll1ch0p8mhjcgqqv1c6c72h06.apps.googleusercontent.com','cg_-cpgzt3xgemmquOmvNq5L',goaData.refresh_token);
     const updatedGoa = Object.assign(goaData,response);
     updatedGoa.foulDate = new Date().getTime() + response.expires_in*1000;
-    await db.updateAsync({'goa':true},updatedGoa,{upsert:true});
+    yield db.updateAsync({'goa':true},updatedGoa,{upsert:true});
     return updatedGoa;
-}
+});
+
+module.exports = {gogoleSignIn,openDashBoard,hideOverlayWindow,setToolbarSize,setLoadingSize,showMainWindow,
+        hideMainWindow,closeOverlayWindow,makeFramedScreenShot,createOverlayWindow,setupTray,showToolbar,
+        showLoginForm,logout,_changeLanguage};
 
 
 

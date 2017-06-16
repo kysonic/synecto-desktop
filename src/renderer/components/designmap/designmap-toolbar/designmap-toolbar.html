@@ -138,11 +138,10 @@
         const {remote} = require('electron');
         const main = remote.require('./main');
         const bluebird = require('bluebird');
+        var co = require('co');
         const fs = require('fs');
         const path = require('path');
-        const readFileAsync = bluebird.promisify(fs.readFile);
         const {takeFullScreen} = require('./libs/screenshot');
-        const concat = require('concat-stream');
         Polymer({
             is: 'designmap-toolbar',
             behaviors: [
@@ -183,16 +182,18 @@
                 main.hideMainWindow();
                 main.createOverlayWindow();
             },
-            openFileDialog: async function () {
+            openFileDialog: function () {
                 this.$.files.$.files.click();
             },
-            _buttonFilesChanged: async function () {
-                if (!this.buttonFiles.length) return;
-                for (let file of this.buttonFiles) {
-                    await this.app._uploadFilesDirectly({detail: {file: file}});
+            _buttonFilesChanged: co.wrap(
+                function * () {
+                    if (!this.buttonFiles.length) return;
+                    for (let file of this.buttonFiles) {
+                        yield this.app._uploadFilesDirectly({detail: {file: file}});
+                    }
+                    this.buttonFiles = [];
                 }
-                this.buttonFiles = [];
-            },
+            ),
             _showFilesNotAllowedError: function(){
                 this.showErrorMessage('File with this extension cannot be uploaded in Designmap.')
             },
