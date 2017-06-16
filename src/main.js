@@ -154,7 +154,7 @@ function showToolbar(){
 }
 
 function setupTray(){
-    tray = new Tray(path.join(__dirname,'../assets/images/tray.png'));
+    tray = new Tray(path.join(__dirname,`../assets/images/tray-${os}.png`));
     const contextMenu = Menu.buildFromTemplate([
         {label: _translate('Open dashboard'), type: 'normal',click: openDashBoard},
         {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
