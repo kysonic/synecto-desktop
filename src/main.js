@@ -3,7 +3,7 @@
  * Here we go with windows, keys, trays and another stuff.
  */
 const electron = require("electron");
-const {app, globalShortcut, BrowserWindow, Menu, Tray,autoUpdater} = electron;
+const {app, globalShortcut, BrowserWindow, Menu, Tray, autoUpdater, dialog} = electron;
 const osLocale = require("os-locale");
 const co = require('co');
 const Updater = require('./main/updater');
@@ -18,7 +18,6 @@ const gapi = require('./main/gapi');
 let browserLanguage = 'en';
 
 osLocale().then(locale => browserLanguage=locale.substr(0,2));
-
 
 // Configs
 app.setName('Designmap');
@@ -65,15 +64,33 @@ db.loadDatabase(co.wrap(function * (err) {
     if(!system.account) return showLoginForm();
     user = yield db.findOneAsync({user:true,_userId:system.account});
     showToolbar();
+    if(process.env.ENV=='dev') return;
     // Check updates after a few seconds after start
-    const updater =new Updater({updateFeedUrl,os,appVersion,system});
+    const updateFeed = `${config.updateServerUrl}/app/updates/latest`;
+    autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion+'&os='+os);
+    setTimeout(()=>{
+        autoUpdater.checkForUpdates();
+    },1000);
+    autoUpdater.on('update-available',()=>{
+        const choice = dialog.showMessageBox(
+            {
+                type: 'question',
+                buttons: [_translate('Yes'), _translate('No')],
+                title: _translate('New Release'),
+                message: _translate('Do yo want to update?')
+            });
+
+        if(choice==1) return;
+        autoUpdater.quitAndInstall();
+    });
+    /*const updater =new Updater({updateFeedUrl,os,appVersion,system});
     setTimeout(()=>{
         updater.checkForUpdates(()=>{
             setLoadingSize();
             mainWindow.show();
             mainWindow.webContents.send('appChange','screen','loading');
         });
-    },1000)
+    },1000)*/
 }));
 
 // Keep a global reference of the window object, if you don't, the window will
@@ -103,6 +120,7 @@ const createWindow =  ()=>{
         mainWindow.webContents.send('appChange','user',user);
         mainWindow.webContents.send('appChange','screen',screen);
         mainWindow.webContents.send('appChange','browserLanguage',browserLanguage);
+        mainWindow.webContents.send('appChange','appVersion',appVersion);
         mainWindow.webContents.send('appChange','config',config);
         mainWindow.center();
     });
