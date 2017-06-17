@@ -3,10 +3,10 @@
  * Here we go with windows, keys, trays and another stuff.
  */
 const electron = require("electron");
-const {app, globalShortcut, BrowserWindow, Menu, Tray, autoUpdater, dialog} = electron;
+const {app, globalShortcut, BrowserWindow, Menu, Tray, dialog} = electron;
+const {autoUpdater} = require("electron-updater");
 const osLocale = require("os-locale");
 const co = require('co');
-const Updater = require('./main/updater');
 
 const locales = {
     ru: require('../assets/locales/ru.json'),
@@ -18,6 +18,8 @@ const gapi = require('./main/gapi');
 let browserLanguage = 'en';
 
 osLocale().then(locale => browserLanguage=locale.substr(0,2));
+
+const isDev = process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath);
 
 // Configs
 app.setName('Designmap');
@@ -64,9 +66,29 @@ db.loadDatabase(co.wrap(function * (err) {
     if(!system.account) return showLoginForm();
     user = yield db.findOneAsync({user:true,_userId:system.account});
     showToolbar();
-    if(process.env.ENV=='dev') return;
+    if(isDev) return;
     // Check updates after a few seconds after start
-    const updateFeed = `${config.updateServerUrl}/app/updates/latest`;
+    autoUpdater.checkForUpdates();
+    autoUpdater.on('update-downloaded', (ev, info) => {
+        // Wait 5 seconds, then quit and install
+        // In your application, you don't need to wait 5 seconds.
+        // You could call autoUpdater.quitAndInstall(); immediately
+        setTimeout(function() {
+            const choice = dialog.showMessageBox(
+                {
+                    type: 'question',
+                    buttons: [_translate('Yes'), _translate('No')],
+                    title: _translate('New Release'),
+                    message: _translate('Do yo want to update?')
+                });
+
+            if(choice==1) return;
+            autoUpdater.quitAndInstall();
+        }, 5000);
+    });
+
+
+    /*const updateFeed = `${config.updateServerUrl}/app/updates/latest`;
     autoUpdater.setFeedURL(updateFeed + '?v=' + appVersion+'&os='+os);
     setTimeout(()=>{
         autoUpdater.checkForUpdates();
@@ -82,7 +104,7 @@ db.loadDatabase(co.wrap(function * (err) {
 
         if(choice==1) return;
         autoUpdater.quitAndInstall();
-    });
+    });*/
     /*const updater =new Updater({updateFeedUrl,os,appVersion,system});
     setTimeout(()=>{
         updater.checkForUpdates(()=>{

@@ -1,7 +1,7 @@
 module.exports = {
-    updateServerUrl:"http://localhost:4000",
-    apiUrl: "http://localhost:4000",
-    frontUrl: "http://localhost:5000",
+    updateServerUrl:"http://192.168.1.3:4000",
+    apiUrl: "http://192.168.1.3:4000",
+    frontUrl: "http://192.168.1.3:5000",
     oauth: {
         dropBox: {
             clientID: '8fvewpw5l3mxxye',
