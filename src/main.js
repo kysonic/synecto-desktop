@@ -252,6 +252,8 @@ function createOverlayWindow(){
     // Clean up
     overlayWindow.on('closed', function () {
         overlayWindow = null
+        globalShortcut.unregister('Esc');
+        globalShortcut.unregister('Enter');
     });
     overlayWindow.focus();
 };
