@@ -135,6 +135,7 @@ const createWindow =  ()=>{
     // ShortCuts
     globalShortcut.register(HOT_KEYS[os].makeFullScreenShot,()=>mainWindow.webContents.send('makeSnapshot'));
     globalShortcut.register(HOT_KEYS[os].makeFramedScreenShot,()=>mainWindow.webContents.send('makeFramedSnapshot'));
+
     /*globalShortcut.register(HOT_KEYS[os].uploadFiles,()=>mainWindow.webContents.send('uploadFiles'));*/
 
     mainWindow.webContents.on('did-finish-load',()=>{
@@ -229,16 +230,30 @@ function setupTray(){
 
 function createOverlayWindow(){
     const {width, height} = electron.screen.getPrimaryDisplay().workAreaSize;
-    overlayWindow = new BrowserWindow({fullscreen:false, width: width, height: height, show:true, transparent:true, frame: false, resizable: false});
+    overlayWindow = new BrowserWindow({
+        fullscreen:false,
+        width: width,
+        height: height,
+        show:true,
+        transparent:true,
+        frame: false,
+        resizable: false,
+        skipTaskbar: true,
+        alwaysOnTop:true,
+    });
     overlayWindow.loadURL(url.format({
         pathname: path.join(__dirname, './renderer/overlay.html'),
         protocol: 'file:',
         slashes: true
     }));
+    // Global shotrcuts
+    globalShortcut.register('Esc',()=>overlayWindow?overlayWindow.webContents.send('closeOverlay'):()=>{});
+    globalShortcut.register('Enter',()=>overlayWindow?overlayWindow.webContents.send('applyOverlayAction'):()=>{});
     // Clean up
     overlayWindow.on('closed', function () {
         overlayWindow = null
     });
+    overlayWindow.focus();
 };
 
 function makeFramedScreenShot(data) {
@@ -265,7 +280,7 @@ function hideOverlayWindow(){
 function openDashBoard(){
     const {x,y,width} = tray.getBounds();
     mainWindow.isVisible() ? mainWindow.hide() : mainWindow.show();
-    mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
+    //mainWindow.setPosition(x-WINDOW_DIMS.width+20,y-WINDOW_DIMS.height);
 }
 
 function _translate(msg) {
@@ -337,6 +352,8 @@ const _refreshToken = co.wrap(function * refreshToken(goaData){
     yield db.updateAsync({'goa':true},updatedGoa,{upsert:true});
     return updatedGoa;
 });
+
+module.exports.os = os;
 
 module.exports = {gogoleSignIn,openDashBoard,hideOverlayWindow,setToolbarSize,setLoadingSize,showMainWindow,
         hideMainWindow,closeOverlayWindow,makeFramedScreenShot,createOverlayWindow,setupTray,showToolbar,

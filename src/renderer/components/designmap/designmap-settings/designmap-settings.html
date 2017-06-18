@@ -120,7 +120,7 @@
         <div class="header">
             <iron-icon class="gear" icon="icons:arrow-back" on-click="goToToolbar"></iron-icon>
             <div class="grab"></div>
-            <iron-icon class="question" icon="designmap:question"></iron-icon>
+            <iron-icon class="question" icon="designmap:question" on-click="openLink"></iron-icon>
         </div>
         <div class="content">
             <div class="block">
@@ -185,6 +185,9 @@
             },
             logout: function(){
                 main.logout();
+            },
+            openLink: function(){
+                shell.openExternal('https://app.designmap.ru/support/docs#app');
             }
         })
     </script>

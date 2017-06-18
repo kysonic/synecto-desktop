@@ -175,13 +175,13 @@
                  data-direction="leftCenter"></div>
         </div>
         <div id="panel" hidden$="[[draw]]" class="panel">
-            <iron-icon icon="icons:clear" title="CLOSE" on-click="cancelFramedScreenShot"></iron-icon>
-            <iron-icon icon="icons:done" title="DONE" on-click="makeFramedScreenShot"></iron-icon>
+            <iron-icon icon="icons:clear" title="Close" on-click="cancelFramedScreenShot"></iron-icon>
+            <iron-icon icon="icons:done" title="Done" on-click="makeFramedScreenShot"></iron-icon>
         </div>
     </template>
     <script>
         const {takeFramedScreen} = require('./libs/screenshot');
-        const {remote} = require('electron');
+        const {remote,ipcRenderer} = require('electron');
         const main = remote.require('./main');
         Polymer({
             is: 'designmap-screen-overlay',
@@ -203,6 +203,10 @@
             observers: [
                 'change(startPoint.x,startPoint.y,endPoint.x,endPoint.y)'
             ],
+            ready: function(){
+                ipcRenderer.on('closeOverlay', this.cancelFramedScreenShot.bind(this));
+                ipcRenderer.on('applyOverlayAction', this.makeFramedScreenShot.bind(this));
+            },
             change: function (sX, sY, eX, eY) {
                 this._renderArea(sX, sY, eX, eY);
                 this._renderDragger(sX, sY, eX, eY);
@@ -382,7 +386,7 @@
             },
             makeFramedScreenShot: function(){
                 main.hideOverlayWindow();
-                takeFramedScreen({startPoint:this.startPoint,endPoint:this.endPoint},(image)=>{
+                takeFramedScreen({startPoint:this.startPoint,endPoint:this.endPoint,os:main.os},function(image){
                     const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
                     main.makeFramedScreenShot(base64Data);
                     main.closeOverlayWindow();

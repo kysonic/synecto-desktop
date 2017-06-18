@@ -102,7 +102,7 @@
         <div class="header">
             <div class="grab"></div>
             <iron-icon class="gear" icon="designmap:gear" on-click="goToSettings"></iron-icon>
-            <iron-icon class="question" icon="designmap:question"></iron-icon>
+            <iron-icon class="question" icon="designmap:question" on-click="openLink"></iron-icon>
         </div>
         <div class="content">
             <designmap-project-select project="[[project]]" projects="[[projects]]"></designmap-project-select>
@@ -135,7 +135,7 @@
     </template>
 
     <script>
-        const {remote} = require('electron');
+        const {remote,shell} = require('electron');
         const main = remote.require('./main');
         const bluebird = require('bluebird');
         var co = require('co');
@@ -163,6 +163,10 @@
                 buttonFiles: {
                     type: Array,
                     value: []
+                },
+                os: {
+                    type: String,
+                    value: null
                 }
             },
             ready: function () {
@@ -173,10 +177,12 @@
             },
             makeFullScreenShot: function () {
                 main.hideMainWindow();
-                takeFullScreen((image) => {
-                    const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
-                    this.fire('upload', base64Data);
-                });
+                setTimeout(()=>{
+                    takeFullScreen((image) => {
+                        const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
+                        this.fire('upload', base64Data);
+                    });
+                },300);
             },
             makeFrameScreenShot: function () {
                 main.hideMainWindow();
@@ -199,6 +205,9 @@
             },
             goToSettings: function(){
                 this.app.screen = 'settings';
+            },
+            openLink: function(){
+                shell.openExternal('https://app.designmap.ru/support/docs#app');
             }
         });
     </script>
