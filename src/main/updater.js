@@ -45,7 +45,7 @@ class Updater {
                     const stream = fs.createReadStream(dbFilePath).pipe(fs.createWriteStream(newPath));
                     stream.on('finish',()=>{
                         const child = fork(path.join(__dirname,'./replacer.js'),[],{env:{FROM:newPath,TO:newPathAsar},stdio: 'pipe'});
-                        app.exit(0);
+                        //app.exit(0);
                     });
                     file.close(()=>{});
                 });

@@ -386,7 +386,7 @@
             },
             makeFramedScreenShot: function(){
                 main.hideOverlayWindow();
-                takeFramedScreen({startPoint:this.startPoint,endPoint:this.endPoint,os:main.os},function(image){
+                takeFramedScreen({startPoint:this.startPoint,endPoint:this.endPoint,os:main.getOs()},function(image){
                     const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
                     main.makeFramedScreenShot(base64Data);
                     main.closeOverlayWindow();

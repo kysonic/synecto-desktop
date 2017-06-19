@@ -178,7 +178,7 @@
             makeFullScreenShot: function () {
                 main.hideMainWindow();
                 setTimeout(()=>{
-                    takeFullScreen((image) => {
+                    takeFullScreen((image)=> {
                         const base64Data = image.replace(/^data:image\/jpeg;base64,/, "");
                         this.fire('upload', base64Data);
                     });

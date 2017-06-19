@@ -95,7 +95,7 @@ function takeFramedScreen(frame,callback) {
             canvas.width = dX;
             canvas.height = dY;
             // Draw video on canvas
-            ctx.drawImage(video, frame.startPoint.x, frame.startPoint.y + 25, dX, dY - (frame.os=='mac'?15:0), 0, 0, dX, dY  );
+            ctx.drawImage(video, frame.startPoint.x, frame.startPoint.y + (frame.os=='mac'?25:0), dX, dY - (frame.os=='mac'?15:0), 0, 0, dX, dY  );
 
             if (_this.callback) {
                 // Save screenshot to jpg - base64

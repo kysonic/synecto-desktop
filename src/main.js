@@ -355,11 +355,13 @@ const _refreshToken = co.wrap(function * refreshToken(goaData){
     return updatedGoa;
 });
 
-module.exports.os = os;
+function getOs(){
+    return os;  
+};
 
 module.exports = {gogoleSignIn,openDashBoard,hideOverlayWindow,setToolbarSize,setLoadingSize,showMainWindow,
         hideMainWindow,closeOverlayWindow,makeFramedScreenShot,createOverlayWindow,setupTray,showToolbar,
-        showLoginForm,logout,_changeLanguage};
+        showLoginForm,logout,_changeLanguage,getOs};
 
 
 
