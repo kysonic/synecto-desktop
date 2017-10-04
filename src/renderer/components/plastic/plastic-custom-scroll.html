@@ -1,0 +1,300 @@
+<link rel="import" href="../../../../bower_components/polymer/polymer.html">
+<link rel="import" href="../../../../bower_components/iron-resizable-behavior/iron-resizable-behavior.html">
+<link rel="import" href="../../../../bower_components/iron-a11y-keys/iron-a11y-keys.html">
+
+<dom-module id="plastic-custom-scroll">
+    <template>
+        <style>
+            :host([fit]) {
+                display: block;
+                position: relative;
+            }
+            :host(.grabbed) > * {
+                user-select: none;
+            }
+
+            .content {
+                display: block;
+                min-height: 100%;
+                flex: 1 0 0;
+                overflow: hidden;
+                position: relative;
+                outline: none;
+                @apply(--plastic-custom-scroll-content-mixin);
+            }
+
+            :host([no-scroll]) .content {
+                height: auto;
+                max-height: 100%;
+                overflow: inherit;
+            }
+
+            .content:after {
+                @apply(--plastic-custom-scroll-content-after-mixin);
+            }
+
+            .bar {
+                position: absolute;
+                background: rgba(0, 0, 0, .2);
+                width: 9px;
+                border-radius: 4px;
+                top: 0;
+                left: 100%;
+                margin-left: 10px;
+                z-index: 2;
+                cursor: default;
+                transition: opacity 0.25s linear, width .1s ease-in, margin-left .1s ease-in;
+                @apply(--plastic-custom-scroll-bar-mixin);
+            }
+
+            .bar:hover {
+                background: rgba(0, 0, 0, .3);
+                transition: opacity 0.25s linear, width .1s ease-in, margin-left .1s ease-in;
+                cursor: pointer;
+                @apply(--plastic-custom-scroll-bar-hover-mixin);
+            }
+
+            :host([small-bar]) .bar {
+                width: 6px;
+                @apply(--plastic-custom-scroll-bar-mixin);
+            }
+
+            :host([small-bar]) .bar:hover {
+                width: 8px;
+                margin-left: 8px;
+                @apply(--plastic-custom-scroll-bar-hover-mixin);
+            }
+
+            :host([small-bar]) .bar.grabbed{
+                width: 8px;
+                margin-left: 8px;
+                @apply(--plastic-custom-scroll-bar-grabbed-mixin);
+            }
+
+            .bar.grabbed {
+                background: rgba(0, 0, 0, .35);
+                transition: opacity 0.25s linear;
+                @apply(--plastic-custom-scroll-bar-grabbed-mixin);
+            }
+
+            :host[into] .bar {
+                margin-left: -10px;
+            }
+
+            /** MOBILE **/
+            @media only screen and (min-width: 300px) and (max-width: 768px) {
+                .bar {
+                    width: 5px;
+                    left: 101%;
+                }
+            }
+
+            /** DEVICES **/
+            @media (min-device-width: 300px) and (max-device-width: 1280px) {
+                .bar {
+                    display: none !important;
+                }
+                .content {
+                    overflow-y: scroll;
+                    -webkit-overflow-scrolling: touch;
+                }
+            }
+
+        </style>
+        <div tabindex="1" class="content" id="content" on-scroll="scrollThat" on-tap="tap" on-keydown="keyDown">
+            <content></content>
+        </div>
+        <div class="bar" id="bar"></div>
+    </template>
+    <script>
+        Polymer({
+            is: 'plastic-custom-scroll',
+            behaviors: [Polymer.IronResizableBehavior],
+            properties: {
+                maxHeight: {
+                    type: Number,
+                    observer: 'maxHeightChanged'
+                },
+                step: Number,
+                scrolled: Number,
+                wheelTarget: Object,
+                uid: {
+                    type: String,
+                    reflectToAttribute: true
+                },
+                noScroll: {
+                    type: Boolean,
+                    reflectToAttribute: true,
+                    value: false
+                },
+                limit: {
+                    type: Number,
+                    value: 0.99
+                },
+                disappear: {
+                    type: Boolean,
+                    value: false
+                },
+                superDelta: {
+                    type:Number,
+                    value: 30
+                },
+                content: {
+                    type: Object,
+                    value: function(){
+                        this.$.content
+                    }
+                }
+            },
+            listeners: {
+                'iron-resize': '_onIronResize'
+            },
+            ready: function () {
+                // Skip preocessing for mobile devices. Because they have normal scroll
+                if(this.isMobileDevice() || this.noScroll) return this.limit = 0;
+                if (this.maxHeight) this.$.content.style.maxHeight = this.maxHeight + 'px';
+                // Mouse wheel
+                var wheelTarget = this.wheelTarget || this;
+                wheelTarget.addEventListener('wheel', this.mouseWheel.bind(this));
+                this.dragStart = 0;
+                // Gestures
+                this.$.bar.addEventListener('mousedown', function (e) {
+                    document.body.classList.add('non-select');
+                    this.lastPageY = e.pageY;
+                    this.classList.add('grabbed');
+                    this.$.bar.classList.add('grabbed');
+
+                    document.addEventListener('mousemove', _drag);
+                    document.addEventListener('mouseup', _stop);
+                    var _this = this;
+
+                    function _drag(e) {
+                        var delta = e.pageY - _this.lastPageY;
+                        _this.lastPageY = e.pageY;
+
+                        _this.async(function () {
+                            _this.$.content.scrollTop += delta / _this.scrollRatio;
+                            this.fire('plastic-scroll',{target:_this.$.content,scrollTop:_this.$.content.scrollTop});
+                        });
+                        _this.calculate();
+                    }
+
+                    function _stop(e) {
+                        _this.classList.remove('grabbed');
+                        _this.$.bar.classList.remove('grabbed');
+                        document.body.classList.remove('non-select');
+                        document.removeEventListener('mousemove', _drag);
+                        document.removeEventListener('mouseup', _stop);
+                    }
+
+                    return false;
+                }.bind(this));
+            },
+            attached: function () {
+                this.async(function () {
+                    this.calculate();
+                }, 1000);
+            },
+            /**
+             * Mouse wheel handler
+             */
+            mouseWheel: function (e) {
+                e.stopPropagation();
+                var delta = e.deltaY || e.detail || e.wheelDelta;
+                delta > 0 ? this.scrollDown():null;
+                delta < 0 ? this.scrollUp():null;
+                this.calculate();
+            },
+            /**
+             * Scroll basic area down
+             */
+            scrollDown: function () {
+                var target = this.$.content;
+                var scrollRatio = this.$.content.scrollHeight / this.$.content.clientHeight;
+                if (parseFloat(this.scrollRatio.toFixed(2)) > this.limit) return;
+                var power = this.$.content.clientHeight / 6;
+                target.scrollTop += power;
+                this.fire('plastic-scroll',{target:target,scrollTop:target.scrollTop});
+            },
+            /**
+             * Scroll basic area up
+             */
+            scrollUp: function () {
+                var target = this.$.content;
+                var scrollRatio = this.$.content.scrollHeight / this.$.content.clientHeight;
+                if (parseFloat(this.scrollRatio.toFixed(2)) > this.limit) return;
+                var power = this.$.content.clientHeight / 6;
+                target.scrollTop -= power;
+                this.fire('plastic-scroll',{target:target,scrollTop:target.scrollTop});
+            },
+            _onIronResize: function () {
+                this.calculate();
+            },
+            /**
+             * Main method. Calculate all of heights and
+             * scrolls
+             */
+            calculate: function () {
+                var totalHeight = this.$.content.scrollHeight,
+                    ownHeight = this.$.content.clientHeight;
+                this.scrollRatio = ownHeight / (totalHeight || 1);
+                if (parseFloat(this.scrollRatio.toFixed(2)) > this.limit) {
+                    this.$.bar.style.display = 'none';
+                } else {
+                    this.$.bar.style.display = 'block';
+                    this.$.bar.style.height = this.scrollRatio * 100 + '%';
+                    this.$.bar.style.top = (this.$.content.scrollTop / totalHeight ) * 100 + '%';
+                }
+            },
+            /**
+             * Scroll area to top
+             */
+            onTop: function () {
+                this.$.content.scrollTop = 0;
+                this.calculate();
+            },
+            /**
+             * Scroll area to defined value
+             */
+            setScroll: function (scroll) {
+                this.$.content.scrollTop = scroll;
+                this.calculate();
+            },
+            /**
+             * When max height changed - change restrictions
+             * @param maxHeight
+             */
+            maxHeightChanged: function (maxHeight) {
+                //if(!this.noScroll) return this.$.content.style.maxHeight = 'none';
+                if (this.maxHeight) {
+                    this.$.content.style.maxHeight = this.maxHeight + 'px';
+                    this.calculate();
+                }
+            },
+            track: function (e) {
+                //e.preventDefault();
+                if(this.noScroll) return;
+                e.stopPropagation();
+                this.$.content.scrollTop -= e.detail.ddy;
+                this.calculate();
+            },
+            scrollThat: function(e){
+                if(!this.isMobileDevice()) return;
+                this.fire('plastic-scroll',{target:this.$.content,scrollTop:this.$.content.scrollTop});
+            },
+            isMobileDevice: function(){
+                return /Mobi/.test(navigator.userAgent);
+            },
+            tap: function (e) {
+                //console.log(e.keyCode);
+                //e.currentTarget.focus();
+            },
+            keyDown: function (e) {
+                if(e.keyCode!=40 && e.keyCode!=38) return;
+                if(e.keyCode==40) this.scrollDown();
+                if(e.keyCode==38) this.scrollUp();
+                this.calculate();
+            }
+        })
+    </script>
+</dom-module>

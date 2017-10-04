@@ -3,8 +3,8 @@ const server = isProd ? 'https://server.synecto.io' : 'http://localhost:4000';
 const spa = isProd ? 'https://app.synecto.io' : 'http://localhost:5000';
 module.exports = {
     updateServerUrl:server,
-    apiUrl: server,
-    frontUrl: spa,
+    apiUrl: 'http://localhost:4000',
+    frontUrl: 'http://localhost:5000',
     oauth: {
         dropBox: {
             clientID: '8fvewpw5l3mxxye',

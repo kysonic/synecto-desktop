@@ -179,7 +179,7 @@
              * @private
              */
             _userChanged: co.wrap(
-                function * (user) {
+                function * (user,config) {
                     if(!user || !user._userId || !this.config.apiUrl) return;
                     const response = yield axios.get(`${this.config.apiUrl}/app/user/projects?email=${user.local.email}&token=${user.system.appToken}`);
                     if(!response.data.success) return this.showErrorMessage('Cannot find user\'s projects');
@@ -190,6 +190,7 @@
                     const updatedUser = Object.assign(user,{profile:response.data.user.profile,isPremium:response.data.user.isPremium,system:response.data.user.system});
                     this.$.settings.$.bar.user = {};
                     this.$.settings.$.bar.user = updatedUser;
+                    this.setupSocket(updatedUser._userId,'notification',config.apiUrl,updatedUser);
                 }
             ),
             /**
@@ -250,7 +251,7 @@
              */
             _projectChanged: function(project,config) {
                 if(!project._id || !config.apiUrl) return;
-                this.setupSocket(project._id,'project',config.apiUrl);
+                //this.setupSocket(project._id,'project',config.apiUrl);
             },
             _updateLanguage: co.wrap(
                 function * (language) {

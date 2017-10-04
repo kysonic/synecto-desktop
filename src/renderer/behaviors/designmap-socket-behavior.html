@@ -3,20 +3,20 @@
         /**
          * Setup socket
          */
-        setupSocket: function (roomId, type, apiUrl) {
+        setupSocket: function (roomId, type, apiUrl,user) {
             this.type = type;
             //if (Designmap[type+'Socket']) Designmap[type+'Socket'].disconnect();
             if (!Designmap[type+'Socket']) {
-                this.roomId = roomId;
+                Designmap[type+'RoomId'] = roomId;
                 // Connect to appropriate room created specially for this project.
-                Designmap[type+'Socket'] = io.connect(apiUrl, {query: 'room=' + roomId});
+                Designmap[type+'Socket'] = io.connect(apiUrl, {query: 'room=' + roomId+'&userId='+user._userId+'&appToken='+user.system.appToken});
                 this.setupSocketSubscribers(type);
             } else if(roomId) {
-                if(this.roomId==roomId) return;
-                this.roomId = roomId;
+                if(Designmap[type+'RoomId']==roomId) return;
+                Designmap[type+'RoomId'] = roomId;
                 // Change room
-                Designmap[type+'Socket'].emit('change-room',{room:this.roomId});
-                console.log('Change '+type+' room on '+this.roomId);
+                Designmap[type+'Socket'].emit('change-room',{room:Designmap[type+'RoomId']});
+                console.log('Change '+type+' room on '+Designmap[type+'RoomId']);
             }
         },
         /**
@@ -24,8 +24,26 @@
          */
         setupSocketSubscribers: function (type) {
             Designmap[type+'Socket'].on('connect', function () {
-                console.log('DesignMap '+type+' socket is connected. Room ='+this.roomId);
+                console.log('DesignMap '+type+' socket is connected. Room ='+Designmap[type+'RoomId']);
+                this.fire('socket-connected',{type:type});
             }.bind(this));
+
+            Designmap[type+'Socket'].on('disconnect', function (e) {
+                console.log('DesignMap '+type+' socket is desiconnected. Room ='+Designmap[type+'RoomId']);
+                this.fire('socket-disconnected',{type:type});
+            }.bind(this));
+            /**
+             * Action!
+             */
+            Designmap[type+'Socket'].on('notify', function (o) {
+                const text = this.replaceExpressions(this.translate(o.text.message),o.text.replacement);
+                const message = `\n${text}\n${this.translate('From')}: ${this.computeOwnerName(o.sender)}`
+                const n = this.showMessage(this.translate(o.type),message);
+                if(o.text && o.text.info && o.text.info.xlink) {
+                    n.onclick = function(){shell.openExternal(o.text.info.xlink);}
+                }
+            }.bind(this));
+
         },
         /**
          * Add custom socket subscriber

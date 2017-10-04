@@ -163,5 +163,59 @@
   },
   "This email is already taken": {
     "message": "This email is already taken"
+  },
+  "From": {
+    "message": "From"
+  },
+  "new-message": {
+    "message": "New chat message"
+  },
+  "new-sticker": {
+    "message": "New precise comment"
+  },
+  "new-assignee": {
+    "message": "New assignee"
+  },
+  "You was assigned to task": {
+    "message": "You was assigned to task \"#TASK#\"."
+  },
+  "status-changed": {
+    "message": "Task status is changed"
+  },
+  "Status of task was changed on": {
+    "message": "Status of \"#NAME#\" task was changed on \"#STATUS#\"."
+  },
+  "estimation-request": {
+    "message": "Estimation request"
+  },
+  "Request on estimation": {
+    "message": "Your project manager is asking you to estimate \"#NAME#\" task. Follow link and press appropriate button in right menu."
+  },
+  "time-change-request": {
+    "message": "Time change request"
+  },
+  "Request on change of time": {
+    "message": "Please approve change of spent time for \"#NAME#\" task."
+  },
+  "file-uploaded": {
+    "message": "Files were uploaded"
+  },
+  "Some files were uploaded": {
+    "message": "Follow the link to open folder with the files."
+  },
+  "new-access": {
+    "message": "New access"
+  },
+  "remove-access": {
+    "message": "Access removed"
+  },
+  "You were removed from project": {
+    "message": "You were removed from \"#PROJECT#\"."
+  },
+  "You received an access to project": {
+    "message": "You received access to project \"#PROJECT#\"."
+  },
+  "new-task-comment": {
+    "message": "New task comment"
   }
 }

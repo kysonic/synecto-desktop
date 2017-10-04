@@ -166,5 +166,56 @@
   },
   "This email is already taken": {
     "message": "Этот email уже занят"
+  },
+  "From": {
+    "message": "От"
+  },
+  "new-message": {
+    "message": "Новое сообщение чата"
+  },
+  "new-sticker": {
+    "message": "Новый точечный комментарий"
+  },
+  "You was assigned to task": {
+    "message": "Вы были назначены ответственным на задачу \"#TASK#\"."
+  },
+  "status-changed": {
+    "message": "Статус задачи изменен"
+  },
+  "Status of task was changed on": {
+    "message": "Статус задачи \"#NAME#\" был изменен на \"#STATUS#\"."
+  },
+  "estimation-request": {
+    "message": "Запрос оценки"
+  },
+  "Request on estimation": {
+    "message": "Ваш менеджер проекта просит оценить задачу \"#NAME#\". Перейдите по ссылке и нажмите на сооотвествующую кнопку в правом меню."
+  },
+  "time-change-request": {
+    "message": "Запрос изменения времени"
+  },
+  "Request on change of time": {
+    "message": "Пожалуйста подтвердите время потраченое на задачу \"#NAME#\"."
+  },
+  "file-uploaded": {
+    "message": "Файлы были загружены"
+  },
+  "Some files were uploaded": {
+    "message": "Нажмите на сообщение, чтобы открыть папку с этими файлыми."
+  },
+  "new-access": {
+    "message": "Новый доступ"
+  },
+  "remove-access": {
+    "message": "Доступ удален"
+  },
+  "You were removed from project": {
+    "message": "Вы были удалены с проекта \"#PROJECT#\"."
+  },
+  "You received an access to project": {
+    "message": "Вы получили доступ к проекту \"#PROJECT#\"."
+  },
+  "new-task-comment": {
+    "message": "Новый комментарий к задаче"
   }
 }

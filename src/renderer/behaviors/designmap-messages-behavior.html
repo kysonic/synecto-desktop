@@ -8,10 +8,10 @@
             if(replacement) msg = this.replaceExpressions(msg,replacement);
             // Show message
 
-            new Notification(title, {
+            const notification = new Notification(title, {
                 body: message
             });
-
+            return notification;
         },
         showErrorMessage: function(message,replacement){
             let msg = this.i18nDomain.getMsg(message) || message;

@@ -1,5 +1,7 @@
 <link rel="import" href="../../../../../bower_components/polymer/polymer.html">
 <link rel="import" href="../designmap-ui/designmap-dropdown.html">
+<link rel="import" href="../../plastic/plastic-custom-scroll.html">
+<link rel="import" href="../../../behaviors/designmap-utils-behavior.html">
 
 <dom-module id="designmap-project-select">
     <template>
@@ -59,6 +61,9 @@
                 cursor: pointer;
                 padding: 10px;
                 transition: .2s background;
+                max-width: 90%;
+                overflow: hidden;
+                text-overflow: ellipsis;
             }
             .project-list li:hover {
                 transition: .2s background;
@@ -73,16 +78,20 @@
         <designmap-dropdown vertical-offset="45" horizontal-offset="60" tri-border previous
                             id="projectList">
             <ul class="project-list">
-                <template is="dom-repeat" items="[[projects]]" as="project">
-                    <li on-click="selectProject">[[project.name]]</li>
-                </template>
+                <plastic-custom-scroll into fit max-height="212">
+                    <template is="dom-repeat" items="[[projects]]" as="project">
+                        <li on-click="selectProject">[[project.name]] [ [[_getOwnerName(project.owner)]] ]</li>
+                    </template>
+                </plastic-custom-scroll>
             </ul>
         </designmap-dropdown>
     </template>
     <script>
         Polymer({
             is: 'designmap-project-select',
-            behaviors: [],
+            behaviors: [
+                Polymer.DesignMapUtilsBehavior
+            ],
             properties: {
                 projects: {
                     type: Array,
@@ -99,6 +108,9 @@
             selectProject: function(e){
                 this.fire('select-project',e.model.project);
                 this.$.projectList.close();
+            },
+            _getOwnerName: function(owner) {
+                return this.computeOwnerName(owner);
             }
         })
     </script>
