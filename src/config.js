@@ -2,7 +2,7 @@ const isProd = !!process.env.PROD;
 const server = isProd ? 'https://server.synecto.io' : 'http://localhost:4000';
 const spa = isProd ? 'https://app.synecto.io' : 'http://localhost:5000';
 module.exports = {
-    updateServerUrl:server,
+    updateServerUrl:'http://localhost:4000',
     apiUrl: 'http://localhost:4000',
     frontUrl: 'http://localhost:5000',
     oauth: {
