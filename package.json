@@ -34,7 +34,7 @@
     "publish": [
       {
         "provider": "generic",
-        "url": "https://server.designmap.ru/updates/releases/"
+        "url": "https://server.synecto.io/updates/releases/"
       }
     ],
     "appId": "com.electron.designmapp",
