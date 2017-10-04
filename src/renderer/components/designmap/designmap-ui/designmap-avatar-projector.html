@@ -49,7 +49,7 @@
 
         </style>
         <template is="dom-if" if="[[user.profile.avatar]]">
-            <img src="[[computeAvatarPath(user.profile.avatar)]]" title="[[user.local.email]]">
+            <img src="[[computeAvatarPath(user.profile.avatar,config)]]" title="[[user.local.email]]">
         </template>
         <template is="dom-if" if="[[!user.profile.avatar]]">
             <div class="text"> [[computeName(user)]]</div>
@@ -72,7 +72,8 @@
             computeAvatarPath: function (path) {
                 if (!path) return '';
                 if (/images/.test(path)) return '../../'+path + '?v=' + this.generateUid();
-                return this.config.apiURL + path + '?v=' + this.generateUid();
+                if (!this.config.apiUrl) return '';
+                return this.config.apiUrl + path + '?v=' + this.generateUid();
             },
             computeName: function (user) {
                 if (typeof user == 'string') return '...';

@@ -318,8 +318,8 @@ const _changeLanguage = co.wrap(function * _changeLanguage(language){
     if(!tray) return;
     const contextMenu = Menu.buildFromTemplate([
         {label: _translate('Open dashboard'), type: 'normal',click: openDashBoard},
-        {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
-        {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
+        {label: _translate('Take a shot '+os),  type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
+        {label: _translate('Take a framed shot '+os), type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
         /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
         {label: _translate('Logout'), type: 'normal',click: this.logout },
         {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}

@@ -1,7 +1,7 @@
 {
   "name": "Synectoapp",
   "version": "0.0.1",
-  "description": "Designmapp allows you to create screenshots and upload fiels directly in designmap. http://designmap.ru",
+  "description": "Synectoapp allows you to create screenshots and upload fiels directly in synecto. http://synecto.io",
   "main": "./src/main.js",
   "scripts": {
     "start": "electron ./src/main.js",
@@ -37,7 +37,7 @@
         "url": "https://server.synecto.io/updates/releases/"
       }
     ],
-    "appId": "com.electron.designmapp",
+    "appId": "com.electron.synectoapp",
     "mac": {
       "category": "Screenshots"
     },

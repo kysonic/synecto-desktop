@@ -74,11 +74,17 @@
   "Open dashboard": {
     "message": "Open dashboard"
   },
-  "Take a shot": {
-    "message": "Take a screenshot"
+  "Take a shot mac": {
+    "message": "Take a screenshot (Cmd+4)"
   },
-  "Take a framed shot": {
-    "message": "Take a framed screenshot"
+  "Take a framed shot mac": {
+    "message": "Take a framed screenshot (Cmd+Opt+4)"
+  },
+  "Take a shot win": {
+    "message": "Take a screenshot (PrtScr)"
+  },
+  "Take a framed shot win": {
+    "message": "Take a framed screenshot (Ctrl+PrtScr)"
   },
   "Logout": {
     "message": "Logout"
@@ -153,7 +159,7 @@
     "message": "New Release"
   },
   "Do yo want to update?": {
-    "message": "Designmapp have released new version! Press \"Yes\" if you want to update an app. After downloading Designmap will be reloaded automatically."
+    "message": "Synecto have released new version! Press \"Yes\" if you want to update an app. After downloading Designmap will be reloaded automatically."
   },
   "User was registered successfully.": {
     "message": "User was registered successfully. You will receive mail with approve link."

@@ -111,7 +111,9 @@
              * change any property of main application
              */
             ready: function () {
-                ipcRenderer.on('appChange', (e, v, value)=> {this[v] = value;});
+                ipcRenderer.on('appChange', (e, v, value)=> {
+                    this[v] = value;
+                });
                 ipcRenderer.on('makeFramedScreenShot', (e,data)=>this._uploadFile({detail:data}));
                 this.$.i18nDomain.addEventListener('i18-n-locale-ready', function () {
                     this.$.login.i18nLoaded = true;
