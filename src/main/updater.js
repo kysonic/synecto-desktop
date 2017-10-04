@@ -34,7 +34,7 @@ class Updater {
             if(choice==1) return;
             loadingFn();
             // Download file
-            const dbFilePath = path.join(require('os').homedir(),'Designmap','app.'+data.version+'.update');
+            const dbFilePath = path.join(require('os').homedir(),'Synecto','app.'+data.version+'.update');
             const file = fs.createWriteStream(dbFilePath);
             http.get(data.url+'/app.asar', function(response) {
                 response.pipe(file);

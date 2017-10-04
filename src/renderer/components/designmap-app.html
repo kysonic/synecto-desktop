@@ -120,6 +120,7 @@
             _login: co.wrap(
                 function * (e){
                     const {email,password} = e.detail;
+                    this.$.login.$.signInLoadingButton.loading = true;
                     const response = yield axios.post(`${this.config.apiUrl}/app/user/login`, {email,password});
                     this.$.login.$.signInLoadingButton.loading = false;
                     if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
@@ -137,6 +138,7 @@
             _googleSignIn: co.wrap(
                 function * (e) {
                     const gaData = e.detail;
+                    this.$.login.$.registerGoogleButton.loading = true;
                     const response = yield axios.post(`${this.config.apiUrl}/app/user/google-registration`, {user:gaData});
                     this.$.login.$.registerGoogleButton.loading = false;
                     if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
@@ -154,11 +156,13 @@
             _register: co.wrap(
                 function * (e){
                     const {email,password} = e.detail;
+                    this.$.login.$.registerButton.loading = true;
                     const response = yield axios.post(`${this.config.apiUrl}/app/user/register`, {email,password,lang:this.browserLanguage});
                     this.$.login.$.registerButton.loading = false;
                     if(!response.data.success) return this.showErrorMessage(response.data.errors.message);
+                    this.showMessage(response.data.message);
                     // Update user in app store
-                    const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
+                    /*const userData = Object.assign({},response.data.user,{user:true,_userId:response.data.user._id});
                     delete userData._id;
                     yield db.updateAsync({'local.email':userData.local.email},userData,{upsert:true});
                     this.user = yield db.findOneAsync({"user":true,"local.email":userData.local.email});
@@ -166,7 +170,7 @@
                     this.system.account = this.user._userId;
                     // Toolbar
                     this.screen = 'toolbar';
-                    main.showToolbar();
+                    main.showToolbar();*/
                 }
             ),
             /**
@@ -180,7 +184,9 @@
                     const response = yield axios.get(`${this.config.apiUrl}/app/user/projects?email=${user.local.email}&token=${user.system.appToken}`);
                     if(!response.data.success) return this.showErrorMessage('Cannot find user\'s projects');
                     this.projects = response.data.projects;
-                    this.project = this.projects[0];
+                    let prj = null;
+                    if(this.system.projectId) prj = this.projects.find((p)=>p._id==this.system.projectId);
+                    this.project = prj || this.projects[0];
                     const updatedUser = Object.assign(user,{profile:response.data.user.profile,isPremium:response.data.user.isPremium,system:response.data.user.system});
                     this.$.settings.$.bar.user = {};
                     this.$.settings.$.bar.user = updatedUser;
@@ -200,8 +206,7 @@
                     if(!response.data.success) return this.showError('Cannot upload file');
                     this.showMessage(this.translate('Screenshot'),this.translate('Screenshot has been taken!'));
                     main.hideMainWindow();
-                    Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
-                    clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
+                    clipboard.writeText(this.config.frontUrl+'/'+response.data.file.project+'/gallery/'+response.data.file._id);
                     main.setToolbarSize();
                     this.screen = 'toolbar';
                 }
@@ -220,8 +225,8 @@
                     if(!response.data.success) return this.showError('Cannot upload file');
                     this.showMessage(this.translate('File'),this.replaceExpressions(this.translate(`File "#FILENAME#" was uploaded successfully!`),{'#FILENAME#':this.cutFileName(response.data.file)}));
                     main.hideMainWindow();
-                    Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'dsgnmapp'});
-                    clipboard.writeText(this.config.frontUrl+'/gallery/'+response.data.file._id);
+                    /*Designmap.projectSocket.emit('action',{type:'ADD_FILE',data: response.data.file,uid:'syenctoapp'});*/
+                    clipboard.writeText(this.config.frontUrl+'/'+response.data.file.project+'/gallery/'+response.data.file._id);
                     main.setToolbarSize();
                     this.screen = 'toolbar';
                 }
@@ -230,9 +235,14 @@
              * Select project to upload in
              * @private
              */
-            _selectProject: function(e){
-                this.project = e.detail;
-            },
+            _selectProject: co.wrap(
+                function * (e){
+                    this.project = e.detail;
+                    const system = yield db.findOneAsync({system:true});
+                    system.projectId = e.detail._id;
+                    const result = yield db.updateAsync({_id:this.system._id},{$set:{projectId:system.projectId}});
+                }
+            ),
             /**
              * When project is changed we have to
              * switch socket channel

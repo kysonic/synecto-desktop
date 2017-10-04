@@ -1,5 +1,5 @@
 {
-  "name": "designmapp",
+  "name": "synectoapp",
   "version": "0.0.1",
   "description": "Designmapp allows you to create screenshots and upload fiels directly in designmap. http://designmap.ru",
   "main": "./src/main.js",
@@ -20,6 +20,7 @@
     "auto-updater": "^1.0.2",
     "axios": "^0.16.1",
     "bluebird": "^3.5.0",
+    "electron": "^1.7.5",
     "electron-google-oauth": "^2.0.0",
     "electron-updater": "^2.3.0",
     "mkdirp": "^0.5.1",
@@ -38,8 +39,8 @@
     "mac": {
       "category": "Screenshots"
     },
-    "win":{
-      "target":"nsis"
+    "win": {
+      "target": "nsis"
     },
     "nsis": {
       "perMachine": true

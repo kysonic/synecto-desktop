@@ -154,5 +154,14 @@
   },
   "Do yo want to update?": {
     "message": "Designmapp have released new version! Press \"Yes\" if you want to update an app. After downloading Designmap will be reloaded automatically."
+  },
+  "User was registered successfully.": {
+    "message": "User was registered successfully. You will receive mail with approve link."
+  },
+  "Your email wasn't approved": {
+    "message": "Your e-mail wasn't approved! To approve it go by link in email."
+  },
+  "This email is already taken": {
+    "message": "This email is already taken"
   }
 }

@@ -26,45 +26,27 @@
                 margin-left: -45px;
             }
         </style>
-        <paper-progress value="[[value]]"></paper-progress>
-        <div class="numbers">[[_computeNumbers(user.system.*,max,value)]]</div>
+        <paper-progress value="[[_computeProgress(user.plan.upload,user.plan.storage,user.*)]]"></paper-progress>
+        <div class="numbers">[[_computeNumbers(user.plan.upload,user.plan.storage,user.*)]]</div>
     </template>
     <script>
         Polymer({
             is: 'designmap-storage-bar',
+            behaviors: [],
             properties: {
                 user: {
                     type: Object,
-                    value: {},
-                    observer: 'userChanged'
-                },
-                value: {
-                    type: Number,
-                    computed: '_computeProgress(user)'
-                },
-                max: {
-                    type: Number,
-                    computed: '_computeMax(user.isPremium)'
+                    value: null
                 }
             },
-            _computeProgress: function(user){
-                if(!user || !user.system) return 0;
-                const s3Uploads = user.system.s3Uploads;
-                return 100 - ((s3Uploads*100)/this.max);
+            _computeProgress: function(upload,storage){
+                return (((this.user.plan.upload/1024/1204)*100)/storage);
             },
-            _computeMax: function(){
-                if(!this.user) return;
-                const isPremium = this.user.isPremium;
-                return !isPremium ? '100' : '3000';
-            },
-            _computeNumbers: function(s4,max){
-                if(!this.user || !this.user.system) return '0/0';
-                const s3Uploads = this.user.system.s3Uploads;
-                return s3Uploads?s3Uploads.toFixed(2)+'/'+max+ ' MB':'---';
-            },
-            userChanged: function(user){
-                this.value = this._computeProgress(user);
+            _computeNumbers: function(upload,storage){
+                return upload!=undefined?(this.user.plan.upload/1024/1204).toFixed(2)+'/'+storage+ ' MB':'---';
             }
         })
     </script>
 </dom-module>
+
+

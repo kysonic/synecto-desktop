@@ -1,5 +1,5 @@
 /**
- * It is an entry point of entire Designmapp
+ * It is an entry point of entire Syenctoapp
  * Here we go with windows, keys, trays and another stuff.
  */
 const electron = require("electron");
@@ -22,7 +22,7 @@ osLocale().then(locale => browserLanguage=locale.substr(0,2));
 const isDev = process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath);
 
 // Configs
-app.setName('Designmap');
+app.setName('Syencto');
 
 const path = require('path');
 const url = require('url');
@@ -221,7 +221,7 @@ function setupTray(){
         {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
     ]);
 
-    tray.setToolTip('Designmap');
+    tray.setToolTip('Synecto');
     tray.setContextMenu(contextMenu);
 
     tray.on(os=='mac'?'right-click':'click', openDashBoard);
