@@ -1,6 +1,6 @@
 {
   "name": "Synectoapp",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "Synectoapp allows you to create screenshots and upload fiels directly in synecto. http://synecto.io",
   "main": "./src/main.js",
   "scripts": {

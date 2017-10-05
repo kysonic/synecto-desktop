@@ -11,7 +11,7 @@ const co = require('co');
 const locales = {
     ru: require('../assets/locales/ru.json'),
     en: require('../assets/locales/en.json')
-}
+};
 const axios = require('axios');
 const gapi = require('./main/gapi');
 
@@ -214,8 +214,8 @@ function setupTray(){
     tray = new Tray(path.join(__dirname,`../assets/images/tray-${os}.png`));
     const contextMenu = Menu.buildFromTemplate([
         {label: _translate('Open dashboard'), type: 'normal',click: openDashBoard},
-        {label: _translate('Take a shot'), accelerator: HOT_KEYS[os].makeFullScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
-        {label: _translate('Take a framed shot'), accelerator: HOT_KEYS[os].makeFramedScreenShot, type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
+        {label: _translate('Take a shot '+os), type: 'normal',click: ()=>{mainWindow.webContents.send('makeSnapshot');}},
+        {label: _translate('Take a framed shot '+os), type: 'normal',click: ()=>{mainWindow.webContents.send('makeFramedSnapshot');}},
         /*{label: _translate('Upload files'), accelerator: HOT_KEYS[os].uploadFiles, type: 'normal',click: ()=>{mainWindow.webContents.send('uploadFiles');}},*/
         {label: _translate('Logout'), type: 'normal',click: logout },
         {label: _translate('Exit'), type: 'normal', click:()=>{app.quit();}}
@@ -314,6 +314,7 @@ const gogoleSignIn = co.wrap(function * gogoleSignIn(){
 
 
 const _changeLanguage = co.wrap(function * _changeLanguage(language){
+    if(!language) return;
     system.language = language;
     if(!tray) return;
     const contextMenu = Menu.buildFromTemplate([

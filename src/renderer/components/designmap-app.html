@@ -257,6 +257,7 @@
             },
             _updateLanguage: co.wrap(
                 function * (language) {
+                    if(!language) return;
                     const system = yield db.findOneAsync({system:true});
                     system.language = language;
                     yield db.updateAsync({_id:this.system._id},{$set:{language:language}});
