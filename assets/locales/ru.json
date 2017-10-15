@@ -60,7 +60,7 @@
     "message": "Снимок экрана"
   },
   "Screenshot has been taken!": {
-    "message": "Снимок экрана был успешно загружен в Designmap! Ссылка на файл добавлена в буфер обмена."
+    "message": "Снимок экрана был успешно загружен в Synecto! Ссылка на файл добавлена в буфер обмена."
   },
   "Cannot upload file": {
     "message": "Не могу загрузить файл... "
@@ -69,7 +69,7 @@
     "message": "Ошибка!"
   },
   "File \"#FILENAME#\" was uploaded successfully!": {
-    "message": "Файл \"#FILENAME#\" был успешно загружен в Designmap! Сслыка на последний файл добавлена в буфер обмена."
+    "message": "Файл \"#FILENAME#\" был успешно загружен в Synecto! Сслыка на последний файл добавлена в буфер обмена."
   },
   "File": {
     "message": "Файл"
@@ -137,8 +137,8 @@
   "frm": {
     "message": " "
   },
-  "File with this extension cannot be uploaded in Designmap.": {
-    "message": "Файл с таким разрешением не может быть загружен в Designmap."
+  "File with this extension cannot be uploaded in Synecto.": {
+    "message": "Файл с таким разрешением не может быть загружен в Synecto."
   },
   "Signout": {
     "message": "Выйти"

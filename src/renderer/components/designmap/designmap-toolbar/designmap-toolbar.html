@@ -98,9 +98,21 @@
                 margin-top: 25px;
                 margin-bottom: 0;
             }
+            .grab {
+                display: flex;
+                align-items: center;
+            }
+            .version {
+                color: var(--white-color);
+                font-size: 14px;
+                margin-left: 10px;
+                font-weight: 100;
+            }
         </style>
         <div class="header">
-            <div class="grab"></div>
+            <div class="grab">
+                <div class="version">v.[[appVersion]]</div>
+            </div>
             <iron-icon class="gear" icon="designmap:gear" on-click="goToSettings"></iron-icon>
             <iron-icon class="question" icon="designmap:question" on-click="openLink"></iron-icon>
         </div>
@@ -167,6 +179,10 @@
                 os: {
                     type: String,
                     value: null
+                },
+                appVersion: {
+                    type: String,
+                    value: ''
                 }
             },
             ready: function () {
@@ -201,7 +217,7 @@
                 }
             ),
             _showFilesNotAllowedError: function(){
-                this.showErrorMessage('File with this extension cannot be uploaded in Designmap.')
+                this.showErrorMessage('File with this extension cannot be uploaded in Synecto.')
             },
             goToSettings: function(){
                 this.app.screen = 'settings';

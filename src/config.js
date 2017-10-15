@@ -1,10 +1,10 @@
-const isProd = !!process.env.PROD;
-const server = isProd ? 'https://server.synecto.io' : 'http://localhost:4000';
-const spa = isProd ? 'https://app.synecto.io' : 'http://localhost:5000';
+const isDev = process.defaultApp || /[\\/]electron-prebuilt[\\/]/.test(process.execPath) || /[\\/]electron[\\/]/.test(process.execPath);
+const server = !isDev ? 'https://server.synecto.io' : 'http://localhost:4000';
+const spa = !isDev ? 'https://app.synecto.io' : 'http://localhost:5000';
 module.exports = {
-    updateServerUrl:'https://server.synecto.io',
-    apiUrl: 'https://server.synecto.io',
-    frontUrl: 'https://app.synecto.io',
+    updateServerUrl:server,
+    apiUrl: server,
+    frontUrl: spa,
     oauth: {
         dropBox: {
             clientID: '8fvewpw5l3mxxye',

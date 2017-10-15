@@ -57,7 +57,7 @@
     "message": "Screenshot"
   },
   "Screenshot has been taken!": {
-    "message": "Screenshot has been uploaded in Designmap successfully! Link on the file added in your clipboard."
+    "message": "Screenshot has been uploaded in Synecto successfully! Link on the file added in your clipboard."
   },
   "Cannot upload file": {
     "message": "Cannot upload file... "
@@ -66,7 +66,7 @@
     "message": "Error!"
   },
   "File \"#FILENAME#\" was uploaded successfully!": {
-    "message": "File \"#FILENAME#\" was uploaded in Designmap successfully! Link on the last file added in your clipboard."
+    "message": "File \"#FILENAME#\" was uploaded in Synecto successfully! Link on the last file added in your clipboard."
   },
   "File": {
     "message": "File"
@@ -134,8 +134,8 @@
   "frm": {
     "message": " "
   },
-  "File with this extension cannot be uploaded in Designmap.": {
-    "message": "File with this extension cannot be uploaded in Designmap."
+  "File with this extension cannot be uploaded in Synecto.": {
+    "message": "File with this extension cannot be uploaded in Synecto."
   },
   "Signout": {
     "message": "Logout"
@@ -159,7 +159,7 @@
     "message": "New Release"
   },
   "Do yo want to update?": {
-    "message": "Synecto have released new version! Press \"Yes\" if you want to update an app. After downloading Designmap will be reloaded automatically."
+    "message": "Synecto have released new version! Press \"Yes\" if you want to update an app. After downloading Synecto will be reloaded automatically."
   },
   "User was registered successfully.": {
     "message": "User was registered successfully. You will receive mail with approve link."
